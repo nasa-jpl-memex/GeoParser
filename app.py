@@ -29,11 +29,34 @@ def get_json_files():
     return jsons_name
 
 
+def extract_text(f):
+    text = file_to_text("{0}/{1}".format(UPLOAD_FOLDER, f))
+    return text
+
+
+def find_loc_name(text):
+    loc_names = extract_loc_name(text)
+    return loc_names
+
+
+def find_lat_lon(loc_names):
+    points = loc_name_lat_lon(loc_names)
+    return points
+
+
+def create_geojson(file_name, points):
+    geojson = create_json(points)
+    geojson_file = "{0}/{1}.json".format(JSON_FOLDER, file_name)
+    with open(geojson_file, 'w') as f:
+        f.write(geojson)
+        f.close()
+    del geojson
+
+
 @app.route('/')
 def index():
     uploaded_files = get_uploaded_files()
     json_files = get_json_files()
-    #loc_names = location_names(json_files)
     return render_template('index.html',uploaded_files=uploaded_files, json_files=json_files)
 
 
@@ -46,6 +69,17 @@ def upload_file():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     uploaded_files = get_uploaded_files()
     json_files = get_json_files()
+    for each in uploaded_files:
+        if not each in json_files:
+            text = extract_text(uploaded_files[each])
+            loc_names = find_loc_name(text)
+            points = find_lat_lon(loc_names)
+            create_geojson(each, points)
+
+    #find the file name
+    #check if json already created
+    #if not create one
+    #get all jsons
     return render_template('index.html',uploaded_files=uploaded_files, json_files=json_files)
 
 
@@ -59,46 +93,7 @@ def remove_file(f):
     return redirect(url_for('index'))
 
 
-@app.route('/extract_text/<f>')
-def extract_text(f):
-    uploaded_files = get_uploaded_files()
-    global text
-    text = file_to_text(uploaded_files[f])
-    return jsonify(out='Text Extracted')
-
-
-@app.route('/find_loc_name/<f>')
-def find_loc_name(f):
-    global text
-    global loc_names
-    loc_names = extract_loc_name(text)
-    return jsonify(out='Location Name Found')
-
-
-@app.route('/find_lat_lon/<f>')
-def find_lat_lon(f):
-    global loc_names
-    global points
-    points = loc_name_lat_lon(loc_names)
-    return jsonify(out='LAT/LON Extracted')
-
-
-@app.route('/create_geojson/<f>')
-def create_geojson(f):
-    global points
-    geojson = create_json(points)
-    geojson_file = "{0}/{1}.json".format(JSON_FOLDER, f)
-    with open(geojson_file, 'w') as f:
-        f.write(geojson)
-        f.close()
-    del geojson
-    text = ""
-    return jsonify(out='GeoJSON Created', geojson_file=geojson_file)
-
 
 if __name__ == "__main__":
     app.debug = True
-    app.run()
-    text = ""
-    loc_names = ""
-    points = ""
+    app.run(host="127.0.0.1", port=8000, debug=True)
