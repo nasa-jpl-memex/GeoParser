@@ -19,7 +19,7 @@ geolocator = Nominatim()
 
 
 def file_to_text(f):
-    parsed = parser.from_file('{0}/{1}'.format(files_dir, f))
+    parsed = parser.from_file(f)
     #cmd = 'curl -T {0}/{1} -H "Content-Disposition: attachment; filename={1}" {2}rmeta'.format(files_dir, f, to_lat_lon_server)
     #return subprocess.check_output(cmd, shell=True)
     return parsed["content"]
