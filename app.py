@@ -75,6 +75,7 @@ def upload_file():
             loc_names = find_loc_name(text)
             points = find_lat_lon(loc_names)
             create_geojson(each, points)
+            json_files = get_json_files()
 
     #find the file name
     #check if json already created
