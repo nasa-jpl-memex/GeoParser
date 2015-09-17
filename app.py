@@ -1,13 +1,12 @@
 import os
 import json
-#from flask import Flask, request, redirect, url_for, render_template, jsonify
 #from werkzeug import secure_filename
 #from geo_tika import file_to_text, create_json, extract_loc_name, loc_name_lat_lon
 
 import cherrypy
 
+STATIC_FOLDER = "./static"
 UPLOAD_FOLDER = 'static/uploaded_files'
-JSON_FOLDER = 'static/json'
 
 class GeoParser(object):
     @cherrypy.expose
@@ -30,4 +29,10 @@ class GeoParser(object):
 
 
 if __name__ == '__main__':
-   cherrypy.quickstart(GeoParser())
+    conf = {
+         '/static': {
+             'tools.staticdir.on': True,
+             'tools.staticdir.dir': STATIC_FOLDER
+         }
+     }
+    cherrypy.quickstart(GeoParser(), conf)
