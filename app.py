@@ -6,10 +6,14 @@ import json
 import cherrypy
 import cgi
 import tempfile
+from mako.template import Template
+from mako.lookup import TemplateLookup
+lookup = TemplateLookup(directories=['templates'])
 
 
 STATIC_FOLDER = "./static"
 UPLOAD_FOLDER = "./static/uploaded_files/"
+CURRENT_DIR = os.getcwd()
 
 class myFieldStorage(cgi.FieldStorage):
     """Our version uses a named temporary file instead of the default
@@ -37,16 +41,20 @@ class GeoParser(object):
         """Simplest possible HTML file upload form. Note that the encoding
         type must be multipart/form-data."""
 
-        return """
-            <html>
-            <body>
-                <form action="upload" method="post" enctype="multipart/form-data">
-                    File: <input type="file" name="theFile"/> <br/>
-                    <input type="submit"/>
-                </form>
-            </body>
-            </html>
-            """
+        tmpl = lookup.get_template("index.html")
+        return tmpl.render(salutation="Hello", target="World")
+
+        # return """
+        #     <html>
+        #     <body>
+        #         <form action="upload" method="post" enctype="multipart/form-data">
+        #             File: <input type="file" name="theFile"/> <br/>
+        #             <input type="submit"/>
+        #         </form>
+        #     </body>
+        #     </html>
+        #     """
+
 
     @cherrypy.expose
     @cherrypy.tools.noBodyProcess()
@@ -102,7 +110,8 @@ class GeoParser(object):
 if __name__ == '__main__':
     conf = {
         '/': {
-            'tools.sessions.on': True
+            'tools.sessions.on': True,
+            'tools.staticdir.root': CURRENT_DIR
         },
         '/static': {
              'tools.staticdir.on': True,
