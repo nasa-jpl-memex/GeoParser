@@ -44,17 +44,6 @@ class GeoParser(object):
         tmpl = lookup.get_template("index.html")
         return tmpl.render(salutation="Hello", target="World")
 
-        # return """
-        #     <html>
-        #     <body>
-        #         <form action="upload" method="post" enctype="multipart/form-data">
-        #             File: <input type="file" name="theFile"/> <br/>
-        #             <input type="submit"/>
-        #         </form>
-        #     </body>
-        #     </html>
-        #     """
-
 
     @cherrypy.expose
     @cherrypy.tools.noBodyProcess()
@@ -93,38 +82,54 @@ class GeoParser(object):
         return "ok, got it filename='%s'" % theFile.filename
 
 
-    @cherrypy.expose
-    def status(self):
-        pass
+class Status:
+
+    exposed = True
+
+    def GET(self, status=None):
+        print status
 
 
-    @cherrypy.expose
-    def search(self):
-        pass
+class Search:
 
-    @cherrypy.expose
-    def bookmark(self):
-        pass
+    exposed = True
+
+    def GET(self, search=None):
+        print search
 
 
 if __name__ == '__main__':
-    conf = {
-        '/': {
-            'tools.sessions.on': True,
-            'tools.staticdir.root': CURRENT_DIR
-        },
-        '/static': {
-             'tools.staticdir.on': True,
-             'tools.staticdir.dir': STATIC_FOLDER
-        }
+
+    main_conf = {
+            '/': {
+                'tools.sessions.on': True,
+                'tools.staticdir.root': CURRENT_DIR
+            },
+            '/static': {
+                 'tools.staticdir.on': True,
+                 'tools.staticdir.dir': STATIC_FOLDER
+            }
     }
 
-    # remove any limit on the request body size; cherrypy's default is 100MB
-    # (maybe we should just increase it ?)
-    cherrypy.server.max_request_body_size = 0
+    status_conf = {'/':
+            {'request.dispatch': cherrypy.dispatch.MethodDispatcher()}
+    }
 
-    # increase server socket timeout to 60s; we are more tolerant of bad
-    # quality client-server connections (cherrypy's defult is 10s)
+    search_conf = {'/':
+            {'request.dispatch': cherrypy.dispatch.MethodDispatcher()}
+    }
+
+
+    cherrypy.server.max_request_body_size = 0
     cherrypy.server.socket_timeout = 60
 
-    cherrypy.quickstart(GeoParser(), '/', conf)
+    cherrypy.tree.mount(GeoParser(), '/', main_conf)
+    cherrypy.tree.mount(Status(), '/status', status_conf)
+    cherrypy.quickstart(Search(), '/search', search_conf)
+
+    cherrypy.config.update({'server.socket_host': '127.0.0.1',
+                            'server.socket_port': 8080,
+                            })
+
+    cherrypy.engine.start()
+    cherrypy.engine.block()
