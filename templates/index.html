@@ -1,30 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Memex GeoParser</title>
+<title>Memex GeoParser</title>
 
-    <script src="static/js/jquery.js" type="text/javascript"></script>
-    <script src="static/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="static/js/geo.ext.min.js" charset="UTF-8" type="text/javascript"></script>
-    <script src="static/js/geo.js" type="text/javascript"></script>
-    
-    <style>
-        html, body, #map {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-    </style>
+<script src="static/js/geo.ext.min.js" charset="UTF-8" type="text/javascript"></script>
+<script src="static/js/geo.js" type="text/javascript"></script>
+<script src="static/js/jquery-ui.min.js" type="text/javascript"></script>
+<script src="static/js/bootstrap.min.js" type="text/javascript"></script>
+<!--App Specific Custom JS -->
+<script src="static/js/app.js" type="text/javascript"></script>
 
-    <script>
-    $(function () {
-        geo.map({'node': '#map'}).createLayer('osm');
-    });
-    </script>
+
+<link href="static/css/bootstrap.css" rel="stylesheet" />
+<link href="static/css/bootstrap-glyphicons.css" rel="stylesheet" />
+<!--App Specific CSS -->
+<link href="static/css/style.css" rel="stylesheet" />
+
 </head>
 <body>
-    <div id="map"></div>
+	<div id="map">
+	<div class="top-left-input-box" >Top Search Box</div>
+	</div>
 </body>
 
 </html>
