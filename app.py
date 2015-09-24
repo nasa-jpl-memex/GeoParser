@@ -76,7 +76,7 @@ class GeoParser(object):
         # filename; if we renamed, there would be a failure because
         # the NamedTemporaryFile, used by our version of cgi.FieldStorage,
         # explicitly deletes the original filename
-        theFile = formFields['theFile']
+        theFile = formFields.list[0] # TODO: This is to be reviewed
         os.link(theFile.file.name, UPLOAD_FOLDER + theFile.filename)
 
         return "ok, got it filename='%s'" % theFile.filename

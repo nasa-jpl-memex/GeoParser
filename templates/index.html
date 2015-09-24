@@ -3,14 +3,20 @@
 <head>
 <title>Memex GeoParser</title>
 
-<script src="static/js/geo.ext.min.js" charset="UTF-8" type="text/javascript"></script>
+<script src="static/js/geo.ext.min.js" charset="UTF-8"
+	type="text/javascript"></script>
 <script src="static/js/geo.js" type="text/javascript"></script>
 <script src="static/js/jquery-ui.min.js" type="text/javascript"></script>
 <script src="static/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/dropzone.js"></script>
+
 <!--App Specific Custom JS -->
 <script src="static/js/app.js" type="text/javascript"></script>
 
 
+<link
+	href="http://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/dropzone.css"
+	rel="stylesheet" />
 <link href="static/css/bootstrap.css" rel="stylesheet" />
 <link href="static/css/bootstrap-glyphicons.css" rel="stylesheet" />
 <!--App Specific CSS -->
@@ -19,7 +25,46 @@
 </head>
 <body>
 	<div id="map">
-	<div class="top-left-input-box" >Top Search Box</div>
+		<div class="row">
+			<div
+				class="top-left-input-box input-box-bg col-md-4 bottom-buffer top-buffer mar-def">
+				<div class="row">
+					<div class="col-md-8"></div>
+					<div class="col-md-4 bottom-buffer">
+						<img alt="Select Action Logos" src="static/img/action_logo.png">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2 bottom-buffer"></div>
+					<div class="col-md-8 bottom-buffer no-left-padding ">
+						<h4>Upload Files</h4>
+						<hr />
+					</div>
+					<div class="col-md-2 bottom-buffer"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-4"></div>
+					<div class="col-md-4">
+						<img alt="Select Action Logos" src="static/img/upload_big.png"
+							class="img-responsive center-block"><br />
+
+					</div>
+					<div class="col-md-4"></div>
+				</div>
+				<div class="clear"></div>
+
+				<div class="row">
+					<div class="col-md-12 bottom-buffer">
+						<form action="/upload" method="post" class="dropzone" id="dropzoneForm">
+							<div class="fallback">
+								<input name="file" type="file" multiple />
+							</div>
+						</form>
+						<ul id="uploadedFiles"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 

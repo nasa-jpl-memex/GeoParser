@@ -1,126 +1,127 @@
-html,
-body {
-    height: 100%;
+html, body {
+	height: 100%;
 }
 
-.navbar{
-    margin-bottom: 0px;
+.navbar {
+	margin-bottom: 0px;
 }
 
-.row{
-    height: 0px;
-    margin-right: 0px;
-}
-.full_height{
-    height: 100%;
+.row {
+	height: 0px;
+	margin-right: 0px;
 }
 
-.main_height{
-    height: 96%;
+.full_height {
+	height: 100%;
 }
 
-.btn{
-    background-color: #bbffff;
-    color: #000000;
-    border-radius: 0px;
+.main_height {
+	height: 96%;
 }
 
-.status{
-    float: right;
+/* .btn {
+	background-color: #bbffff;
+	color: #000000;
+	border-radius: 0px;
+}
+ */
+.status {
+	float: right;
 }
 
-#navbar{
-    background-color: #595959;
-    border-radius: 0px;
-    border: none;
-    border-bottom: double 1px #ffffff;
+#navbar {
+	background-color: #595959;
+	border-radius: 0px;
+	border: none;
+	border-bottom: double 1px #ffffff;
 }
 
-#navbar p{
-    font-size: 30px;
-    padding-bottom: 0xp;
-    font-weight: 200;
-    color: white;
+#navbar p {
+	font-size: 30px;
+	padding-bottom: 0xp;
+	font-weight: 200;
+	color: white;
 }
 
-#steps{
-    background-color: #595959;
-    width: 100%;
-    font-size: 30px;
-    color: #ffffff;
-    font-weight: 100;
-    margin-top:0px;
+#steps {
+	background-color: #595959;
+	width: 100%;
+	font-size: 30px;
+	color: #ffffff;
+	font-weight: 100;
+	margin-top: 0px;
 }
 
-#file_input{
-    width: 100%;
+#file_input {
+	width: 100%;
 }
 
-#sidebar{
-    background-color: #c3c3c3;
+#sidebar {
+	background-color: #c3c3c3;
 }
 
-#sidebar_title{
-    background-color: #aefff0;
+#sidebar_title {
+	background-color: #aefff0;
 }
 
-#sidebar_title h1{
-    margin-top: 0px;
+#sidebar_title h1 {
+	margin-top: 0px;
 }
 
-#upload_file{
+#upload_file {
+	
 }
 
-#uploaded_files{
+#uploaded_files {
+	
 }
 
-#upload_button{
-    text-align: right;
+#upload_button {
+	text-align: right;
 }
 
-#start_button{
-    text-align: right;
+#start_button {
+	text-align: right;
 }
 
-#processing{
-    background-color: #595959;
+#processing {
+	background-color: #595959;
 }
 
-#map{
-    background-color: #595959;
+#map {
+	background-color: #595959;
 }
 
-#remove{
-    padding-left: 10px;
-    padding-right: 10px;
-    font-weight: 200;
-    font-size: 15px;
-    float: right;
-    color: red;
+#remove {
+	padding-left: 10px;
+	padding-right: 10px;
+	font-weight: 200;
+	font-size: 15px;
+	float: right;
+	color: red;
 }
 
-#numFound{
-    color: #606060;
-    font-size: 20px;
-    font-weight: 200;
+#numFound {
+	color: #606060;
+	font-size: 20px;
+	font-weight: 200;
 }
 
-#loading{
-    width: 10%;
-    float: right;
-    margin-right: 5px;
-    
+#loading {
+	width: 10%;
+	float: right;
+	margin-right: 5px;
 }
 
-.input-group{
-    background-color: #ffffff;
+.input-group {
+	background-color: #ffffff;
 }
 
-.input-group-addon{
-    background-color: #ffffff;
-    border-radius: 0px;
-    border-color: black;
-    border: none;
+.input-group-addon {
+	background-color: #ffffff;
+	border-radius: 0px;
+	border-color: black;
+	border: none;
 }
 
 #map {
@@ -131,9 +132,69 @@ body {
 }
 
 .top-left-input-box {
-	position: absolute;
-	left: 10px;
-	top: 10px;
-	padding-left: 5px;
 	z-index: 1001;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+
+.input-box-bg {
+	outline: 1px solid black;
+	background-color: white;
+	opacity: 0.8;
+}
+
+.top-buffer {
+	padding-top: 20px;
+}
+
+.bottom-buffer {
+	padding-bottom: 20px;
+}
+
+.no-left-padding {
+	padding-left: 0px;
+}
+
+.center {
+	margin: 0 auto;
+	float: none;
+}
+
+.clear {
+	clear: both;
+}
+
+.btn-file {
+	position: relative;
+	overflow: hidden;
+}
+
+.btn-file input[type=file] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	min-width: 100%;
+	min-height: 100%;
+	font-size: 100px;
+	text-align: right;
+	filter: alpha(opacity = 0);
+	opacity: 0;
+	background: red;
+	cursor: inherit;
+	display: block;
+}
+
+input[readonly] {
+	background-color: white !important;
+	cursor: text !important;
+}
+
+hr {
+	margin: 0px;
+	border-top: 1px solid #000;
+}
+
+.mar-def {
+	margin: 5px;
 }
