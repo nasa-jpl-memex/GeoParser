@@ -18,4 +18,4 @@ Extract and Visualize location from any text file
 ```
 python app.py
 ```
-2-Open in browser (http://localhost:8080/)[http://localhost:8080/]
+2- Open in browser [http://localhost:8080/](http://localhost:8080/)
