@@ -10,4 +10,4 @@ Extract and Visualize location from any text file
 - CherryPy
 - Apache Tika
 - Geograpy
-- (Geopy)[http:"google.com"]
+- [Geopy](http:"google.com")
