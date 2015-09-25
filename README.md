@@ -7,3 +7,7 @@ Extract and Visualize location from any text file
 
 
 ## Install requirements
+- CherryPy
+- Apache Tika
+- Geograpy
+- Geopy[http:"google.com"]
