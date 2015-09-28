@@ -15,6 +15,7 @@ STATIC_FOLDER = "./static"
 UPLOAD_FOLDER = "./static/uploaded_files/"
 CURRENT_DIR = os.getcwd()
 
+
 class myFieldStorage(cgi.FieldStorage):
     """Our version uses a named temporary file instead of the default
     non-named file; keeping it visibile (named), allows us to create a
@@ -32,6 +33,18 @@ def noBodyProcess():
     cherrypy.request.process_request_body = False
 
 cherrypy.tools.noBodyProcess = cherrypy.Tool('before_request_body', noBodyProcess)
+
+
+def get_uploaded_files():
+    """
+    This function returns list of uploaded files.
+    """
+    list_of_uploaded_files = []
+    for item in os.listdir(UPLOAD_FOLDER):
+        if not item.startswith('.'):
+            list_of_uploaded_files.append(item)
+    print list_of_uploaded_files
+    return list_of_uploaded_files
 
 
 class GeoParser(object):
