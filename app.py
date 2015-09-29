@@ -121,6 +121,11 @@ if __name__ == '__main__':
             '/static': {
                  'tools.staticdir.on': True,
                  'tools.staticdir.dir': STATIC_FOLDER
+            },
+            '/favicon.ico':
+            {
+                'tools.staticfile.on': True,
+                'tools.staticfile.filename': CURRENT_DIR + '/logo.png'
             }
     }
 
