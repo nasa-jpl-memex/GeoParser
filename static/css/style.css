@@ -198,12 +198,3 @@ hr {
 .hide{
 	dislay:none;
 }
-
-.dropdown-toggle-full-width {
-  min-width:auto;
-  width:100%;
-}
-.dropdown-menu-full-width {
-  min-width:auto;
-  width:100%;
-}

@@ -58,44 +58,34 @@ $(function() {
 
 });
 /**
- * Nav icons to control views. Views supported<br/> 1. Add Index<br/> 2.
- * Upload files<br/> 3. Search Index.
+ * Nav icons to control views. Views supported<br/>
+ * 1. Add Index<br/>
+ * 2. Upload files<br/>
+ * 3. Search Index.
  */
 $(function() {
-	$("#navButtons :input").change(
-			function() {
-				var boxToBeDisplayed;
-				// variable this points to the clicked input button
-				var buttonClicked = $(this);
-				buttonClicked.parent().addClass('active').siblings()
-						.removeClass('active');
+	$("#navButtons :input").change(function() {
+		var boxToBeDisplayed;
+		// variable this points to the clicked input button
+		var buttonClicked = $(this);
+		buttonClicked.parent().addClass('active').siblings().removeClass('active');
+		
+		//switch case on this.id to control corresponding div 
+		switch (buttonClicked.attr("id")) {
+	    case 'navUploadFiles':
+	        boxToBeDisplayed = $('#fileUploadBox');
+	        break;
+	    case 'navAddIndex':
+	        boxToBeDisplayed = $('#addIndexBox');
+	        break;
+	    case 'navSearchIndex':
+	        boxToBeDisplayed = $('#searchIndexBox');
+	        break;
+	    default: 
+			console.error("Error while navigating ");
+		}
+	    boxToBeDisplayed.removeClass('hide').siblings().addClass('hide');
 
-				// switch case on this.id to control corresponding div
-				switch (buttonClicked.attr("id")) {
-				case 'navUploadFiles':
-					boxToBeDisplayed = $('#fileUploadBox');
-					break;
-				case 'navAddIndex':
-					boxToBeDisplayed = $('#addIndexBox');
-					break;
-				case 'navSearchIndex':
-					boxToBeDisplayed = $('#searchIndexBox');
-					break;
-				default:
-					console.error("Error while navigating ");
-				}
-				boxToBeDisplayed.removeClass('hide').siblings()
-						.addClass('hide');
-
-			});
-});
-/**
- * Dropdown text change bindings
- */
-$(function() {
-	$(".dropdown-menu li a").click(function() {
-				$(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
-				$(this).parents(".dropdown").find('.btn').val($(this).data('value'));
 	});
 });
 
@@ -107,15 +97,14 @@ $(function() {
 var getStatus = function(uploadResponse) {
 
 	if (uploadResponse) {
-		// TODO Design a template and apply to this rather than just appending
-		// text
-		// TODO Move it in Dropzone
+		//TODO Design a template and apply to this rather than just appending text
+		//TODO Move it in Dropzone
 		$("#uploadedFiles").append("<li>" + uploadResponse + "</li>");
 	}
 	$.ajax({
 		dataType : 'json',
 		url : 'static/json/sample_data.json',// needs to be changed to actual
-		// API
+												// API
 		success : function(data) {
 			// TODO Append data instead of removing existing data
 			spec.data = data;// might become data.parsedInfo
@@ -128,59 +117,57 @@ var getStatus = function(uploadResponse) {
 }
 
 // Dropzone start
-// TODO truncate big file names
+//TODO truncate big file names
 $(function() {
-	// Get the template HTML and remove it from the document template HTML and
-	// remove it from the document
-	var previewNode = document.querySelector("#template");
-	previewNode.id = "";
-	var previewTemplate = previewNode.parentNode.innerHTML;
-	previewNode.parentNode.removeChild(previewNode);
+// Get the template HTML and remove it from the document template HTML and
+// remove it from the document
+var previewNode = document.querySelector("#template");
+previewNode.id = "";
+var previewTemplate = previewNode.parentNode.innerHTML;
+previewNode.parentNode.removeChild(previewNode);
 
-	var myDropzone = new Dropzone(document.body, { // Make the whole body a
-		// dropzone
-		url : "/upload", // Set the url
-		parallelUploads : 2,
-		previewTemplate : previewTemplate,
-		maxFilesize : 1024, // MB
-		autoQueue : true,
-		previewsContainer : "#previews", // Define the container to display
-		// the
-		// previews
-		clickable : ".fileinput-button" // Define the element that should be
-	// used as
-	// click trigger to select files.
-	});
+var myDropzone = new Dropzone(document.body, { // Make the whole body a
+												// dropzone
+	url : "/upload", // Set the url
+	parallelUploads : 2,
+	previewTemplate : previewTemplate,
+	maxFilesize : 1024, // MB
+	autoQueue : true, 
+	previewsContainer : "#previews", // Define the container to display the
+										// previews
+	clickable : ".fileinput-button" // Define the element that should be used as
+									// click trigger to select files.
+});
 
-	// Update the total progress bar
-	myDropzone
-			.on(
-					"totaluploadprogress",
-					function(progress) {
-						document.querySelector("#total-progress .progress-bar").style.width = progress
-								+ "%";
-					});
+// Update the total progress bar
+myDropzone.on(
+				"totaluploadprogress",
+				function(progress) {
+					document.querySelector("#total-progress .progress-bar").style.width = progress
+							+ "%";
+				});
 
-	myDropzone.on("sending", function(file) {
-		// Show the total progress bar when upload starts
-		document.querySelector("#total-progress").style.opacity = "1";
-	});
+myDropzone.on("sending", function(file) {
+	// Show the total progress bar when upload starts
+	document.querySelector("#total-progress").style.opacity = "1";
+});
 
-	// Hide the total progress bar when nothing's uploading anymore
-	myDropzone.on("queuecomplete", function(progress) {
-		document.querySelector("#total-progress").style.opacity = "0";
-	});
+// Hide the total progress bar when nothing's uploading anymore
+myDropzone.on("queuecomplete", function(progress) {
+	document.querySelector("#total-progress").style.opacity = "0";
+});
 
-	document.querySelector("#actions .cancel").onclick = function() {
-		myDropzone.removeAllFiles(true);
-	};
+document.querySelector("#actions .cancel").onclick = function() {
+	myDropzone.removeAllFiles(true);
+};
 
-	myDropzone.on("success", function(file, responseText) {
-		getStatus(responseText);// Start looking for geo parse status and show
-		// pointers on map if found
+myDropzone.on("success", function(file, responseText) {
+	getStatus(responseText);// Start looking for geo parse status and show
+							// pointers on map if found
+	
+});
 
-	});
 
-	// Dropzone end
+// Dropzone end
 
 });
