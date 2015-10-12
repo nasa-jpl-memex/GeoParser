@@ -201,3 +201,11 @@ hr {
 .mar-def {
 	margin: 5px;
 }
+
+.extra-large{
+	font-size: 60px;
+}
+
+.hide{
+	dislay:none;
+}
