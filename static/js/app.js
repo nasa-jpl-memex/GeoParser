@@ -57,20 +57,6 @@ $(function() {
 	}).createLayer('osm');
 
 });
-/**
- * Nav icons to control views. Views supported<br/>
- * 1. Add Index<br/>
- * 2. Upload files<br/>
- * 3. Search Index.
- */
-$(function() {
-	$("#navButtons :input").change(function() {
-		// variable this points to the clicked input button
-		$(this).parent().addClass('active').siblings().removeClass('active');
-		//switch case on this.id
-	    
-	});
-});
 
 /**
  * Polls /status API to get parsing status of file and show pointers on map if
@@ -99,7 +85,7 @@ var getStatus = function(uploadResponse) {
 	});
 }
 
-// Dropzone start
+//Dropzone start
 $(function() {
 // Get the template HTML and remove it from the document template HTML and
 // remove it from the document
@@ -115,11 +101,16 @@ var myDropzone = new Dropzone(document.body, { // Make the whole body a
 	previewTemplate : previewTemplate,
 	maxFilesize : 1024, // MB
 	autoQueue : true, 
-	previewsContainer : "#previews", // Define the container to display the
-										// previews
-	clickable : ".fileinput-button" // Define the element that should be used as
-									// click trigger to select files.
+	previewsContainer : "#previews", // Define the container to display the previews
+	clickable : ".fileinput-button" // Define the element that should be used as click trigger to select files.
 });
+
+//myDropzone.on("addedfile", function(file) {
+//	// Hookup the start button
+//	file.previewElement.querySelector(".start").onclick = function() {
+//		myDropzone.enqueueFile(file);
+//	};
+//});
 
 // Update the total progress bar
 myDropzone.on(
@@ -132,6 +123,9 @@ myDropzone.on(
 myDropzone.on("sending", function(file) {
 	// Show the total progress bar when upload starts
 	document.querySelector("#total-progress").style.opacity = "1";
+//	// And disable the start button
+//	file.previewElement.querySelector(".start").setAttribute("disabled",
+//			"disabled");
 });
 
 // Hide the total progress bar when nothing's uploading anymore
@@ -144,8 +138,7 @@ document.querySelector("#actions .cancel").onclick = function() {
 };
 
 myDropzone.on("success", function(file, responseText) {
-	getStatus(responseText);// Start looking for geo parse status and show
-							// pointers on map if found
+	getStatus(responseText);// Start looking for geo parse status and show pointers on map if found
 	
 });
 
