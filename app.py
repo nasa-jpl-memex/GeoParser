@@ -66,11 +66,10 @@ if __name__ == '__main__':
     cherrypy.server.max_request_body_size = 0
     cherrypy.server.socket_timeout = 60
 
-    cherrypy.tree.mount(GeoParser(), '/', main_conf)
-
     cherrypy.config.update({'server.socket_host': '127.0.0.1',
-                            'server.socket_port': 8080,
-                            })
+                            'server.socket_port': 8080})
+
+    cherrypy.tree.mount(GeoParser(), '/', main_conf)
 
     cherrypy.engine.start()
     cherrypy.engine.block()
