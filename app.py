@@ -45,11 +45,12 @@ if __name__ == '__main__':
     else:
         print "ERROR: Cannot create Collection. User not registered or logged in."
 
-    for collection in girderCollection.list():
-        if collection['name'] == GIRDER_COLLECTION:
-            girderFolder.createFolder(collection, 'uploaded_files', description="uploaded files", parentType='collection')
-        else:
-            print "WARNING: Uploaded_Files folder already exists."
+    try:
+        for collection in girderCollection.list():
+            if collection['name'] == GIRDER_COLLECTION:
+                girderFolder.createFolder(collection, 'uploaded_files', description="uploaded files", parentType='collection')
+    except:
+        print "WARNING: Uploaded_Files folder already exists."
 
     main_conf = {
             '/': {
