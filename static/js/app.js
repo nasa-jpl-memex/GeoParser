@@ -65,27 +65,10 @@ $(function() {
  */
 $(function() {
 	$("#navButtons :input").change(function() {
-		var boxToBeDisplayed;
 		// variable this points to the clicked input button
-		var buttonClicked = $(this);
-		buttonClicked.parent().addClass('active').siblings().removeClass('active');
-		
-		//switch case on this.id to control corresponding div 
-		switch (buttonClicked.attr("id")) {
-	    case 'navUploadFiles':
-	        boxToBeDisplayed = $('#fileUploadBox');
-	        break;
-	    case 'navAddIndex':
-	        boxToBeDisplayed = $('#addIndexBox');
-	        break;
-	    case 'navSearchIndex':
-	        boxToBeDisplayed = $('#searchIndexBox');
-	        break;
-	    default: 
-			console.error("Error while navigating ");
-		}
-	    boxToBeDisplayed.removeClass('hide').siblings().addClass('hide');
-
+		$(this).parent().addClass('active').siblings().removeClass('active');
+		//switch case on this.id
+	    
 	});
 });
 
@@ -97,8 +80,8 @@ $(function() {
 var getStatus = function(uploadResponse) {
 
 	if (uploadResponse) {
-		//TODO Design a template and apply to this rather than just appending text
-		//TODO Move it in Dropzone
+		// TODO Design a template and apply to this rather than just appending
+		// text
 		$("#uploadedFiles").append("<li>" + uploadResponse + "</li>");
 	}
 	$.ajax({
@@ -117,7 +100,6 @@ var getStatus = function(uploadResponse) {
 }
 
 // Dropzone start
-//TODO truncate big file names
 $(function() {
 // Get the template HTML and remove it from the document template HTML and
 // remove it from the document

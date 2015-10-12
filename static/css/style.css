@@ -113,6 +113,17 @@ html, body {
 	margin-right: 5px;
 }
 
+.input-group {
+	background-color: #ffffff;
+}
+
+.input-group-addon {
+	background-color: #ffffff;
+	border-radius: 0px;
+	border-color: black;
+	border: none;
+}
+
 #map {
 	margin: 0;
 	width: 100%;
