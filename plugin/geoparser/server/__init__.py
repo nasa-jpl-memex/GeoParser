@@ -18,8 +18,8 @@ class GeoParserJobs(Resource):
     def __init__(self):
         self.resourceName = 'geoparser_jobs'
         self.route('GET', ("extract_text",), self.extractText)
-        self.route('GET', ("find_location",), self.extractLocation)
-        self.route('GET', ("find_lat_lon",), self.extractLocation)
+        self.route('GET', ("find_location",), self.findLocation)
+        self.route('GET', ("find_lat_lon",), self.findLatlon)
 
     @access.public
     def extractText(self, params):
@@ -33,7 +33,7 @@ class GeoParserJobs(Resource):
     def findLocation(self, params):
         # Run Geograpy location name finder from text
         return {'data': 'some location'}
-    extractLocation.description = (
+    findLocation.description = (
         Description('Find location name')
     )
 
@@ -41,7 +41,7 @@ class GeoParserJobs(Resource):
     def findLatlon(self, params):
         # Run Geopy latitude and longitude finder from location name
         return {'data': 'some lat lon'}
-    extractLocation.description = (
+    findLatlon.description = (
         Description('Find latitude and longitude')
     )
 
