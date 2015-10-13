@@ -14,6 +14,12 @@ from girder.api.describe import Description
 from girder.api import access
 
 
+from tika import parser
+from geograpy import extraction
+from geopy.geocoders import Nominatim
+
+geolocator = Nominatim()
+
 class GeoParserJobs(Resource):
     def __init__(self):
         self.resourceName = 'geoparser_jobs'
@@ -21,26 +27,71 @@ class GeoParserJobs(Resource):
         self.route('GET', ("find_location",), self.findLocation)
         self.route('GET', ("find_lat_lon",), self.findLatlon)
 
+
+    def SolrIndexText(text):
+        pass
+
+
+    def SolrQueryText(file_name):
+        pass
+
+
+    def SolrIndexLocationName(places):
+        pass
+
+
+    def SolrQueryLocationName(file_name):
+        pass
+
+
+    def SolrIndexLatLon(points):
+        pass
+
+
     @access.public
-    def extractText(self, params):
-        ## Run Tika text extraction
-        return {'data': 'some text'}
+    def extractText(self, file_name):
+        '''
+        Using Tika to extract text from given file
+        and return the text content.
+        '''
+        parsed = parser.from_file(file_name)
+        SolrIndexText(parsed["content"])
+        return {'data': 'Text Extracted'}
     extractText.description = (
         Description('Extract text')
     )
 
+
     @access.public
-    def findLocation(self, params):
-        # Run Geograpy location name finder from text
-        return {'data': 'some location'}
+    def findLocation(self, file_name):
+        '''
+        Find location name from extracted text using Geograpy.
+        '''
+        text_content = SolrQueryText(file_name)
+        e = extraction.Extractor(text=text_content)
+        e.find_entities()
+        SolrIndexLocationName(e.places)
+        return {'data': 'Location name Found.'}
     findLocation.description = (
         Description('Find location name')
     )
 
+
     @access.public
-    def findLatlon(self, params):
-        # Run Geopy latitude and longitude finder from location name
-        return {'data': 'some lat lon'}
+    def findLatlon(self, file_name):
+        '''
+        Find latitude and longitude from location name using GeoPy.
+        '''
+        location_names = SolrQueryLocationName(file_name)
+        points = []
+        for location in location_names:
+            try:
+                geolocation = geolocator.geocode(location)
+                points.append([geolocation.latitude, geolocation.longitude,location])
+            except:
+                pass
+        SolrIndexLatLon(points)
+        return {'data': 'Latitude and longitude Found.'}
     findLatlon.description = (
         Description('Find latitude and longitude')
     )
