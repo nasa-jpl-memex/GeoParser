@@ -22,3 +22,4 @@ six==1.10.0
 tika==1.10
 tldextract==1.5.1
 wheel==0.24.0
+solrpy==0.9.7
