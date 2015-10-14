@@ -36,7 +36,10 @@ if __name__ == '__main__':
     girderCollection = Collection()
     girderFolder = Folder()
 
-    currentUser = girderUser.getAdmins()[0]
+    try:
+        currentUser = girderUser.getAdmins()[0]
+    except:
+        print "ERROR: No user registered or logged in."
     existinig_collections = [each['name'] for each in girderCollection.list()]
 
     if len(existinig_collections) == 0 or not GIRDER_COLLECTION in existinig_collections:
