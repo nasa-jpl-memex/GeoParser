@@ -7,12 +7,14 @@ Extract and Visualize location from any text file
 
 ##How to Install 
 
-##Requirements
+###Requirements
 -Python 2.7 
+
 -pip 
+
 -Girder
 
-##Instructions
+###Instructions
 
 1. pip install -r requirements.txt
 2. [Install Girder] (http://girder.readthedocs.org/en/latest/prerequisites.html)
