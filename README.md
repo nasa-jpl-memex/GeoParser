@@ -16,7 +16,10 @@ Extract and Visualize location from any text file
 
 ###Instructions
 
-1. pip install -r requirements.txt
+1. Install python requirements
+```
+pip install -r requirements.txt
+```
 2. [Install Girder] (http://girder.readthedocs.org/en/latest/prerequisites.html)
 
 ###How to Run the Application
