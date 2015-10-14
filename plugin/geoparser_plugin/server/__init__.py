@@ -13,6 +13,8 @@ from girder.api.rest import Resource, loadmodel, RestException
 from girder.api.describe import Description
 from girder.api import access
 
+from solr import *
+
 
 from tika import parser
 from geograpy import extraction
@@ -20,33 +22,13 @@ from geopy.geocoders import Nominatim
 
 geolocator = Nominatim()
 
+
 class GeoParserJobs(Resource):
     def __init__(self):
         self.resourceName = 'geoparser_jobs'
         self.route('GET', ("extract_text",), self.extractText)
         self.route('GET', ("find_location",), self.findLocation)
         self.route('GET', ("find_lat_lon",), self.findLatlon)
-
-
-    def SolrIndexText(self, text):
-        pass
-
-
-    def SolrQueryText(self, file_name):
-        pass
-
-
-    def SolrIndexLocationName(self, places):
-        pass
-
-
-    def SolrQueryLocationName(self, file_name):
-        pass
-
-
-    def SolrIndexLatLon(self, points):
-        pass
-
 
     @access.public
     def extractText(self, params):
@@ -56,7 +38,7 @@ class GeoParserJobs(Resource):
         '''
         file_name = params['file_name']
         parsed = parser.from_file(file_name)
-        self.SolrIndexText(parsed["content"])
+        SolrIndexText(parsed["content"])
         return {'status': 'Text Extracted', 'data':parsed["content"]}
     extractText.description = (
         Description('Extract text')
@@ -68,10 +50,10 @@ class GeoParserJobs(Resource):
         '''
         Find location name from extracted text using Geograpy.
         '''
-        text_content = self.SolrQueryText(file_name)
+        text_content = SolrQueryText(file_name)
         e = extraction.Extractor(text=text_content)
         e.find_entities()
-        self.SolrIndexLocationName(e.places)
+        SolrIndexLocationName(e.places)
         return {'data': 'Location name Found.'}
     findLocation.description = (
         Description('Find location name')
@@ -83,7 +65,7 @@ class GeoParserJobs(Resource):
         '''
         Find latitude and longitude from location name using GeoPy.
         '''
-        location_names = self.SolrQueryLocationName(file_name)
+        location_names = SolrQueryLocationName(file_name)
         points = []
         for location in location_names:
             try:
@@ -91,7 +73,7 @@ class GeoParserJobs(Resource):
                 points.append([geolocation.latitude, geolocation.longitude,location])
             except:
                 pass
-        self.SolrIndexLatLon(points)
+        SolrIndexLatLon(points)
         return {'data': 'Latitude and longitude Found.'}
     findLatlon.description = (
         Description('Find latitude and longitude')
