@@ -13,7 +13,7 @@ from girder.api.rest import Resource, loadmodel, RestException
 from girder.api.describe import Description
 from girder.api import access
 
-from solr import *
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName
 
 
 from tika import parser
@@ -30,6 +30,7 @@ class GeoParserJobs(Resource):
         self.route('GET', ("find_location",), self.findLocation)
         self.route('GET', ("find_lat_lon",), self.findLatlon)
 
+
     @access.public
     def extractText(self, params):
         '''
@@ -38,22 +39,26 @@ class GeoParserJobs(Resource):
         '''
         file_name = params['file_name']
         parsed = parser.from_file(file_name)
-        SolrIndexText(parsed["content"])
-        return {'status': 'Text Extracted', 'data':parsed["content"]}
+        status = IndexUploadedFilesText(file_name, parsed["content"])
+        if status[0]:
+            return {'job':'text_extraction', 'status': 'successful', 'comment':'Text extracted and indexed to Solr.'}
+        else:
+            return {'job':'text_extraction', 'status': 'unsuccessful', 'comment':status[1]}
     extractText.description = (
         Description('Extract text')
     )
 
 
     @access.public
-    def findLocation(self, file_name):
+    def findLocation(self, params):
         '''
         Find location name from extracted text using Geograpy.
         '''
-        text_content = SolrQueryText(file_name)
+        file_name = params['file_name']
+        text_content = QueryText(file_name)
         e = extraction.Extractor(text=text_content)
         e.find_entities()
-        SolrIndexLocationName(e.places)
+        IndexLocationName(file_name, e.places)
         return {'data': 'Location name Found.'}
     findLocation.description = (
         Description('Find location name')
@@ -61,10 +66,11 @@ class GeoParserJobs(Resource):
 
 
     @access.public
-    def findLatlon(self, file_name):
+    def findLatlon(self, params):
         '''
         Find latitude and longitude from location name using GeoPy.
         '''
+        file_name = params['file_name']
         location_names = SolrQueryLocationName(file_name)
         points = []
         for location in location_names:
