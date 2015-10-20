@@ -13,7 +13,7 @@ from girder.api.rest import Resource, loadmodel, RestException
 from girder.api.describe import Description
 from girder.api import access
 
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName
 
 
 from tika import parser
@@ -56,10 +56,16 @@ class GeoParserJobs(Resource):
         '''
         file_name = params['file_name']
         text_content = QueryText(file_name)
-        e = extraction.Extractor(text=text_content)
-        e.find_entities()
-        IndexLocationName(file_name, e.places)
-        return {'data': 'Location name Found.'}
+        if text_content:
+            e = extraction.Extractor(text=text_content)
+            e.find_entities()
+            status = IndexLocationName(file_name, e.places)
+            if status[0]:
+                return {'job':'find_location', 'status': 'successful', 'comment':'Location/s found and indexed to Solr.'}
+            else:
+                return {'job':'find_location', 'status': 'unsuccessful', 'comment':status[1]}
+        else:
+            return {'job':'find_location', 'status': 'unsuccessful', 'comment':'Cannot extract text.'}
     findLocation.description = (
         Description('Find location name')
     )
@@ -71,7 +77,7 @@ class GeoParserJobs(Resource):
         Find latitude and longitude from location name using GeoPy.
         '''
         file_name = params['file_name']
-        location_names = SolrQueryLocationName(file_name)
+        location_names = QueryLocationName(file_name)
         points = []
         for location in location_names:
             try:
