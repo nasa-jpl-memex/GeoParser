@@ -90,22 +90,31 @@ def IndexLocationName(file_name, places):
     '''
     Index location name for each file.
     '''
-    print places
+    if create_core(COLLECTION_NAME):
+        try:
+            p = ",".join(places)
+            url = SOLR_URL + COLLECTION_NAME + '/update?stream.body=[{%22id%22:%22' + file_name + '%22,%22places%22:{%22set%22:"' + p + '"}}]&commit=true'
+            urllib2.urlopen(url)
+            return (True, "Location name/s indexed to Solr successfully.")
+        except:
+            return (False, "Cannot index location name/s to Solr.")
+    else:
+        return (False, "Either Solr not running or cannot create Core.")
 
 
-def SolrQueryLocationName(file_name):
+def QueryLocationName(file_name):
     '''
     Return location names for given filename
     '''
 
 
-def SolrIndexLatLon(file_name, points):
+def IndexLatLon(file_name, points):
     '''
     Index points for given file
     '''
 
 
-def SolrQueryPoints(file_name):
+def QueryPoints(file_name):
     '''
     Return geopoints for given filename
     '''
