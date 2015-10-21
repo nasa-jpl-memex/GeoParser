@@ -13,7 +13,7 @@ from girder.api.rest import Resource, loadmodel, RestException
 from girder.api.describe import Description
 from girder.api import access
 
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints
 
 
 from tika import parser
@@ -29,7 +29,7 @@ class GeoParserJobs(Resource):
         self.route('GET', ("extract_text",), self.extractText)
         self.route('GET', ("find_location",), self.findLocation)
         self.route('GET', ("find_lat_lon",), self.findLatlon)
-        self.route('GET', ("query_points",), self.QueryPoints)
+        self.route('GET', ("get_points",), self.getPoints)
 
 
     @access.public
@@ -107,10 +107,16 @@ class GeoParserJobs(Resource):
 
 
     @access.public
-    def QueryPoints(self, params):
+    def getPoints(self, params):
         '''
         Return geopoints for given filename
         '''
+        file_name = params['file_name']
+        points = QueryPoints(file_name)
+        if points:
+            return {'job':'getPoints', 'status': 'successful', 'comment':'Points returned sucessfuly', 'points':points}
+        else:
+            return {'job':'getPoints', 'status': 'unsuccessful', 'comment':'Cannot find location name.', 'points':""}
     QueryPoints.description = (
         Description('Return geo points for given file name.')
     )
