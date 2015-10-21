@@ -2,7 +2,7 @@ import os
 import urllib2
 
 SOLR_URL = "http://localhost:8983/solr/"
-COLLECTION_NAME = "uploaded_files3"
+COLLECTION_NAME = "uploaded_files"
 
 
 def check_solr():
