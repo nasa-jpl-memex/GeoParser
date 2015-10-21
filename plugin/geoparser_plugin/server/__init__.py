@@ -13,7 +13,7 @@ from girder.api.rest import Resource, loadmodel, RestException
 from girder.api.describe import Description
 from girder.api import access
 
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon
 
 
 from tika import parser
@@ -29,6 +29,7 @@ class GeoParserJobs(Resource):
         self.route('GET', ("extract_text",), self.extractText)
         self.route('GET', ("find_location",), self.findLocation)
         self.route('GET', ("find_lat_lon",), self.findLatlon)
+        self.route('GET', ("query_points",), self.QueryPoints)
 
 
     @access.public
@@ -78,17 +79,40 @@ class GeoParserJobs(Resource):
         '''
         file_name = params['file_name']
         location_names = QueryLocationName(file_name)
-        points = []
-        for location in location_names:
-            try:
-                geolocation = geolocator.geocode(location)
-                points.append([geolocation.latitude, geolocation.longitude,location])
-            except:
-                pass
-        SolrIndexLatLon(points)
-        return {'data': 'Latitude and longitude Found.'}
+        if location_names:
+            points = []
+            for location in location_names:
+                try:
+                    geolocation = geolocator.geocode(location)
+                    points.append(
+                        {'loc_name': location,
+                        'position':{
+                            'x': geolocation.latitude,
+                            'y': geolocation.longitude
+                        }
+                        }
+                    )
+                except:
+                    pass
+            status = IndexLatLon(file_name, points)
+            if status[0]:
+                return {'job':'find_lat_lon', 'status': 'successful', 'comment':'Latitude and Longitude found and indexed to Solr.'}
+            else:
+                return {'job':'find_lat_lon', 'status': 'unsuccessful', 'comment':status[1]}
+        else:
+            return {'job':'find_lat_lon', 'status': 'unsuccessful', 'comment':'Cannot find location name.'}
     findLatlon.description = (
         Description('Find latitude and longitude')
+    )
+
+
+    @access.public
+    def QueryPoints(self, params):
+        '''
+        Return geopoints for given filename
+        '''
+    QueryPoints.description = (
+        Description('Return geo points for given file name.')
     )
 
 
