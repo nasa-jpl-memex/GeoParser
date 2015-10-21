@@ -130,3 +130,16 @@ def IndexLatLon(file_name, points):
             return (False, "Cannot index latitude and longitude to Solr.")
     else:
         return (False, "Either Solr not running or cannot create Core.")
+
+
+def QueryPoints(file_name):
+    '''
+    Return geopoints for given filename
+    '''
+    if create_core(COLLECTION_NAME):
+        try:
+            url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json&indent=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
+            response = urllib2.urlopen(url)
+            return eval(response.read())['response']['docs'][0]['points'][0]
+        except:
+            return False
