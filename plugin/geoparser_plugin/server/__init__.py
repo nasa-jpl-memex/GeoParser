@@ -122,5 +122,35 @@ class GeoParserJobs(Resource):
     )
 
 
+class CustomAppRoot(object):
+    """
+    The webroot endpoint simply serves the main index HTML file of GeoParser.
+    """
+
+    indexHtml = None
+
+    file_dir = os.path.realpath(__file__).split("__init__.py")[0]
+    index_html_path = "{0}/../../../templates/index.html".format(file_dir)
+
+    with open(index_html_path,'r') as f:
+        template = f.read()
+        f.close()
+
+    vars = {
+        'plugins': [],
+        'apiRoot': '/api/v1',
+        'staticRoot': '/static',
+        'title': 'Memex GeoParser'
+    }
+
+    def GET(self):
+        if self.indexHtml is None:
+            self.indexHtml = mako.template.Template(self.template).render(**self.vars)
+        return self.indexHtml
+
+
 def load(info):
     info['apiRoot'].geoparser_jobs = GeoParserJobs()
+
+    # Move girder app to /girder, serve minerva app from /
+    info['serverRoot'], info['serverRoot'].girder = (CustomAppRoot(), info['serverRoot'])
