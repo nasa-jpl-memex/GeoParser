@@ -126,6 +126,7 @@ class CustomAppRoot(object):
     """
     The webroot endpoint simply serves the main index HTML file of GeoParser.
     """
+    exposed = True
 
     indexHtml = None
 
