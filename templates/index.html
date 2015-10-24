@@ -8,8 +8,6 @@
 <script src="static/js/jquery-ui.min.js" type="text/javascript"></script>
 <script src="static/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="static/js/dropzone.js" type="text/javascript"></script>
-<script src="static/js/app.min.js" type="text/javascript"></script>
-<script src="static/js/libs.min.js" type="text/javascript"></script>
 
 <!--App Specific Custom JS -->
 <script src="static/js/app.js" type="text/javascript"></script>
@@ -21,8 +19,9 @@
 
 <!--App Specific CSS -->
 <link href="static/css/style.css" rel="stylesheet" />
-<link href="static/css/app.min.css" rel="stylesheet" />
 
+<link rel="icon" type="image/png" href="/static/img/favicon-map-marker.ico">
+              
 </head>
 <body>
   <nav class="navbar navbar-inverse navbar-static-top">
@@ -229,15 +228,6 @@
     </div>
   </div>
 
-  <script>
-			$.ajax({
-				'url' : 'http://localhost:8081/api/v1/user/authentication',
-				'type' : 'GET',
-				headers : {
-					"Girder-Authorization" : "Basic bWJvdXN0YW5pOjEyMzQ1Ng=="
-				}
-			});
-		</script>
 </body>
 
 </html>

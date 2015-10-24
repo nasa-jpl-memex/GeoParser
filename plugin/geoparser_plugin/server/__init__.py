@@ -150,5 +150,8 @@ class CustomAppRoot(object):
 def load(info):
     info['apiRoot'].geoparser_jobs = GeoParserJobs()
 
-    # Move girder app to /girder, serve minerva app from /
+    # Move girder app to /girder, serve GeoParser app from /
     info['serverRoot'], info['serverRoot'].girder = (CustomAppRoot(), info['serverRoot'])
+    
+
+

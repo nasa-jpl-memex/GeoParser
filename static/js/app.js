@@ -9,100 +9,159 @@ if (!window.console) {
 		}
 	};
 }
-/*
- * The data schema used in this example is as follows: { color: string -- a css
- * color name hex: string -- a 24bit hex value position: object -- a correlated
- * gaussian R.V. in R^2 exp: number -- a random value ~ exp(0.1) unif: number --
- * a random uniform value in [0,1] fruits: string -- a random fruit }
+/**
+ * Initialize variables needed to call girder API's<br/> Call Girder Auth to
+ * get <br/> 1. Auth token <br/> 2. Folder ID
  */
-var spec = {
-	center : {
-		x : -100,
-		y : 40
-	},
-	zoom : 4,
-	layers : [ {
-		renderer : 'd3',
-		features : [ {
-			type : 'point',
-			size : function(d) {
-				return d.exp;
-			},
-			position : function(d) {
-				return {
-					x : d.position.x,
-					y : d.position.y
-				};
-			},
-			fill : true,
-			fillColor : function(d) {
-				return d.fruits;
-			},
-			fillOpacity : function(d) {
-				return 0.5 + d.unif / 2;
-			},
-			stroke : true,
-			strokeColor : function(d) {
-				return d.color;
-			},
-			strokeOpacity : 1,
-			strokeWidth : 2
-		} ]
-	} ]
-};
+var authToken = null;// GLOBAL VARIABLE TO STORE AUTH TOKEN
+var folderId = null;// GLOBAL VARIABLE TO STORE UPLOAD FOLDER ID
+var FOLDER_NAME = 'uploaded_files'; // constant storing name of folder
+$(function() {
+	// get auth token
+	$.ajax({
+		'url' : '/girder/api/v1/user/authentication',
+		'type' : 'GET',
+		headers : {
+			'Girder-Authorization' : 'Basic Z2lyZGVyOmdpcmRlcg=='
+		},
+		async : false,
+		success : function(data) {
+			if (data && data.authToken && data.authToken.token) {
+				authToken = data.authToken.token;
+			}
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			alert('Issue while logging into Girder - ' + textStatus + ' - ' + errorThrown);
+		}
+	});
+	// get folder id
+	if (authToken) {
+		callGirderWithAuth('girder/api/v1//folder?parentType=collection&text=' + FOLDER_NAME + '&limit=50', 'GET', false,
+				function(data) {
+					for ( var ele in data) {
+						if (data[ele].name == FOLDER_NAME) {
+							folderId = data[ele]._id;
+							break;
+						}
+					}
+				});
+	}
+});
 
+/**
+ * Generic AJAX call to girder APIs Sample usage - callGirderWithAuth (url,
+ * typeMethod, asyncBoolean, successFunction)
+ */
+var callGirderWithAuth = function(url, type, async, success) {
+	$.ajax({
+		'url' : url,
+		'type' : type,
+		headers : {
+			'Girder-Token' : authToken
+		},
+		'async' : async,
+		'success' : success,
+		error : function(jqXHR, textStatus, errorThrown) {
+			alert('Issue while calling Girder API - ' + url + ' - ' + textStatus + ' - ' + errorThrown);
+		}
+	});
+}
+
+/**
+ * Draws basic layer of map
+ */
 $(function() {
 	geo.map({
 		'node' : '#map'
 	}).createLayer('osm');
 
 });
+
 /**
  * Nav icons to control views. Views supported<br/> 1. Add Index<br/> 2.
  * Upload files<br/> 3. Search Index.
  */
 $(function() {
-	$("#navButtons :input").change(
-			function() {
-				var boxToBeDisplayed;
-				// variable this points to the clicked input button
-				var buttonClicked = $(this);
-				buttonClicked.parent().addClass('active').siblings()
-						.removeClass('active');
+	$("#navButtons :input").change(function() {
+		var boxToBeDisplayed;
+		// variable this points to the clicked input button
+		var buttonClicked = $(this);
+		buttonClicked.parent().addClass('active').siblings().removeClass('active');
 
-				// switch case on this.id to control corresponding div
-				switch (buttonClicked.attr("id")) {
-				case 'navUploadFiles':
-					boxToBeDisplayed = $('#fileUploadBox');
-					break;
-				case 'navAddIndex':
-					boxToBeDisplayed = $('#addIndexBox');
-					break;
-				case 'navSearchIndex':
-					boxToBeDisplayed = $('#searchIndexBox');
-					break;
-				default:
-					console.error("Error while navigating ");
-				}
-				boxToBeDisplayed.removeClass('hide').siblings()
-						.addClass('hide');
+		// switch case on this.id to control corresponding div
+		switch (buttonClicked.attr("id")) {
+		case 'navUploadFiles':
+			boxToBeDisplayed = $('#fileUploadBox');
+			break;
+		case 'navAddIndex':
+			boxToBeDisplayed = $('#addIndexBox');
+			break;
+		case 'navSearchIndex':
+			boxToBeDisplayed = $('#searchIndexBox');
+			break;
+		default:
+			console.error("Error while navigating ");
+		}
+		boxToBeDisplayed.removeClass('hide').siblings().addClass('hide');
 
-			});
-});
-/**
- * Dropdown text change bindings
- */
-$(function() {
-	$(".dropdown-menu li a").click(function() {
-				$(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
-				$(this).parents(".dropdown").find('.btn').val($(this).data('value'));
 	});
 });
 
 /**
+ * Dropdown text change bindings. Dropdown is used in #addIndexBox
+ */
+$(function() {
+	$(".dropdown-menu li a").click(function() {
+		$(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+		$(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+	});
+});
+
+/**
+ * Function to draw points on #map
+ */
+var drawPoints = function(dataPoints) {
+	var map = geo.map({
+		'node' : '#map'
+	});
+	map.createLayer('osm');
+
+	var featureLayer = map.createLayer('feature', {
+		renderer : 'vgl'
+	});
+	var uiLayer = map.createLayer('ui');
+
+	featureLayer.createFeature('point', {
+		selectionAPI : true
+	}).data(dataPoints).position(function(d) {
+		return {
+			x : d.x,
+			y : d.y
+		};
+	}).geoOn(geo.event.feature.mouseover, function(evt) {
+		$(uiLayer.node()).append('<div id="example-overlay">' + evt.data.location + '<br/>' + evt.data.content + '</div>');
+
+		var pos = map.gcsToDisplay({
+			x : evt.data.x,
+			y : evt.data.y
+		});
+
+		$('#example-overlay').css('position', 'absolute');
+		$('#example-overlay').css('left', pos.x + 'px');
+		$('#example-overlay').css('top', pos.y + 'px');
+	}).geoOn(geo.event.feature.mouseout, function(evt) {
+		$('#example-overlay').remove();
+	}).geoOn(geo.event.pan, function(evt) {
+		// Do something on pan
+	});
+
+	map.draw();
+}
+
+/**
  * Polls /status API to get parsing status of file and show pointers on map if
- * found. TODO: To implement recursive polling after every 5 seconds. Below
- * function will only be called once
+ * found. <br/> TODO: To implement recursive polling after every 5 seconds.
+ * Below function will only be called once
  */
 var getStatus = function(uploadResponse) {
 
@@ -118,8 +177,7 @@ var getStatus = function(uploadResponse) {
 		// API
 		success : function(data) {
 			// TODO Append data instead of removing existing data
-			spec.data = data;// might become data.parsedInfo
-			$('#map').geojsMap(spec);// spec filled with pointers data
+			drawPoints(data);
 		},
 		error : function(e) {
 			console.error("Error.." + e.responseText);
@@ -137,33 +195,42 @@ $(function() {
 	var previewTemplate = previewNode.parentNode.innerHTML;
 	previewNode.parentNode.removeChild(previewNode);
 
-	var myDropzone = new Dropzone(document.body, { // Make the whole body a
-		// dropzone
-		url : "/upload", // Set the url
+	var myDropzone = new Dropzone(document.body, {// Whole body is a drop zone
+		url : 'girder/api/v1/file', // Set the url
 		parallelUploads : 2,
 		previewTemplate : previewTemplate,
 		maxFilesize : 1024, // MB
 		autoQueue : true,
-		previewsContainer : "#previews", // Define the container to display
-		// the
-		// previews
-		clickable : ".fileinput-button" // Define the element that should be
-	// used as
-	// click trigger to select files.
+		headers : {
+			'Girder-Token' : authToken
+		// Girder Auth token as received
+		},
+		previewsContainer : '#previews', // Container to display the previews
+		clickable : '.fileinput-button' // class for click trigger to select files.
 	});
 
 	// Update the total progress bar
-	myDropzone
-			.on(
-					"totaluploadprogress",
-					function(progress) {
-						document.querySelector("#total-progress .progress-bar").style.width = progress
-								+ "%";
-					});
+	myDropzone.on('totaluploadprogress', function(progress) {
+		document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
+	});
 
-	myDropzone.on("sending", function(file) {
+	myDropzone.on("sending", function(file, xhr, formData) {
 		// Show the total progress bar when upload starts
 		document.querySelector("#total-progress").style.opacity = "1";
+
+		// Make sync call to create new item
+		var itemId = null;
+		callGirderWithAuth('girder/api/v1/item?folderId=' + folderId + '&name=' + file.name, 'POST', false, function(data) {
+			itemId = data._id;
+		});
+
+		// Add additional formData as required by girder
+		formData.append('parentType', 'item');
+		formData.append('parentId', itemId);
+		formData.append('name', file.name);
+		formData.append('size', file.size);
+		formData.append('mimeType', file.type);
+
 	});
 
 	// Hide the total progress bar when nothing's uploading anymore
@@ -177,10 +244,19 @@ $(function() {
 
 	myDropzone.on("success", function(file, responseText) {
 		getStatus(responseText);// Start looking for geo parse status and show
-		// pointers on map if found
+														// pointers on map if found
 
 	});
 
 	// Dropzone end
 
 });
+
+/**
+ * 1. get folder id - 56202bd0fbadd635bde512f8.
+ * http://localhost:8081/api/v1/./folder?parentType=collection&text=uploaded_files
+ * 2. Post item
+ * http://localhost:8081/api/v1/./item?folderId=56202bd0fbadd635bde512f8&name=test&description=test
+ * 3. Post file
+ */
+
