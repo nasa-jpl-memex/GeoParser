@@ -37,7 +37,7 @@ $(function() {
 	// get folder id
 	if (authToken) {
 		callGirderWithAuth('girder/api/v1//folder?parentType=collection&text=' + FOLDER_NAME + '&limit=50', 'GET', false,
-				function(data) {
+				{}, function(data) {
 					for ( var ele in data) {
 						if (data[ele].name == FOLDER_NAME) {
 							folderId = data[ele]._id;
@@ -50,12 +50,13 @@ $(function() {
 
 /**
  * Generic AJAX call to girder APIs Sample usage - callGirderWithAuth (url,
- * typeMethod, asyncBoolean, successFunction)
+ * typeMethod, asyncBoolean, data, successFunction)
  */
-var callGirderWithAuth = function(url, type, async, success) {
+var callGirderWithAuth = function(url, type, async, data, success) {
 	$.ajax({
 		'url' : url,
 		'type' : type,
+		'data' : data,
 		headers : {
 			'Girder-Token' : authToken
 		},
@@ -165,12 +166,9 @@ var drawPoints = function(dataPoints) {
  */
 var getStatus = function(uploadResponse) {
 
-	if (uploadResponse) {
-		// TODO Design a template and apply to this rather than just appending
-		// text
-		// TODO Move it in Dropzone
-		$("#uploadedFiles").append("<li>" + uploadResponse + "</li>");
-	}
+	// TODO Design a template to show response after file upload 
+	// TODO Move it in Dropzone
+
 	$.ajax({
 		dataType : 'json',
 		url : 'static/json/sample_data.json',// needs to be changed to actual
@@ -196,7 +194,9 @@ $(function() {
 	previewNode.parentNode.removeChild(previewNode);
 
 	var myDropzone = new Dropzone(document.body, {// Whole body is a drop zone
-		url : 'girder/api/v1/file', // Set the url
+		// Set the url for Girder multipart file upload
+		url : 'girder/api/v1/file/chunk',
+		paramName : 'chunk',
 		parallelUploads : 2,
 		previewTemplate : previewTemplate,
 		maxFilesize : 1024, // MB
@@ -220,16 +220,31 @@ $(function() {
 
 		// Make sync call to create new item
 		var itemId = null;
-		callGirderWithAuth('girder/api/v1/item?folderId=' + folderId + '&name=' + file.name, 'POST', false, function(data) {
+		callGirderWithAuth('girder/api/v1/item?folderId=' + folderId + '&name=' + file.name, 'POST', false, {}, function(
+				data) {
 			itemId = data._id;
 		});
 
+		var uploadFileId = null;
+		if (itemId) {
+			// Make sync call to create new place holder file
+			callGirderWithAuth('girder/api/v1/file', 'POST', false, {
+				'parentType' : 'item',
+				'parentId' : itemId,
+				'name' : file.name,
+				'size' : file.size,
+				'mimeType' : file.type
+			}, function(data) {
+				uploadFileId = data._id;
+			});
+		} else {
+			// throw exception to stop further upload
+			throw 'Unable to create item in Girder';
+		}
+
 		// Add additional formData as required by girder
-		formData.append('parentType', 'item');
-		formData.append('parentId', itemId);
-		formData.append('name', file.name);
-		formData.append('size', file.size);
-		formData.append('mimeType', file.type);
+		formData.append('offset', 0);
+		formData.append('uploadId', uploadFileId);
 
 	});
 
@@ -244,19 +259,10 @@ $(function() {
 
 	myDropzone.on("success", function(file, responseText) {
 		getStatus(responseText);// Start looking for geo parse status and show
-														// pointers on map if found
+		// pointers on map if found
 
 	});
 
 	// Dropzone end
 
 });
-
-/**
- * 1. get folder id - 56202bd0fbadd635bde512f8.
- * http://localhost:8081/api/v1/./folder?parentType=collection&text=uploaded_files
- * 2. Post item
- * http://localhost:8081/api/v1/./item?folderId=56202bd0fbadd635bde512f8&name=test&description=test
- * 3. Post file
- */
-
