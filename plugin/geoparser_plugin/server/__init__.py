@@ -128,8 +128,6 @@ class CustomAppRoot(object):
     """
     exposed = True
 
-    indexHtml = None
-
     file_dir = os.path.realpath(__file__).split("__init__.py")[0]
     index_html_path = "{0}/../../../templates/index.html".format(file_dir)
 
@@ -145,9 +143,8 @@ class CustomAppRoot(object):
     }
 
     def GET(self):
-        if self.indexHtml is None:
-            self.indexHtml = mako.template.Template(self.template).render(**self.vars)
-        return self.indexHtml
+        return mako.template.Template(self.template).render(**self.vars)
+        
 
 
 def load(info):
