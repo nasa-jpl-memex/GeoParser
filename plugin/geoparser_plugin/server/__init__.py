@@ -131,9 +131,6 @@ class CustomAppRoot(object):
     file_dir = os.path.realpath(__file__).split("__init__.py")[0]
     index_html_path = "{0}/../../../templates/index.html".format(file_dir)
 
-    with open(index_html_path,'r') as f:
-        template = f.read()
-        f.close()
 
     vars = {
         'plugins': [],
@@ -143,7 +140,10 @@ class CustomAppRoot(object):
     }
 
     def GET(self):
-        return mako.template.Template(self.template).render(**self.vars)
+        with open(self.index_html_path,'r') as f:
+            template = f.read()
+            f.close()
+        return mako.template.Template(template).render(**self.vars)
         
 
 
