@@ -1,0 +1,34 @@
+2015-10-13 19:30:39.586 INFO  (main) [   ] o.e.j.u.log Logging initialized @381ms
+2015-10-13 19:30:39.804 INFO  (main) [   ] o.e.j.s.Server jetty-9.2.11.v20150529
+2015-10-13 19:30:39.819 WARN  (main) [   ] o.e.j.s.h.RequestLogHandler !RequestLog
+2015-10-13 19:30:39.821 INFO  (main) [   ] o.e.j.d.p.ScanningAppProvider Deployment monitor [file:/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/contexts/] at interval 0
+2015-10-13 19:30:40.239 INFO  (main) [   ] o.e.j.w.StandardDescriptorProcessor NO JSP Support for /solr, did not find org.apache.jasper.servlet.JspServlet
+2015-10-13 19:30:40.250 WARN  (main) [   ] o.e.j.s.SecurityHandler ServletContext@o.e.j.w.WebAppContext@149eef3{/solr,file:/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp/,STARTING}{/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp} has uncovered http methods for path: /
+2015-10-13 19:30:40.258 INFO  (main) [   ] o.a.s.s.SolrDispatchFilter SolrDispatchFilter.init(): WebAppClassLoader=1315137858@4e636942
+2015-10-13 19:30:40.280 INFO  (main) [   ] o.a.s.c.SolrResourceLoader JNDI not configured for solr (NoInitialContextEx)
+2015-10-13 19:30:40.280 INFO  (main) [   ] o.a.s.c.SolrResourceLoader using system property solr.solr.home: /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr
+2015-10-13 19:30:40.282 INFO  (main) [   ] o.a.s.c.SolrResourceLoader new SolrResourceLoader for directory: '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/'
+2015-10-13 19:30:40.454 INFO  (main) [   ] o.a.s.c.SolrXmlConfig Loading container configuration from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/solr.xml
+2015-10-13 19:30:40.567 INFO  (main) [   ] o.a.s.c.CoresLocator Config-defined core root directory: /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr
+2015-10-13 19:30:40.597 INFO  (main) [   ] o.a.s.c.CoreContainer New CoreContainer 1287179668
+2015-10-13 19:30:40.597 INFO  (main) [   ] o.a.s.c.CoreContainer Loading cores into CoreContainer [instanceDir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/]
+2015-10-13 19:30:40.597 INFO  (main) [   ] o.a.s.c.CoreContainer loading shared library: /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/lib
+2015-10-13 19:30:40.597 WARN  (main) [   ] o.a.s.c.SolrResourceLoader Can't find (or read) directory to add to classloader: lib (resolved as: /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/lib).
+2015-10-13 19:30:40.615 INFO  (main) [   ] o.a.s.h.c.HttpShardHandlerFactory created with socketTimeout : 600000,connTimeout : 60000,maxConnectionsPerHost : 20,maxConnections : 10000,corePoolSize : 0,maximumPoolSize : 2147483647,maxThreadIdleTime : 5,sizeOfQueue : -1,fairnessPolicy : false,useRetries : false,
+2015-10-13 19:30:40.788 INFO  (main) [   ] o.a.s.u.UpdateShardHandler Creating UpdateShardHandler HTTP client with params: socketTimeout=600000&connTimeout=60000&retry=true
+2015-10-13 19:30:40.791 INFO  (main) [   ] o.a.s.l.LogWatcher SLF4J impl is org.slf4j.impl.Log4jLoggerFactory
+2015-10-13 19:30:40.792 INFO  (main) [   ] o.a.s.l.LogWatcher Registering Log Listener [Log4j (org.slf4j.impl.Log4jLoggerFactory)]
+2015-10-13 19:30:40.794 INFO  (main) [   ] o.a.s.c.CoreContainer Security conf doesn't exist. Skipping setup for authorization module.
+2015-10-13 19:30:40.794 INFO  (main) [   ] o.a.s.c.CoreContainer No authentication plugin used.
+2015-10-13 19:30:40.833 INFO  (main) [   ] o.a.s.c.CoresLocator Looking for core definitions underneath /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr
+2015-10-13 19:30:40.837 INFO  (main) [   ] o.a.s.c.CoresLocator Found 0 core definitions
+2015-10-13 19:30:40.840 INFO  (main) [   ] o.a.s.s.SolrDispatchFilter user.dir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server
+2015-10-13 19:30:40.840 INFO  (main) [   ] o.a.s.s.SolrDispatchFilter SolrDispatchFilter.init() done
+2015-10-13 19:30:40.851 INFO  (main) [   ] o.e.j.s.h.ContextHandler Started o.e.j.w.WebAppContext@149eef3{/solr,file:/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp/,AVAILABLE}{/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp}
+2015-10-13 19:30:40.868 INFO  (main) [   ] o.e.j.s.ServerConnector Started ServerConnector@1a48d2b1{HTTP/1.1}{0.0.0.0:8983}
+2015-10-13 19:30:40.869 INFO  (main) [   ] o.e.j.s.Server Started @1666ms
+2015-10-13 19:30:56.895 INFO  (qtp485053489-15) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444764656854&wt=json} status=0 QTime=31 
+2015-10-13 19:30:56.954 INFO  (qtp485053489-12) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444764656918&wt=json} status=0 QTime=19 
+2015-10-13 19:34:00.479 INFO  (ShutdownMonitor) [   ] o.e.j.s.ServerConnector Stopped ServerConnector@1a48d2b1{HTTP/1.1}{0.0.0.0:8983}
+2015-10-13 19:34:00.480 INFO  (ShutdownMonitor) [   ] o.a.s.c.CoreContainer Shutting down CoreContainer instance=1287179668
+2015-10-13 19:34:00.483 INFO  (ShutdownMonitor) [   ] o.e.j.s.h.ContextHandler Stopped o.e.j.w.WebAppContext@149eef3{/solr,file:/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp/,UNAVAILABLE}{/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp}

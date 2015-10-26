@@ -1,0 +1,680 @@
+2015-10-14 17:27:55.128 INFO  (main) [   ] o.e.j.u.log Logging initialized @374ms
+2015-10-14 17:27:55.338 INFO  (main) [   ] o.e.j.s.Server jetty-9.2.11.v20150529
+2015-10-14 17:27:55.351 WARN  (main) [   ] o.e.j.s.h.RequestLogHandler !RequestLog
+2015-10-14 17:27:55.353 INFO  (main) [   ] o.e.j.d.p.ScanningAppProvider Deployment monitor [file:/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/contexts/] at interval 0
+2015-10-14 17:27:55.811 INFO  (main) [   ] o.e.j.w.StandardDescriptorProcessor NO JSP Support for /solr, did not find org.apache.jasper.servlet.JspServlet
+2015-10-14 17:27:55.824 WARN  (main) [   ] o.e.j.s.SecurityHandler ServletContext@o.e.j.w.WebAppContext@3050afdd{/solr,file:/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp/,STARTING}{/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp} has uncovered http methods for path: /
+2015-10-14 17:27:55.834 INFO  (main) [   ] o.a.s.s.SolrDispatchFilter SolrDispatchFilter.init(): WebAppClassLoader=1690645045@64c53235
+2015-10-14 17:27:55.860 INFO  (main) [   ] o.a.s.c.SolrResourceLoader JNDI not configured for solr (NoInitialContextEx)
+2015-10-14 17:27:55.860 INFO  (main) [   ] o.a.s.c.SolrResourceLoader using system property solr.solr.home: /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr
+2015-10-14 17:27:55.863 INFO  (main) [   ] o.a.s.c.SolrResourceLoader new SolrResourceLoader for directory: '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/'
+2015-10-14 17:27:56.059 INFO  (main) [   ] o.a.s.c.SolrXmlConfig Loading container configuration from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/solr.xml
+2015-10-14 17:27:56.189 INFO  (main) [   ] o.a.s.c.CoresLocator Config-defined core root directory: /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr
+2015-10-14 17:27:56.232 INFO  (main) [   ] o.a.s.c.CoreContainer New CoreContainer 1880072084
+2015-10-14 17:27:56.232 INFO  (main) [   ] o.a.s.c.CoreContainer Loading cores into CoreContainer [instanceDir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/]
+2015-10-14 17:27:56.232 INFO  (main) [   ] o.a.s.c.CoreContainer loading shared library: /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/lib
+2015-10-14 17:27:56.232 WARN  (main) [   ] o.a.s.c.SolrResourceLoader Can't find (or read) directory to add to classloader: lib (resolved as: /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/lib).
+2015-10-14 17:27:56.253 INFO  (main) [   ] o.a.s.h.c.HttpShardHandlerFactory created with socketTimeout : 600000,connTimeout : 60000,maxConnectionsPerHost : 20,maxConnections : 10000,corePoolSize : 0,maximumPoolSize : 2147483647,maxThreadIdleTime : 5,sizeOfQueue : -1,fairnessPolicy : false,useRetries : false,
+2015-10-14 17:27:56.435 INFO  (main) [   ] o.a.s.u.UpdateShardHandler Creating UpdateShardHandler HTTP client with params: socketTimeout=600000&connTimeout=60000&retry=true
+2015-10-14 17:27:56.438 INFO  (main) [   ] o.a.s.l.LogWatcher SLF4J impl is org.slf4j.impl.Log4jLoggerFactory
+2015-10-14 17:27:56.439 INFO  (main) [   ] o.a.s.l.LogWatcher Registering Log Listener [Log4j (org.slf4j.impl.Log4jLoggerFactory)]
+2015-10-14 17:27:56.440 INFO  (main) [   ] o.a.s.c.CoreContainer Security conf doesn't exist. Skipping setup for authorization module.
+2015-10-14 17:27:56.441 INFO  (main) [   ] o.a.s.c.CoreContainer No authentication plugin used.
+2015-10-14 17:27:56.482 INFO  (main) [   ] o.a.s.c.CoresLocator Looking for core definitions underneath /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr
+2015-10-14 17:27:56.495 INFO  (main) [   ] o.a.s.c.CoresLocator Found 0 core definitions
+2015-10-14 17:27:56.497 INFO  (main) [   ] o.a.s.s.SolrDispatchFilter user.dir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server
+2015-10-14 17:27:56.498 INFO  (main) [   ] o.a.s.s.SolrDispatchFilter SolrDispatchFilter.init() done
+2015-10-14 17:27:56.509 INFO  (main) [   ] o.e.j.s.h.ContextHandler Started o.e.j.w.WebAppContext@3050afdd{/solr,file:/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp/,AVAILABLE}{/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp}
+2015-10-14 17:27:56.525 INFO  (main) [   ] o.e.j.s.ServerConnector Started ServerConnector@57018165{HTTP/1.1}{0.0.0.0:8983}
+2015-10-14 17:27:56.525 INFO  (main) [   ] o.e.j.s.Server Started @1773ms
+2015-10-14 20:14:26.344 INFO  (qtp894275705-15) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444853666302&wt=json} status=0 QTime=31 
+2015-10-14 20:14:26.405 INFO  (qtp894275705-16) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444853666365&wt=json} status=0 QTime=22 
+2015-10-14 21:25:17.822 INFO  (qtp894275705-17) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444857917811&wt=json} status=0 QTime=0 
+2015-10-14 21:25:17.854 INFO  (qtp894275705-29) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444857917835&wt=json} status=0 QTime=10 
+2015-10-14 21:25:20.215 ERROR (qtp894275705-16) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Solr instance is not running in SolrCloud mode.
+	at org.apache.solr.handler.admin.CollectionsHandler.handleRequestBody(CollectionsHandler.java:153)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+
+2015-10-14 21:25:20.216 INFO  (qtp894275705-16) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/collections params={name=newCollection&action=CREATE} status=400 QTime=2 
+2015-10-14 21:25:22.710 INFO  (qtp894275705-18) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444857922699&wt=json} status=0 QTime=0 
+2015-10-14 21:25:22.738 INFO  (qtp894275705-30) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444857922720&wt=json} status=0 QTime=8 
+2015-10-14 21:25:32.045 ERROR (qtp894275705-17) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Solr instance is not running in SolrCloud mode.
+	at org.apache.solr.handler.admin.CollectionsHandler.handleRequestBody(CollectionsHandler.java:153)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+
+2015-10-14 21:25:32.045 INFO  (qtp894275705-17) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/collections params={commit=true&name=newCollection&action=CREATE} status=400 QTime=0 
+2015-10-14 21:25:34.805 INFO  (qtp894275705-33) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444857934794&wt=json} status=0 QTime=0 
+2015-10-14 21:25:34.848 INFO  (qtp894275705-32) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444857934817&wt=json} status=0 QTime=8 
+2015-10-14 21:25:35.533 INFO  (qtp894275705-30) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444857935522&wt=json} status=0 QTime=0 
+2015-10-14 21:25:35.562 INFO  (qtp894275705-15) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444857935544&wt=json} status=0 QTime=7 
+2015-10-14 21:25:54.971 ERROR (qtp894275705-17) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Solr instance is not running in SolrCloud mode.
+	at org.apache.solr.handler.admin.CollectionsHandler.handleRequestBody(CollectionsHandler.java:153)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+
+2015-10-14 21:25:54.971 INFO  (qtp894275705-17) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/collections params={numShards=2&name=newCollection&replicationFactor=1&action=CREATE} status=400 QTime=0 
+2015-10-14 21:25:56.832 INFO  (qtp894275705-37) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444857956821&wt=json} status=0 QTime=0 
+2015-10-14 21:25:56.861 INFO  (qtp894275705-35) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444857956843&wt=json} status=0 QTime=8 
+2015-10-14 21:25:58.086 INFO  (qtp894275705-30) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444857958075&wt=json} status=0 QTime=0 
+2015-10-14 21:25:58.113 INFO  (qtp894275705-15) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444857958097&wt=json} status=0 QTime=8 
+2015-10-14 21:26:38.107 INFO  (qtp894275705-30) [   ] o.a.s.h.a.CoreAdminHandler core create command action=CREATE&schema=schema_file_name.xml&config=config_file_name.xml&dataDir=data&instanceDir=path_to_instance_directory&name=coreX
+2015-10-14 21:26:38.110 INFO  (qtp894275705-30) [   ] o.a.s.c.SolrCore Created CoreDescriptor: {name=coreX, config=config_file_name.xml, transient=false, schema=schema_file_name.xml, loadOnStartup=true, configSetProperties=configsetprops.json, instanceDir=path_to_instance_directory, absoluteInstDir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/, dataDir=data}
+2015-10-14 21:26:38.111 INFO  (qtp894275705-30) [   ] o.a.s.c.SolrResourceLoader new SolrResourceLoader for directory: '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/'
+2015-10-14 21:26:38.129 ERROR (qtp894275705-30) [   ] o.a.s.c.CoreContainer Error creating core [coreX]: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'config_file_name.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+2015-10-14 21:26:38.133 ERROR (qtp894275705-30) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Error CREATEing SolrCore 'coreX': Unable to create core [coreX] Caused by: Can't find resource 'config_file_name.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:662)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Unable to create core [coreX]
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:737)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	... 27 more
+Caused by: org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	... 29 more
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'config_file_name.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+
+2015-10-14 21:26:38.134 INFO  (qtp894275705-30) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={schema=schema_file_name.xml&instanceDir=path_to_instance_directory&name=coreX&action=CREATE&config=config_file_name.xml&dataDir=data} status=400 QTime=26 
+2015-10-14 21:26:54.924 INFO  (qtp894275705-18) [   ] o.a.s.h.a.CoreAdminHandler core create command action=CREATE&name=coreX
+2015-10-14 21:26:54.925 INFO  (qtp894275705-18) [   ] o.a.s.c.SolrCore Created CoreDescriptor: {name=coreX, config=solrconfig.xml, transient=false, schema=schema.xml, loadOnStartup=true, configSetProperties=configsetprops.json, instanceDir=coreX, absoluteInstDir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/, dataDir=data/}
+2015-10-14 21:26:54.925 INFO  (qtp894275705-18) [   ] o.a.s.c.SolrResourceLoader new SolrResourceLoader for directory: '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/'
+2015-10-14 21:26:54.932 ERROR (qtp894275705-18) [   ] o.a.s.c.CoreContainer Error creating core [coreX]: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+2015-10-14 21:26:54.933 ERROR (qtp894275705-18) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Error CREATEing SolrCore 'coreX': Unable to create core [coreX] Caused by: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf'
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:662)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Unable to create core [coreX]
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:737)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	... 27 more
+Caused by: org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	... 29 more
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+
+2015-10-14 21:26:54.933 INFO  (qtp894275705-18) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={name=coreX&action=CREATE} status=400 QTime=8 
+2015-10-14 21:27:17.394 ERROR (qtp894275705-36) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Solr instance is not running in SolrCloud mode.
+	at org.apache.solr.handler.admin.CollectionsHandler.handleRequestBody(CollectionsHandler.java:153)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+
+2015-10-14 21:27:17.394 INFO  (qtp894275705-36) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/collections params={name=coreX&action=CREATE} status=400 QTime=0 
+2015-10-14 21:28:34.816 INFO  (qtp894275705-40) [   ] o.a.s.h.a.CoreAdminHandler core create command action=CREATE&schema=schema_file_name.xml&config=config_file_name.xml&dataDir=data&instanceDir=path_to_instance_directory&name=coreX
+2015-10-14 21:28:34.817 INFO  (qtp894275705-40) [   ] o.a.s.c.SolrCore Created CoreDescriptor: {name=coreX, config=config_file_name.xml, transient=false, schema=schema_file_name.xml, loadOnStartup=true, configSetProperties=configsetprops.json, instanceDir=path_to_instance_directory, absoluteInstDir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/, dataDir=data}
+2015-10-14 21:28:34.817 INFO  (qtp894275705-40) [   ] o.a.s.c.SolrResourceLoader new SolrResourceLoader for directory: '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/'
+2015-10-14 21:28:34.823 ERROR (qtp894275705-40) [   ] o.a.s.c.CoreContainer Error creating core [coreX]: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'config_file_name.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+2015-10-14 21:28:34.824 ERROR (qtp894275705-40) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Error CREATEing SolrCore 'coreX': Unable to create core [coreX] Caused by: Can't find resource 'config_file_name.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:662)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Unable to create core [coreX]
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:737)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	... 27 more
+Caused by: org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	... 29 more
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/config_file_name.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'config_file_name.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+
+2015-10-14 21:28:34.824 INFO  (qtp894275705-40) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={schema=schema_file_name.xml&instanceDir=path_to_instance_directory&name=coreX&action=CREATE&config=config_file_name.xml&dataDir=data} status=400 QTime=8 
+2015-10-14 21:28:47.156 INFO  (qtp894275705-41) [   ] o.a.s.h.a.CoreAdminHandler core create command action=CREATE&instanceDir=path_to_instance_directory&name=coreX
+2015-10-14 21:28:47.156 INFO  (qtp894275705-41) [   ] o.a.s.c.SolrCore Created CoreDescriptor: {name=coreX, config=solrconfig.xml, transient=false, schema=schema.xml, loadOnStartup=true, configSetProperties=configsetprops.json, instanceDir=path_to_instance_directory, absoluteInstDir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/, dataDir=data/}
+2015-10-14 21:28:47.156 INFO  (qtp894275705-41) [   ] o.a.s.c.SolrResourceLoader new SolrResourceLoader for directory: '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/'
+2015-10-14 21:28:47.162 ERROR (qtp894275705-41) [   ] o.a.s.c.CoreContainer Error creating core [coreX]: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/solrconfig.xml
+org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/solrconfig.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/solrconfig.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+2015-10-14 21:28:47.163 ERROR (qtp894275705-41) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Error CREATEing SolrCore 'coreX': Unable to create core [coreX] Caused by: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:662)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Unable to create core [coreX]
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:737)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	... 27 more
+Caused by: org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/solrconfig.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	... 29 more
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf/solrconfig.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/path_to_instance_directory/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+
+2015-10-14 21:28:47.163 INFO  (qtp894275705-41) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={instanceDir=path_to_instance_directory&name=coreX&action=CREATE} status=400 QTime=7 
+2015-10-14 21:29:14.583 INFO  (qtp894275705-40) [   ] o.a.s.h.a.CoreAdminHandler core create command action=CREATE&instanceDir=&name=coreX
+2015-10-14 21:29:14.584 INFO  (qtp894275705-40) [   ] o.a.s.c.SolrCore Created CoreDescriptor: {name=coreX, config=solrconfig.xml, transient=false, schema=schema.xml, loadOnStartup=true, configSetProperties=configsetprops.json, instanceDir=coreX, absoluteInstDir=/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/, dataDir=data/}
+2015-10-14 21:29:14.584 INFO  (qtp894275705-40) [   ] o.a.s.c.SolrResourceLoader new SolrResourceLoader for directory: '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/'
+2015-10-14 21:29:14.590 ERROR (qtp894275705-40) [   ] o.a.s.c.CoreContainer Error creating core [coreX]: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+2015-10-14 21:29:14.591 ERROR (qtp894275705-40) [   ] o.a.s.c.SolrCore org.apache.solr.common.SolrException: Error CREATEing SolrCore 'coreX': Unable to create core [coreX] Caused by: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf'
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:662)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestInternal(CoreAdminHandler.java:214)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleRequestBody(CoreAdminHandler.java:194)
+	at org.apache.solr.handler.RequestHandlerBase.handleRequest(RequestHandlerBase.java:143)
+	at org.apache.solr.servlet.HttpSolrCall.handleAdminRequest(HttpSolrCall.java:675)
+	at org.apache.solr.servlet.HttpSolrCall.call(HttpSolrCall.java:443)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:214)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:179)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1652)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:585)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:577)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:223)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1127)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:515)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:185)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1061)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:215)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:110)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:97)
+	at org.eclipse.jetty.server.Server.handle(Server.java:499)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:310)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:257)
+	at org.eclipse.jetty.io.AbstractConnection$2.run(AbstractConnection.java:540)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:635)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:555)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.apache.solr.common.SolrException: Unable to create core [coreX]
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:737)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:697)
+	at org.apache.solr.handler.admin.CoreAdminHandler.handleCreateAction(CoreAdminHandler.java:629)
+	... 27 more
+Caused by: org.apache.solr.common.SolrException: Could not load conf for core coreX: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:80)
+	at org.apache.solr.core.CoreContainer.create(CoreContainer.java:721)
+	... 29 more
+Caused by: org.apache.solr.common.SolrException: Error loading solr config from /Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf/solrconfig.xml
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:186)
+	at org.apache.solr.core.ConfigSetService.createSolrConfig(ConfigSetService.java:94)
+	at org.apache.solr.core.ConfigSetService.getConfig(ConfigSetService.java:74)
+	... 30 more
+Caused by: org.apache.solr.core.SolrResourceNotFoundException: Can't find resource 'solrconfig.xml' in classpath or '/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr/coreX/conf'
+	at org.apache.solr.core.SolrResourceLoader.openResource(SolrResourceLoader.java:363)
+	at org.apache.solr.core.SolrResourceLoader.openConfig(SolrResourceLoader.java:309)
+	at org.apache.solr.core.Config.<init>(Config.java:122)
+	at org.apache.solr.core.Config.<init>(Config.java:92)
+	at org.apache.solr.core.SolrConfig.<init>(SolrConfig.java:201)
+	at org.apache.solr.core.SolrConfig.readFromResourceLoader(SolrConfig.java:178)
+	... 32 more
+
+2015-10-14 21:29:14.592 INFO  (qtp894275705-40) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={instanceDir=&name=coreX&action=CREATE} status=400 QTime=8 
+2015-10-14 21:29:22.889 INFO  (qtp894275705-18) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444858162877&wt=json} status=0 QTime=0 
+2015-10-14 21:29:22.922 INFO  (qtp894275705-36) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444858162904&wt=json} status=0 QTime=8 
+2015-10-14 21:29:27.017 INFO  (qtp894275705-36) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444858167005&wt=json} status=0 QTime=0 
+2015-10-14 21:29:27.067 INFO  (qtp894275705-40) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444858167049&wt=json} status=0 QTime=9 
+2015-10-14 21:30:13.409 INFO  (qtp894275705-18) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={indexInfo=false&_=1444858213397&wt=json} status=0 QTime=0 
+2015-10-14 21:30:13.455 INFO  (qtp894275705-36) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/system params={_=1444858213437&wt=json} status=0 QTime=8 
+2015-10-14 21:31:22.176 INFO  (qtp894275705-18) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/info/logging params={_=1444858282158&since=0&wt=json} status=0 QTime=2 
+2015-10-14 21:31:23.959 INFO  (qtp894275705-38) [   ] o.a.s.s.SolrDispatchFilter [admin] webapp=null path=/admin/cores params={_=1444858283949&wt=json} status=0 QTime=0 
+2015-10-14 21:31:36.546 INFO  (ShutdownMonitor) [   ] o.e.j.s.ServerConnector Stopped ServerConnector@57018165{HTTP/1.1}{0.0.0.0:8983}
+2015-10-14 21:31:36.546 INFO  (ShutdownMonitor) [   ] o.a.s.c.CoreContainer Shutting down CoreContainer instance=1880072084
+2015-10-14 21:31:36.548 INFO  (ShutdownMonitor) [   ] o.e.j.s.h.ContextHandler Stopped o.e.j.w.WebAppContext@3050afdd{/solr,file:/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp/,UNAVAILABLE}{/Users/MBoustani/Documents/Projects/Memex/GeoParser/github/Solr/solr-5.3.1/server/solr-webapp/webapp}
