@@ -12,40 +12,30 @@ Geoparser extracts locations, such as cities or geographic coordinates expressed
 
 -pip 
 
--Girder
+- Django
 
 ###Instructions
 
-1. Install python requirements
+Install python requirements
 ```
 pip install -r requirements.txt
 ```
-2. [Install Girder] (http://girder.readthedocs.org/en/latest/prerequisites.html)
 
 ###How to Run the Application
 
-1. Run MongoDB
-```
-Mongod &
-```
-
-2. Run Solr
+1. Run Solr
 Change directory to where you cloned the project
 ```
 Solr/solr-5.3.1/bin/solr start
 ```
 
-3. Run Girder
+2. Run Dajgno server
+
 ```
-girder-server -p 8081
+python manage.py runserver
 ```
 
-4. Run the app
-```
-python app.py
-```
-
-5. Open in browser [http://localhost:8080/](http://localhost:8080/)
+3. Open in browser [http://localhost:8080/](http://localhost:8080/)
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
