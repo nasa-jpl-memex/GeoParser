@@ -152,6 +152,7 @@ def load(info):
 
     # Move girder app to /girder, serve GeoParser app from /
     info['serverRoot'], info['serverRoot'].girder = (CustomAppRoot(), info['serverRoot'])
-    
+    info['serverRoot'].api = info['serverRoot'].girder.api
+
 
 
