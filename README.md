@@ -23,14 +23,16 @@ pip install -r requirements.txt
 
 ###How to Run the Application
 
-1. Run Solr
+1.Run Solr
+
 
 Change directory to where you cloned the project
 ```
 Solr/solr-5.3.1/bin/solr start
 ```
 
-2. Run Dajgno server
+2.Run Dajgno server
+
 
 ```
 python manage.py runserver
