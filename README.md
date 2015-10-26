@@ -36,7 +36,7 @@ Solr/solr-5.3.1/bin/solr start
 python manage.py runserver
 ```
 
-3.Open in browser [http://localhost:8080/](http://localhost:8080/)
+3.Open in browser [http://localhost:8000/](http://localhost:8000/)
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
