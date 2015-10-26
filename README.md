@@ -24,6 +24,7 @@ pip install -r requirements.txt
 ###How to Run the Application
 
 1. Run Solr
+
 Change directory to where you cloned the project
 ```
 Solr/solr-5.3.1/bin/solr start
