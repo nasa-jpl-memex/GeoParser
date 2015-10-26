@@ -25,7 +25,6 @@ pip install -r requirements.txt
 
 1.Run Solr
 
-
 Change directory to where you cloned the project
 ```
 Solr/solr-5.3.1/bin/solr start
@@ -33,12 +32,11 @@ Solr/solr-5.3.1/bin/solr start
 
 2.Run Dajgno server
 
-
 ```
 python manage.py runserver
 ```
 
-3. Open in browser [http://localhost:8080/](http://localhost:8080/)
+3.Open in browser [http://localhost:8080/](http://localhost:8080/)
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
