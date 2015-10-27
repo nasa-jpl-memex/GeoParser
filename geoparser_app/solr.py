@@ -41,7 +41,7 @@ def create_core(core_name):
     elif check_solr():
         try:
             file_dir = os.path.realpath(__file__).split("solr.py")[0]
-            command = "{0}/../../../Solr/solr-5.3.1/bin/solr create_core -c {1}".format(file_dir, COLLECTION_NAME)
+            command = "{0}/../Solr/solr-5.3.1/bin/solr create_core -c {1}".format(file_dir, COLLECTION_NAME)
             os.system(command)
             return True
         except:
@@ -54,18 +54,16 @@ def IndexUploadedFilesText(file_name, text):
     '''
     Index extracted text for given file.
     '''
-    text = "".join(text.splitlines())
-    text = text.encode('ascii', 'ignore')
-    text = text.replace(" ","")
-    text = text.replace("&","")
-    text = text.replace("#","")
-    text = text.replace("%","")
-    text = text.replace("<","")
-    text = text.replace(">","")
+    file_dir = os.path.realpath(__file__).split("solr.py")[0]
+    tmp_json = "{0}/static/json/tmp.json".format(file_dir)
+    with open(tmp_json, 'w') as f:
+        f.write("[{{'id':'{0}', 'text':'{1}'}}]".format(file_name, text.encode('ascii', 'ignore')))
+        f.close()
     if create_core(COLLECTION_NAME):
         try:
-            url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E{3}%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name, text)
-            urllib2.urlopen(url)
+            command = "{0}/../Solr/solr-5.3.1/bin/post -c {1} {2}".format(file_dir, COLLECTION_NAME, tmp_json)
+            os.system(command)
+            os.remove(tmp_json)
             return (True, "Text indexed to Solr successfully.")
         except:
             return (False, "Cannot index text to Solr.")
