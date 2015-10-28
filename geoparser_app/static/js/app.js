@@ -36,7 +36,7 @@ var colorArr = [ 'black','red', 'yellow', 'blue', 'green', 'orange' ];
 var map = null;
 $(function() {
 	map = geo.map({
-		'node' : '#map'
+		'node' : '#map', zoom: 2
 	});
 	map.createLayer('osm', {
 		baseUrl : 'http://a.basemaps.cartocdn.com/light_all/'
