@@ -9,67 +9,38 @@ if (!window.console) {
 		}
 	};
 }
-/**
- * Initialize variables needed to call girder API's<br/> Call Girder Auth to
- * get <br/> 1. Auth token <br/> 2. Folder ID
- */
-var authToken = null;// GLOBAL VARIABLE TO STORE AUTH TOKEN
-var folderId = null;// GLOBAL VARIABLE TO STORE UPLOAD FOLDER ID
-var FOLDER_NAME = 'uploaded_files'; // constant storing name of folder
-$(function() {
-	// get auth token
-	/*
-	 * $.ajax({ 'url' : '/girder/api/v1/user/authentication', 'type' : 'GET',
-	 * headers : { 'Girder-Authorization' : 'Basic Z2lyZGVyOmdpcmRlcg==' }, async :
-	 * false, success : function(data) { if (data && data.authToken &&
-	 * data.authToken.token) { authToken = data.authToken.token; } }, error :
-	 * function(jqXHR, textStatus, errorThrown) { alert('Issue while logging into
-	 * Girder - ' + textStatus + ' - ' + errorThrown); } });
-	 */
-	// get folder id
-	if (authToken) {
-		callGirderWithAuth('girder/api/v1//folder?parentType=collection&text=' + FOLDER_NAME + '&limit=50', 'GET', false,
-				{}, function(data) {
-					for ( var ele in data) {
-						if (data[ele].name == FOLDER_NAME) {
-							folderId = data[ele]._id;
-							break;
-						}
-					}
-				});
-	}
-});
 
 /**
- * Generic AJAX call to girder APIs Sample usage - callGirderWithAuth (url,
- * typeMethod, asyncBoolean, data, successFunction)
+ * Generic AJAX call to REST APIs Sample usage - callRESTApi (url, typeMethod,
+ * asyncBoolean, data, successFunction)
  */
-var callGirderWithAuth = function(url, type, async, data, success) {
-	$.ajax({
+var callRESTApi = function(url, type, async, data, success) {
+	return $.ajax({
 		'url' : url,
 		'type' : type,
 		'data' : data,
-		headers : {
-			'Girder-Token' : authToken
-		},
 		'async' : async,
 		'success' : success,
 		error : function(jqXHR, textStatus, errorThrown) {
-			alert('Issue while calling Girder API - ' + url + ' - ' + textStatus + ' - ' + errorThrown);
+			console.error('Issue while calling API - ' + url + ' - ' + textStatus + ' - ' + errorThrown);
 		}
 	});
 }
 
 /**
- * Draws basic layer of map
+ * Draws basic layer of map and define basic colors
+ * 
  */
+var colorIndex = 0
+var colorArr = [ 'black','red', 'yellow', 'blue', 'green', 'orange' ];
 var map = null;
 $(function() {
 	map = geo.map({
 		'node' : '#map'
 	});
-	map.createLayer('osm');
-
+	map.createLayer('osm', {
+		baseUrl : 'http://a.basemaps.cartocdn.com/light_all/'
+	});
 });
 
 /**
@@ -115,12 +86,13 @@ $(function() {
 /**
  * Function to draw points on #map
  */
-var dataPoints = {};
-var drawPoints = function() {
-	// var map = geo.map({
-	// 'node' : '#map'
-	// });
-	// map.createLayer('osm');
+var dataPointsAll = {
+	position : {}
+};
+var drawPoints = function(dataPoints) {
+	if (!dataPoints.length || dataPoints.length == 0) {
+		return;
+	}
 
 	var featureLayer = map.createLayer('feature', {
 		renderer : 'vgl'
@@ -131,19 +103,22 @@ var drawPoints = function() {
 		selectionAPI : true
 	}).data(dataPoints).position(function(d) {
 		return {
-			x : d.x,
-			y : d.y
+			'x' : d.position.x,
+			'y' : d.position.y
 		};
+	}).style('fillColor', function(d) {
+		if (d.color)
+			return d.color;
+		return 'yellow'
 	}).geoOn(
 			geo.event.feature.mouseover,
 			function(evt) {
 				$(uiLayer.node()).append(
-						'<div id="example-overlay">' + evt.data.location + '<br/> Reference: ' + evt.data.content
-								+ '<br/> Extracted from: ' + evt.data.file + '</div>');
+						'<div id="example-overlay">' + evt.data.loc_name + '<br/> Extracted from: ' + evt.data.file + '</div>');
 
 				var pos = map.gcsToDisplay({
-					x : evt.data.x,
-					y : evt.data.y
+					x : evt.data.position.x,
+					y : evt.data.position.y
 				});
 
 				$('#example-overlay').css('position', 'absolute');
@@ -176,7 +151,6 @@ var getStatus = function(uploadResponse, file) {
 	console.log('Started processing file');
 
 	// TODO: ALL API's should return json in future
-
 	var progressTemplateCloned = progressTemplate.cloneNode();
 	progressTemplateCloned.appendChild(progressTemplate.children[0].cloneNode());
 
@@ -184,42 +158,57 @@ var getStatus = function(uploadResponse, file) {
 
 	var displayArea = progressTemplateCloned.children[0];
 
-	callGirderWithAuth('extract_text/geoparser_app/static/uploaded_files/' + file.name, 'GET', false, {}, function(data) {
-		displayArea.textContent = 'Extracted Text..';
+	// AJAX 1
+	callRESTApi('extract_text/' + file.name, 'GET', false, {}, function(data) {
+		displayArea.textContent = data + '..';
+	}).done(function(data) {
+		setTimeout(function() {
+			// AJAX 2
+			callRESTApi('find_location/' + file.name, 'GET', false, {}, function(data) {
+				displayArea.textContent = data + '..';
+
+			}).done(function(data) {
+				setTimeout(function() {
+					// AJAX 3
+					callRESTApi('find_latlon/' + file.name, 'GET', false, {}, function(data) {
+						displayArea.textContent = data + '..';
+					}).done(function(data) {
+						// AJAX 4
+						fetchAndDrawPoints(file, displayArea)
+					});
+				}, 1000);
+
+			});
+		}, 1000);
+
 	});
 
-	// ALL SET TIMEOUTS NEED TO BE REMOVED ONCE APIS START RESPONDING AFTER ACTUAL
-	// PROCESSING
-	setTimeout(function() {
-		callGirderWithAuth('find_location/' + file.name, 'GET', false, {}, function(data) {
-			displayArea.textContent = 'Finding location..';
-		});
-	}, 3000);
+}
 
-	setTimeout(function() {
-		callGirderWithAuth('find_latlon/' + file.name, 'GET', false, {}, function(data) {
-			displayArea.textContent = 'Finding lat lon';
-		});
-	}, 6000);
+var fetchAndDrawPoints = function(file, displayArea) {
+	callRESTApi('return_points/' + file.name, 'GET', false, {}, function(data) {
+		data = eval(data);// REMOVE THIS ONCE API RETURNS JSON
+		displayArea.textContent = '';
 
-	setTimeout(function() {
-		callGirderWithAuth('return_points/' + file.name, 'GET', false, {}, function(data) {
-			data = eval(data);// REMOVE THIS ONCE API RETURNS JSON
-			displayArea.textContent = '';
-			var list = '<ol>';
-			for ( var i in data) {
-				data[i].file = file.name;
-				list += '<li>' + data[i].location + '</li>';
-			}
-			list += '</ol>'
-			displayArea.appendChild(Dropzone.createElement(list));
+		var list = '<ol>';
+		for ( var i in data) {
+			data[i].file = file.name;
+			data[i].color = colorArr[colorIndex];
+			list += '<li>' + data[i].loc_name + '</li>';
+		}
+		list += '</ol>'
 
-			// KEEP ON APPENDING POINTS
-			dataPoints = data.concat(dataPoints);
-			drawPoints();
-		});
-	}, 9000);
+		colorIndex++;
+		if (colorIndex >= colorArr.length) {
+			colorIndex = 0;
+		}
 
+		displayArea.appendChild(Dropzone.createElement(list));
+
+		// KEEP ON APPENDING POINTS
+		dataPointsAll = data.concat(dataPointsAll);
+		drawPoints(data);
+	});
 }
 
 var myDropzone;
@@ -234,17 +223,13 @@ $(function() {
 	previewNode.parentNode.removeChild(previewNode);
 
 	myDropzone = new Dropzone(document.body, {// Whole body is a drop zone
-		// Set the url for Girder multipart file upload
+
 		url : 'upload_file',
 		paramName : 'chunk',
 		parallelUploads : 2,
 		previewTemplate : previewTemplate,
 		maxFilesize : 1024, // MB
 		autoQueue : true,
-		headers : {
-			'Girder-Token' : authToken
-		// Girder Auth token as received
-		},
 		previewsContainer : '#previews', // Container to display the previews
 		clickable : '.fileinput-button' // class for click trigger to select files.
 	});
@@ -281,28 +266,29 @@ $(function() {
 // TEMP code TODO: REMOVE BELOW
 $(function() {
 
+	var mockFile = {
+		name : "polar.txt",
+		size : 12345
+	};
+	myDropzone.options.addedfile.call(myDropzone, mockFile);
+
 	setTimeout(function() {
-		var mockFile = {
-			name : "File1.txt",
-			size : 12345
-		};
-		myDropzone.options.addedfile.call(myDropzone, mockFile);
 		myDropzone.emit("complete", mockFile);
 		myDropzone.emit("success", mockFile, 'Uploaded File');
-
 		myDropzone.files.push(mockFile);
 	}, 100);
 
 	setTimeout(function() {
-		var mockFile = {
-			name : "File2.txt",
-			size : 42345
+		mockFile = {
+			name : "simple.txt",
+			size : 12345
 		};
 		myDropzone.options.addedfile.call(myDropzone, mockFile);
-		myDropzone.emit("complete", mockFile);
-		myDropzone.emit("success", mockFile, 'Uploaded File');
-
-		myDropzone.files.push(mockFile);
+		setTimeout(function() {
+			myDropzone.emit("complete", mockFile);
+			myDropzone.emit("success", mockFile, 'Uploaded File');
+			myDropzone.files.push(mockFile);
+		}, 100);
 	}, 10000);
 
 });
