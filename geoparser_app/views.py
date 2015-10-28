@@ -101,8 +101,8 @@ def find_latlon(request, file_name):
                 points.append(
                     {'loc_name': location,
                     'position':{
-                        'x': geolocation.latitude,
-                        'y': geolocation.longitude
+                        'x': geolocation.longitude,
+                        'y': geolocation.latitude
                     }
                     }
                 )
@@ -122,7 +122,8 @@ def return_points(request, file_name):
         Returns geo point for give file
     '''
     points = QueryPoints(file_name)
+
     if points:
-        return HttpResponse(status=200, content=points)
+        return HttpResponse(status=200, content='['+points+']')
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
