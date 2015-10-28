@@ -128,31 +128,33 @@ class CustomAppRoot(object):
     """
     exposed = True
 
-    file_dir = os.path.realpath(__file__).split("__init__.py")[0]
-    index_html_path = "{0}/../../../templates/index.html".format(file_dir)
+    plugin_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+    index_mako_path = os.path.join(plugin_dir, 'templates', 'index.html.mako')
 
 
     vars = {
         'plugins': [],
         'apiRoot': '/api/v1',
-        'staticRoot': '/static',
+        'staticRoot': '/geoparser_static',
         'title': 'Memex GeoParser'
     }
 
     def GET(self):
-        with open(self.index_html_path,'r') as f:
+        with open(self.index_mako_path,'r') as f:
             template = f.read()
             f.close()
         return mako.template.Template(template).render(**self.vars)
-        
+
 
 
 def load(info):
     info['apiRoot'].geoparser_jobs = GeoParserJobs()
 
     # Move girder app to /girder, serve GeoParser app from /
-    info['serverRoot'], info['serverRoot'].girder = (CustomAppRoot(), info['serverRoot'])
+    info['serverRoot'], info['serverRoot'].girder = CustomAppRoot(), info['serverRoot']
     info['serverRoot'].api = info['serverRoot'].girder.api
 
-
-
+    info['config']['/geoparser_static'] = {
+        'tools.staticdir.dir': os.path.join(info['pluginRootDir'], 'static'),
+        'tools.staticdir.on': True
+    }
