@@ -50,14 +50,48 @@ def create_core(core_name):
         print False
 
 
+def IndexStatus(step, file_name):
+    try:
+        url = "{0}{1}/select?q=*%3A*&fq=id%3A+%22{2}%22&fl={3}&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME, file_name, step)
+        response = urllib2.urlopen(url)
+        return eval(response.read())['response']['docs'][0][step][0]
+    except Exception as e:
+        return False
+
+
+def IndexFile(file_name):
+    '''
+    Index filename, text, location and points fields in Solr if not already exists.
+    '''
+    try:
+        url = "{0}{1}/select?q=*%3A*&fl=id&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME)
+        response = urllib2.urlopen(url)
+        files = eval(response.read())['response']['docs']
+        files = [f['id'] for f in files]
+        if file_name in files:
+            return True
+        else:
+            try:
+                url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E%22false%22%3C/field%3E%3Cfield%20name=%22location%22%3E%22false%22%3C/field%3E%3Cfield%20name=%22points%22%3E%22false%22%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
+                print url
+                urllib2.urlopen(url)
+                return True
+            except:
+                print "Cannot index status fields"
+                return False
+    except:
+        return False
+
+
 def IndexUploadedFilesText(file_name, text):
     '''
     Index extracted text for given file.
     '''
+    text = text.replace("'", " ")
     file_dir = os.path.realpath(__file__).split("solr.py")[0]
     tmp_json = "{0}/static/json/tmp.json".format(file_dir)
     with open(tmp_json, 'w') as f:
-        f.write("[{{'id':'{0}', 'text':'{1}'}}]".format(file_name, text.encode('ascii', 'ignore')))
+        f.write("[{{'id':'{0}', 'text':'{1}', 'locations':'\"false\"', 'points':'\"false\"'}}]".format(file_name, text.encode('ascii', 'ignore')))
         f.close()
     if create_core(COLLECTION_NAME):
         try:
