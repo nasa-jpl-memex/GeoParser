@@ -41,6 +41,8 @@ $(function() {
 	map.createLayer('osm', {
 		baseUrl : 'http://a.basemaps.cartocdn.com/light_all/'
 	});
+	map.createLayer('ui')
+    .createWidget('slider');
 });
 
 /**
@@ -267,7 +269,7 @@ $(function() {
 $(function() {
 
 	var mockFile = {
-		name : "polar.txt",
+		name : "5c0018-19.pdf",
 		size : 12345
 	};
 	myDropzone.options.addedfile.call(myDropzone, mockFile);
@@ -280,8 +282,8 @@ $(function() {
 
 	setTimeout(function() {
 		mockFile = {
-			name : "simple.txt",
-			size : 12345
+			name : "mc100_family_ds.pdf",
+			size : 4380
 		};
 		myDropzone.options.addedfile.call(myDropzone, mockFile);
 		setTimeout(function() {

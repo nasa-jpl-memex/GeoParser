@@ -21,18 +21,35 @@ COLLECTION_NAME = "uploaded_files"
 
 
 def index(request):
-    if create_core(COLLECTION_NAME):
-        context = {'title': "GeoParser"}
-        return render(request, 'index.html', context)
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = Document(docfile=request.FILES['file'])
+            instance.save()
     else:
-        return HttpResponse(status=400, content="Cannot create uploaded_files core.")
+        form = UploadFileForm()
+    return render_to_response('index.html', {'form': form},  RequestContext(request))
+    # 
+    # if create_core(COLLECTION_NAME):
+    #     context = {'title': "GeoParser"}
+    #     return render(request, 'index.html', context)
+    # else:
+    #     return HttpResponse(status=400, content="Cannot create uploaded_files core.")
 
 
 def upload_file(request, file_name):
-    if IndexFile(file_name):
-        return HttpResponse(status=200)
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = Document(docfile=request.FILES['file'])
+            instance.save()
     else:
-        return HttpResponse(status=400, content="Cannot upload file.")
+        form = UploadFileForm()
+    return render_to_response('index.html', {'form': form},  RequestContext(request))
+    # if IndexFile(file_name):
+    #     return HttpResponse(status=200)
+    # else:
+    #     return HttpResponse(status=400, content="Cannot upload file.")
 
 
 def list_of_uploaded_files(request):
