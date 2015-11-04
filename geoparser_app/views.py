@@ -17,8 +17,8 @@ from geopy.geocoders import Nominatim
 geolocator = Nominatim()
 flip = True
 
-COLLECTION_NAME = "uploaded_files"
-
+APP_NAME = "geoparser_app"
+UPLOADED_FILES_PATH = "static/uploaded_files"
 
 def index(request):
     if request.method == 'POST':
@@ -29,12 +29,6 @@ def index(request):
     else:
         form = UploadFileForm()
     return render_to_response('index.html', {'form': form},  RequestContext(request))
-    # 
-    # if create_core(COLLECTION_NAME):
-    #     context = {'title': "GeoParser"}
-    #     return render(request, 'index.html', context)
-    # else:
-    #     return HttpResponse(status=400, content="Cannot create uploaded_files core.")
 
 
 def upload_file(request, file_name):
@@ -54,9 +48,14 @@ def upload_file(request, file_name):
 
 def list_of_uploaded_files(request):
     '''
-    Return list of uploaded files and status of geoparsed
+    Return list of uploaded files.
     '''
-    return HttpResponse(status=200, content="[filenames]")
+    files_list = []
+    file_dir = os.path.realpath(__file__).split("views.py")[0]
+    for f in os.listdir("{0}{1}".format(file_dir, UPLOADED_FILES_PATH)):
+        if not f.startswith('.'):
+            files_list.append(f)
+    return HttpResponse(status=200, content="{0}".format(files_list))
 
 
 def extract_text(request, file_name):
@@ -65,7 +64,7 @@ def extract_text(request, file_name):
         and return the text content.
     '''
     if "false" in IndexStatus("text", file_name):
-        parsed = parser.from_file("geoparser_app/static/uploaded_files/{0}".format(file_name))
+        parsed = parser.from_file("{0}/{1}/{2}".format(APP_NAME, UPLOADED_FILES_PATH, file_name))
         status = IndexUploadedFilesText(file_name, parsed["content"])
         if status[0]:
             return HttpResponse(status=200, content="Text extracted.")
