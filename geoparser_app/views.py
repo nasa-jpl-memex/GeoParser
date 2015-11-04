@@ -37,13 +37,10 @@ def upload_file(request, file_name):
         if form.is_valid():
             instance = Document(docfile=request.FILES['file'])
             instance.save()
+            IndexFile(file_name) #Index new file to Solr
     else:
         form = UploadFileForm()
     return render_to_response('index.html', {'form': form},  RequestContext(request))
-    # if IndexFile(file_name):
-    #     return HttpResponse(status=200)
-    # else:
-    #     return HttpResponse(status=400, content="Cannot upload file.")
 
 
 def list_of_uploaded_files(request):
