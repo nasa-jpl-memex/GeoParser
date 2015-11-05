@@ -76,14 +76,7 @@
             <div class="clear"></div>
 
             <!-- DROPZONE START -->
-            <div id="actions" class="row">
-
-  <form method="post" enctype="multipart/form-data">
-     {% csrf_token %}
-    {{form}}
-    <input type="submit" value="Submit">
-  </form>
-  
+            <div id="actions" class="row">  
               <div class="col-lg-8">
                 <!-- The fileinput-button span is used to style the file input field as button -->
                 <span class="btn btn-success fileinput-button dz-clickable"> <i
@@ -239,6 +232,8 @@
       </div>
     </div>
   </div>
+       {% csrf_token %}
+  
 </body>
 
 </html>

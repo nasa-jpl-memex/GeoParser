@@ -1,5 +1,15 @@
 'use strict';
 
+var csrfMiddlewareToken;
+var CSRF_MIDDLEWARE_TOKEN_PARAM = "csrfmiddlewaretoken";
+
+var getCsrfMiddlewareToken = function() {
+	if (!csrfMiddlewareToken) {
+		csrfMiddlewareToken = $("[name=csrfmiddlewaretoken]").val();
+	}
+	return csrfMiddlewareToken;
+}
+
 // to safeguard from old browser which don't support console
 if (!window.console) {
 	window.console = {
@@ -32,17 +42,17 @@ var callRESTApi = function(url, type, async, data, success) {
  * 
  */
 var colorIndex = 0
-var colorArr = [ 'black','red', 'yellow', 'blue', 'green', 'orange' ];
+var colorArr = [ 'black', 'red', 'yellow', 'blue', 'green', 'orange' ];
 var map = null;
 $(function() {
 	map = geo.map({
-		'node' : '#map', zoom: 2
+		'node' : '#map',
+		zoom : 2
 	});
 	map.createLayer('osm', {
 		baseUrl : 'http://a.basemaps.cartocdn.com/light_all/'
 	});
-	map.createLayer('ui')
-    .createWidget('slider');
+	map.createLayer('ui').createWidget('slider');
 });
 
 /**
@@ -226,8 +236,8 @@ $(function() {
 
 	myDropzone = new Dropzone(document.body, {// Whole body is a drop zone
 
-		url : 'upload_file',
-		paramName : 'chunk',
+		url : '/',
+		paramName : 'file',
 		parallelUploads : 2,
 		previewTemplate : previewTemplate,
 		maxFilesize : 1024, // MB
@@ -244,6 +254,8 @@ $(function() {
 	myDropzone.on("sending", function(file, xhr, formData) {
 		// Show the total progress bar when upload starts
 		document.querySelector("#total-progress").style.opacity = "1";
+		// APPEND CSRF_MIDDLEWARE_TOKEN_PARAM
+		formData.append(CSRF_MIDDLEWARE_TOKEN_PARAM, getCsrfMiddlewareToken());
 	});
 
 	// Hide the total progress bar when nothing's uploading anymore
@@ -265,32 +277,26 @@ $(function() {
 
 });
 
-// TEMP code TODO: REMOVE BELOW
-$(function() {
-
+var processUploadedFile = function(name) {
 	var mockFile = {
-		name : "5c0018-19.pdf",
-		size : 12345
+		'name' : name,
+		'size' : 12345
 	};
 	myDropzone.options.addedfile.call(myDropzone, mockFile);
 
-	setTimeout(function() {
-		myDropzone.emit("complete", mockFile);
-		myDropzone.emit("success", mockFile, 'Uploaded File');
-		myDropzone.files.push(mockFile);
-	}, 100);
+	myDropzone.emit("complete", mockFile);
+	myDropzone.emit("success", mockFile, 'Uploaded File');
+	myDropzone.files.push(mockFile);
 
-	setTimeout(function() {
-		mockFile = {
-			name : "mc100_family_ds.pdf",
-			size : 4380
-		};
-		myDropzone.options.addedfile.call(myDropzone, mockFile);
-		setTimeout(function() {
-			myDropzone.emit("complete", mockFile);
-			myDropzone.emit("success", mockFile, 'Uploaded File');
-			myDropzone.files.push(mockFile);
-		}, 100);
-	}, 10000);
+}
+
+$(function() {
+	callRESTApi("/list_of_uploaded_files", 'GET', 'true', null, function(d) {
+		d = eval(d);
+		// console.log("list: " + d);
+		for ( var i in d) {
+			processUploadedFile(d[i]);
+		}
+	});
 
 });
