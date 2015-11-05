@@ -11,4 +11,5 @@ urlpatterns = patterns('geoparser_app.views',
     url(r'^return_points/(?P<file_name>\S+)', views.return_points, name='return_points'),
     url(r'upload_file/(?P<file_name>\S+)$', views.upload_file, name='upload_file'),
     url(r'list_of_uploaded_files$', views.list_of_uploaded_files, name='list_of_uploaded_files'),
+    url(r'index_file/(?P<file_name>\S+)$', views.index_file, name='index_file'),
 )
