@@ -268,11 +268,12 @@ $(function() {
 	};
 
 	myDropzone.on("success", function(file, responseText) {
-		getStatus(responseText, file);// Start looking for geo parse status and show
-		// pointers on map if found
-
+		callRESTApi("index_file/" + file.name, "GET", false, {}, function(d) {
+			console.log(d);
+		})
+		//Start looking for geo parse status and show pointers on map if found
+		getStatus(responseText, file);
 	});
-
 	// Dropzone end
 
 });
@@ -287,16 +288,14 @@ var processUploadedFile = function(name) {
 	myDropzone.emit("complete", mockFile);
 	myDropzone.emit("success", mockFile, 'Uploaded File');
 	myDropzone.files.push(mockFile);
-
 }
 
-$(function() {
+setTimeout(function() {
 	callRESTApi("/list_of_uploaded_files", 'GET', 'true', null, function(d) {
 		d = eval(d);
-		// console.log("list: " + d);
 		for ( var i in d) {
 			processUploadedFile(d[i]);
 		}
 	});
+}, 1000);
 
-});

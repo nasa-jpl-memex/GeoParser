@@ -63,25 +63,27 @@ def IndexFile(file_name):
     '''
     Index filename, text, location and points fields in Solr if not already exists.
     '''
-    try:
-        url = "{0}{1}/select?q=*%3A*&fl=id&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME)
-        response = urllib2.urlopen(url)
-        files = eval(response.read())['response']['docs']
-        files = [f['id'] for f in files]
-        if file_name in files:
-            return True
-        else:
-            try:
-                url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E%22false%22%3C/field%3E%3Cfield%20name=%22location%22%3E%22false%22%3C/field%3E%3Cfield%20name=%22points%22%3E%22false%22%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
-                print url
-                urllib2.urlopen(url)
+    if create_core(COLLECTION_NAME):
+        try:
+            url = "{0}{1}/select?q=*%3A*&fl=id&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME)
+            response = urllib2.urlopen(url)
+            files = eval(response.read())['response']['docs']
+            files = [f['id'] for f in files]
+            if file_name in files:
                 return True
-            except:
-                print "Cannot index status fields"
-                return False
-    except:
+            else:
+                try:
+                    url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E%22false%22%3C/field%3E%3Cfield%20name=%22location%22%3E%22false%22%3C/field%3E%3Cfield%20name=%22points%22%3E%22false%22%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
+                    print url
+                    urllib2.urlopen(url)
+                    return True
+                except:
+                    print "Cannot index status fields"
+                    return False
+        except:
+            return False
+    else:
         return False
-
 
 def IndexUploadedFilesText(file_name, text):
     '''
