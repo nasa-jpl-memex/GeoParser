@@ -268,10 +268,8 @@ $(function() {
 	};
 
 	myDropzone.on("success", function(file, responseText) {
-		callRESTApi("index_file/" + file.name, "GET", false, {}, function(d) {
-			console.log(d);
-		})
-		//Start looking for geo parse status and show pointers on map if found
+		callRESTApi("index_file/" + file.name, "GET", false, {}, {})
+		// Start looking for geo parse status and show pointers on map if found
 		getStatus(responseText, file);
 	});
 	// Dropzone end
@@ -298,4 +296,3 @@ setTimeout(function() {
 		}
 	});
 }, 1000);
-
