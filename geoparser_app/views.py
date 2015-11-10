@@ -26,7 +26,6 @@ def index(request):
         if form.is_valid():
             instance = Document(docfile=request.FILES['file'])
             instance.save()
-            IndexFile(file_name) #Index new file to Solr
     else:
         form = UploadFileForm()
     return render_to_response('index.html', {'form': form},  RequestContext(request))
