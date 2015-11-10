@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import glob, os
+import urllib2
 from os.path import isfile
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
@@ -85,7 +86,7 @@ def find_location(request, file_name):
         if text_content:
             e = extraction.Extractor(text=text_content)
             e.find_entities()
-            status = IndexLocationName(file_name, e.places)
+            status = IndexLocationName("local", file_name, e.places)
             if status[0]:
                 return HttpResponse(status=200, content="Location/s found and index to Solr.")
             else:
@@ -139,3 +140,29 @@ def return_points(request, file_name):
         return HttpResponse(status=200, content='['+points+']')
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
+
+
+def query_crawled_index(request, engine_type ,host, core_name):
+    '''
+        To query crawled data that has been indexed into
+        Solr or Elastichsearch and return location names
+        Host should be without "http://"
+    '''
+    if engine_type.lower() == "solr":
+        try:
+            url = "http://{0}/solr/{1}/select?q=*%3A*&wt=json&rows=100000000".format(host, core_name)
+            response = urllib2.urlopen(url)
+            text = eval(response.read())['response']['docs']
+            e = extraction.Extractor(text=str(text))
+            e.find_entities()
+            status = IndexLocationName("solr", "solr_{0}".format(core_name), e.places)
+            return HttpResponse(status=200, content=e.places)
+        except Exception as e:
+            return False
+    elif engine_type.lower() == "elasticsearch":
+        text = ""
+        return text
+    else:
+        pass
+    
+    
