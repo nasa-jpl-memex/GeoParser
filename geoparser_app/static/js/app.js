@@ -300,10 +300,9 @@ var processUploadedFile = function(name) {
 setTimeout(function() {
 	callRESTApi("/list_of_uploaded_files", 'GET', 'true', null, function(d) {
 		d = eval(d);
-//		for ( var i in d) {
-		processUploadedFile(d[1]);
-		processUploadedFile(d[2]);
-//		}
+		for ( var i in d) {
+		processUploadedFile(d[i]);
+		}
 	});
 }, 1000);
 
