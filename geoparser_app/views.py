@@ -22,14 +22,16 @@ APP_NAME = "geoparser_app"
 UPLOADED_FILES_PATH = "static/uploaded_files"
 
 def index(request):
+    file_name = ""
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             instance = Document(docfile=request.FILES['file'])
             instance.save()
+            file_name = str(instance.docfile).replace("{0}/{1}/".format(APP_NAME, UPLOADED_FILES_PATH),"")
     else:
         form = UploadFileForm()
-    return render_to_response('index.html', {'form': form},  RequestContext(request))
+    return render_to_response('index.html', {'form': form},  RequestContext(request), {'file_name':file_name})
 
 
 def upload_file(request, file_name):
