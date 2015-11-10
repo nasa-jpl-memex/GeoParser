@@ -32,7 +32,9 @@
       <div class="top-left-input-box input-box-bg col-md-4 bottom-buffer top-buffer mar-def">
         <!-- Nav icons start -->
         <div class="row">
-          <div class="col-md-7"></div>
+          <div class="col-md-7">
+            <span class="glyphicon glyphicon-minus" aria-hidden="true" id="collapseIcon"></span>
+          </div>
           <div class="col-md-5 bottom-buffer">
             <div class="btn-group btn-group-lg" id="navButtons" data-toggle="buttons">
               <!-- BELOW HEIRARCHY OF label MUST BE MAINTAINED -->
@@ -52,7 +54,7 @@
         <!-- Nav icons end -->
         <div class="clear"></div>
         <!-- User Input Box Start-->
-        <div>
+        <div id="useInputDiv">
           <!-- BELOW HEIRARCHY OF div{fileUploadBox,addIndexBox,searchIndexBox} MUST BE MAINTAINED else toggle switch will fail-->
           <!-- File Upload box Start-->
           <div id="fileUploadBox">
@@ -76,7 +78,7 @@
             <div class="clear"></div>
 
             <!-- DROPZONE START -->
-            <div id="actions" class="row">  
+            <div id="actions" class="row">
               <div class="col-lg-8">
                 <!-- The fileinput-button span is used to style the file input field as button -->
                 <span class="btn btn-success fileinput-button dz-clickable"> <i
@@ -136,9 +138,7 @@
                     </div>
                     <div class="clear"></div>
                     <div class="row" id="progress-template-sucess">
-                      <div class="col-md-12 no-right-padding">
-                        
-                      </div>
+                      <div class="col-md-12 no-right-padding"></div>
                     </div>
                   </div>
 
@@ -232,8 +232,8 @@
       </div>
     </div>
   </div>
-       {% csrf_token %}
-  
+  {% csrf_token %}
+
 </body>
 
 </html>

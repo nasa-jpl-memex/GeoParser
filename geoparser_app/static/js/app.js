@@ -20,6 +20,24 @@ if (!window.console) {
 	};
 }
 
+// collapse "useInputDiv" on clicking +/- button
+$(function() {
+
+	$("#collapseIcon").bind('click', function(){ 
+		if($('#useInputDiv').is(":visible")) {
+			$('#useInputDiv').hide();
+			$("#collapseIcon").removeClass('glyphicon-minus');
+			$("#collapseIcon").addClass('glyphicon-plus');
+		}
+		else{
+			$('#useInputDiv').show();
+			$("#collapseIcon").addClass('glyphicon-minus');
+			$("#collapseIcon").removeClass('glyphicon-plus');
+		}
+	});
+	
+});
+
 /**
  * Generic AJAX call to REST APIs Sample usage - callRESTApi (url, typeMethod,
  * asyncBoolean, data, successFunction)
