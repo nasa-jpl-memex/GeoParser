@@ -24,16 +24,8 @@ if (!window.console) {
 $(function() {
 
 	$("#collapseIcon").bind('click', function(){ 
-		if($('#useInputDiv').is(":visible")) {
-			$('#useInputDiv').hide();
-			$("#collapseIcon").removeClass('glyphicon-minus');
-			$("#collapseIcon").addClass('glyphicon-plus');
-		}
-		else{
-			$('#useInputDiv').show();
-			$("#collapseIcon").addClass('glyphicon-minus');
-			$("#collapseIcon").removeClass('glyphicon-plus');
-		}
+		$('#useInputDiv').toggle();
+		$("#collapseIcon").toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
 	});
 	
 });
@@ -178,8 +170,6 @@ $(function() {
  * found. <br/> progressTemplate shows progress on UI
  */
 var getStatus = function(uploadResponse, file) {
-	console.log('Started processing file');
-
 	// TODO: ALL API's should return json in future
 	var progressTemplateCloned = progressTemplate.cloneNode();
 	progressTemplateCloned.appendChild(progressTemplate.children[0].cloneNode());
@@ -310,8 +300,16 @@ var processUploadedFile = function(name) {
 setTimeout(function() {
 	callRESTApi("/list_of_uploaded_files", 'GET', 'true', null, function(d) {
 		d = eval(d);
-		for ( var i in d) {
-			processUploadedFile(d[i]);
-		}
+//		for ( var i in d) {
+		processUploadedFile(d[1]);
+		processUploadedFile(d[2]);
+//		}
 	});
 }, 1000);
+
+var collapseFile = function(ele){
+	//get element which hold location data
+	var t1 = $(ele).parent().parent().siblings()[2];
+	$(t1).toggle();
+	$(ele).toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
+}
