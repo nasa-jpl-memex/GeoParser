@@ -145,16 +145,18 @@ def return_points(request, file_name):
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
 
 
-def query_crawled_index(request, engine_type ,host, core_name):
+def query_crawled_index(request, indexed_path):
     '''
         To query crawled data that has been indexed into
         Solr or Elastichsearch and return location names
         Host should be without "http://"
     '''
-    if engine_type.lower() == "solr":
+
+    if "solr" in indexed_path.lower():
         try:
-            url = "http://{0}/solr/{1}/select?q=*%3A*&wt=json&rows=100000000".format(host, core_name)
+            url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
             response = urllib2.urlopen(url)
+            numFound = eval(response.read())['response']['numFound']
             text = eval(response.read())['response']['docs']
             e = extraction.Extractor(text=str(text))
             e.find_entities()
@@ -162,10 +164,6 @@ def query_crawled_index(request, engine_type ,host, core_name):
             return HttpResponse(status=200, content=e.places)
         except Exception as e:
             return False
-    elif engine_type.lower() == "elasticsearch":
-        text = ""
-        return text
     else:
         pass
-    
     
