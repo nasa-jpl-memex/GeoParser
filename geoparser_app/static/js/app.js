@@ -169,7 +169,7 @@ $(function() {
  * Polls /status API to get parsing status of file and show pointers on map if
  * found. <br/> progressTemplate shows progress on UI
  */
-var getStatus = function(uploadResponse, file) {
+var getStatus = function(res, file) {
 	// TODO: ALL API's should return json in future
 	var progressTemplateCloned = progressTemplate.cloneNode();
 	progressTemplateCloned.appendChild(progressTemplate.children[0].cloneNode());
@@ -179,22 +179,22 @@ var getStatus = function(uploadResponse, file) {
 	var displayArea = progressTemplateCloned.children[0];
 
 	// AJAX 1
-	callRESTApi('extract_text/' + file.name, 'GET', false, {}, function(data) {
+	callRESTApi('extract_text/' + res.file_name, 'GET', false, {}, function(data) {
 		displayArea.textContent = data + '..';
 	}).done(function(data) {
 		setTimeout(function() {
 			// AJAX 2
-			callRESTApi('find_location/' + file.name, 'GET', false, {}, function(data) {
+			callRESTApi('find_location/' + res.file_name, 'GET', false, {}, function(data) {
 				displayArea.textContent = data + '..';
 
 			}).done(function(data) {
 				setTimeout(function() {
 					// AJAX 3
-					callRESTApi('find_latlon/' + file.name, 'GET', false, {}, function(data) {
+					callRESTApi('find_latlon/' + res.file_name, 'GET', false, {}, function(data) {
 						displayArea.textContent = data + '..';
 					}).done(function(data) {
 						// AJAX 4
-						fetchAndDrawPoints(file, displayArea)
+						fetchAndDrawPoints(res, file, displayArea)
 					});
 				}, 1000);
 
@@ -205,8 +205,8 @@ var getStatus = function(uploadResponse, file) {
 
 }
 
-var fetchAndDrawPoints = function(file, displayArea) {
-	callRESTApi('return_points/' + file.name, 'GET', false, {}, function(data) {
+var fetchAndDrawPoints = function(res, file, displayArea) {
+	callRESTApi('return_points/' + res.file_name, 'GET', false, {}, function(data) {
 		data = eval(data);// REMOVE THIS ONCE API RETURNS JSON
 		displayArea.textContent = '';
 
@@ -275,10 +275,10 @@ $(function() {
 		myDropzone.removeAllFiles(true);
 	};
 
-	myDropzone.on("success", function(file, responseText) {
-		callRESTApi("index_file/" + file.name, "GET", false, {}, function(d) {
+	myDropzone.on("success", function(file, res) {
+		callRESTApi("index_file/" + res.file_name, "GET", false, {}, function(d) {
 			// Start looking for geo parse status and show pointers on map if found
-			getStatus(responseText, file);
+			getStatus(res, file);
 		});
 	});
 	// Dropzone end
@@ -293,7 +293,7 @@ var processUploadedFile = function(name) {
 	myDropzone.options.addedfile.call(myDropzone, mockFile);
 
 	myDropzone.emit("complete", mockFile);
-	myDropzone.emit("success", mockFile, 'Uploaded File');
+	myDropzone.emit("success", mockFile, { "file_name" : name });
 	myDropzone.files.push(mockFile);
 }
 
@@ -301,7 +301,7 @@ setTimeout(function() {
 	callRESTApi("/list_of_uploaded_files", 'GET', 'true', null, function(d) {
 		d = eval(d);
 		for ( var i in d) {
-		processUploadedFile(d[i]);
+			processUploadedFile(d[i]);
 		}
 	});
 }, 1000);

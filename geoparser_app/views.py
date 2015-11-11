@@ -29,9 +29,10 @@ def index(request):
             instance = Document(docfile=request.FILES['file'])
             instance.save()
             file_name = str(instance.docfile).replace("{0}/{1}/".format(APP_NAME, UPLOADED_FILES_PATH),"")
+            return HttpResponse(status=200, content="{{ \"file_name\":\"{0}\" }}".format(file_name), content_type="application/json")
     else:
         form = UploadFileForm()
-    return render_to_response('index.html', {'form': form},  RequestContext(request), {'file_name':file_name})
+    return render_to_response('index.html', {'form': form},  RequestContext(request))
 
 
 def upload_file(request, file_name):
