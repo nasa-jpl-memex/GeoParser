@@ -20,6 +20,7 @@ flip = True
 
 APP_NAME = "geoparser_app"
 UPLOADED_FILES_PATH = "static/uploaded_files"
+SUBDOMAIN = ""
 
 def index(request):
     file_name = ""
@@ -32,7 +33,7 @@ def index(request):
             return HttpResponse(status=200, content="{{ \"file_name\":\"{0}\" }}".format(file_name), content_type="application/json")
     else:
         form = UploadFileForm()
-    return render_to_response('index.html', {'form': form},  RequestContext(request))
+    return render_to_response('index.html', {'form': form, 'subdomian':SUBDOMAIN},  RequestContext(request))
 
 
 def upload_file(request, file_name):
@@ -43,7 +44,7 @@ def upload_file(request, file_name):
             instance.save()
     else:
         form = UploadFileForm()
-    return render_to_response('index.html', {'form': form},  RequestContext(request))
+    return render_to_response('index.html',  {'form': form, 'subdomian':SUBDOMAIN}, RequestContext(request))
 
 
 def index_file(request, file_name):
