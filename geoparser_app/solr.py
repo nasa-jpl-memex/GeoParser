@@ -73,7 +73,7 @@ def IndexFile(file_name):
                 return True
             else:
                 try:
-                    url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E%22false%22%3C/field%3E%3Cfield%20name=%22location%22%3E%22false%22%3C/field%3E%3Cfield%20name=%22points%22%3E%22false%22%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
+                    url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E%22none%22%3C/field%3E%3Cfield%20name=%22location%22%3E%22none%22%3C/field%3E%3Cfield%20name=%22points%22%3E%22none%22%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
                     print url
                     urllib2.urlopen(url)
                     return True
@@ -93,7 +93,7 @@ def IndexUploadedFilesText(file_name, text):
     file_dir = os.path.realpath(__file__).split("solr.py")[0]
     tmp_json = "{0}/static/json/tmp.json".format(file_dir)
     with open(tmp_json, 'w') as f:
-        f.write("[{{'id':'{0}', 'text':'{1}', 'locations':'\"false\"', 'points':'\"false\"'}}]".format(file_name, text.encode('ascii', 'ignore')))
+        f.write("[{{'id':'{0}', 'text':'{1}', 'locations':'\"none\"', 'points':'\"none\"'}}]".format(file_name, text.encode('ascii', 'ignore')))
         f.close()
     if create_core(COLLECTION_NAME):
         try:

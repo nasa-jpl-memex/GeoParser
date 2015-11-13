@@ -69,7 +69,7 @@ def extract_text(request, file_name):
         Using Tika to extract text from given file
         and return the text content.
     '''
-    if not IndexStatus("text", file_name):
+    if "none" in IndexStatus("text", file_name):
         parsed = parser.from_file("{0}/{1}/{2}".format(APP_NAME, UPLOADED_FILES_PATH, file_name))
         status = IndexUploadedFilesText(file_name, parsed["content"])
         if status[0]:
@@ -85,7 +85,7 @@ def find_location(request, file_name):
     '''
         Find location name from extracted text using Geograpy.
     '''
-    if not IndexStatus("locations", file_name):
+    if "none" in IndexStatus("locations", file_name):
         text_content = QueryText(file_name)
         if text_content:
             e = extraction.Extractor(text=text_content)
@@ -106,7 +106,7 @@ def find_latlon(request, file_name):
     '''
     Find latitude and longitude from location name using GeoPy.
     '''
-    if not IndexStatus("points", file_name):
+    if "none" in IndexStatus("points", file_name):
         location_names = QueryLocationName(file_name)
         if location_names:
             points = []
