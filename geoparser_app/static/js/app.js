@@ -218,13 +218,18 @@ var fetchAndDrawPoints = function(res, file, displayArea) {
 		}
 		list += '</ol>'
 
+		displayArea.appendChild(Dropzone.createElement(list));
+		
+		var fileLabels = file.previewElement.getElementsByClassName('glyphicon-minus')[0];
+		fileLabels=$(fileLabels).parent();
+		fileLabels.append(
+				Dropzone.createElement("<span class='glyphicon glyphicon-map-marker left-buffer' style='color: "+colorArr[colorIndex]+";'>"));
+
 		colorIndex++;
 		if (colorIndex >= colorArr.length) {
 			colorIndex = 0;
 		}
-
-		displayArea.appendChild(Dropzone.createElement(list));
-
+		
 		// KEEP ON APPENDING POINTS
 		dataPointsAll = data.concat(dataPointsAll);
 		drawPoints(data);
@@ -308,7 +313,7 @@ setTimeout(function() {
 
 var collapseFile = function(ele){
 	//get element which hold location data
-	var t1 = $(ele).parent().parent().siblings()[2];
+	var t1 = $(ele).parent().parent().parent().siblings()[2];
 	$(t1).toggle();
 	$(ele).toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
 }

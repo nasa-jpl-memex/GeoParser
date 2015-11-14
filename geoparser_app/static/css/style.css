@@ -141,6 +141,10 @@ html, body {
 	padding-bottom: 20px;
 }
 
+.left-buffer {
+	padding-left: 10px;
+}
+
 .no-left-padding {
 	padding-left: 0px;
 }
