@@ -211,9 +211,3 @@ hr {
   min-width:auto;
   width:100%;
 }
-.name{
-    text-overflow: ellipsis;
-    width: 100%;
-    overflow: hidden;
-    position: absolute;
-}
