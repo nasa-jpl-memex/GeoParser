@@ -256,6 +256,7 @@
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             node = _ref[_i];
             node.textContent = file.name;
+            node.title = file.name;
           }
           _ref1 = file.previewElement.querySelectorAll("[data-dz-size]");
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
