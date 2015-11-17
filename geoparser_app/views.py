@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import glob, os
 import urllib2
+from compiler.ast import flatten
 from os.path import isfile
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
@@ -9,10 +10,12 @@ from django.core.urlresolvers import reverse
 
 from .forms import UploadFileForm
 from .models import Document
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints
 
 from tika import parser
+import geograpy
 from geograpy import extraction
+from geograpy import places
 from geopy.geocoders import Nominatim
 
 geolocator = Nominatim()
@@ -48,7 +51,7 @@ def upload_file(request, file_name):
 
 
 def index_file(request, file_name):
-    IndexFile(file_name)
+    IndexFile("uploaded_files", file_name)
     return HttpResponse(status=200)
 
 
@@ -90,7 +93,7 @@ def find_location(request, file_name):
         if text_content:
             e = extraction.Extractor(text=text_content)
             e.find_entities()
-            status = IndexLocationName("local", file_name, e.places)
+            status = IndexLocationName(file_name, e.places)
             if status[0]:
                 return HttpResponse(status=200, content="Location/s found and index to Solr.")
             else:
@@ -146,25 +149,44 @@ def return_points(request, file_name):
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
 
 
-def query_crawled_index(request, indexed_path):
+def query_crawled_index(request, core_name, indexed_path):
     '''
         To query crawled data that has been indexed into
         Solr or Elastichsearch and return location names
-        Host should be without "http://"
     '''
-
     if "solr" in indexed_path.lower():
-        try:
-            url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
-            response = urllib2.urlopen(url)
-            numFound = eval(response.read())['response']['numFound']
-            text = eval(response.read())['response']['docs']
-            e = extraction.Extractor(text=str(text))
-            e.find_entities()
-            status = IndexLocationName("solr", "solr_{0}".format(core_name), e.places)
-            return HttpResponse(status=200, content=e.places)
-        except Exception as e:
-            return False
+        if IndexFile(core_name, indexed_path.lower()):
+            location_names = []
+            points = []
+            query_range = 500
+            try:
+                url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
+                response = urllib2.urlopen(url)
+                numFound = eval(response.read())['response']['numFound']
+                for row in range(0, int(numFound), query_range):
+                    query_url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
+                    places = geograpy.get_place_context(url=query_url)
+                    location_names.append(places.regions)
+                    location_names.append(places.countries)
+                    location_names.append(places.cities)
+                    location_names.append(places.other)
+                    location_names = flatten(location_names)
+                for location in location_names:
+                    try:
+                        geolocation = geolocator.geocode(location)
+                        points.append(
+                            {'loc_name': location,
+                            'position':{
+                                'x': geolocation.longitude,
+                                'y': geolocation.latitude
+                                    }
+                            }
+                        )
+                    except:
+                        pass
+                status = IndexCrawledPoints(core_name, indexed_path.lower(), points)
+                return HttpResponse(status=200, content=status)
+            except Exception as e:
+                return False
     else:
         pass
-    

@@ -41,7 +41,7 @@ def create_core(core_name):
     elif check_solr():
         try:
             file_dir = os.path.realpath(__file__).split("solr.py")[0]
-            command = "{0}/../Solr/solr-5.3.1/bin/solr create_core -c {1}".format(file_dir, COLLECTION_NAME)
+            command = "{0}/../Solr/solr-5.3.1/bin/solr create_core -c {1}".format(file_dir, core_name)
             os.system(command)
             return True
         except:
@@ -59,11 +59,11 @@ def IndexStatus(step, file_name):
         return False
 
 
-def IndexFile(file_name):
+def IndexFile(core_name, file_name):
     '''
     Index filename, text, location and points fields in Solr if not already exists.
     '''
-    if create_core(COLLECTION_NAME):
+    if create_core(core_name):
         try:
             url = "{0}{1}/select?q=*%3A*&fl=id&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME)
             response = urllib2.urlopen(url)
@@ -73,8 +73,10 @@ def IndexFile(file_name):
                 return True
             else:
                 try:
-                    url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E%22none%22%3C/field%3E%3Cfield%20name=%22location%22%3E%22none%22%3C/field%3E%3Cfield%20name=%22points%22%3E%22none%22%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
-                    print url
+                    if core_name == COLLECTION_NAME:
+                        url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E%22none%22%3C/field%3E%3Cfield%20name=%22location%22%3E%22none%22%3C/field%3E%3Cfield%20name=%22points%22%3E%22none%22%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
+                    else:
+                        url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, core_name, file_name)
                     urllib2.urlopen(url)
                     return True
                 except:
@@ -84,6 +86,7 @@ def IndexFile(file_name):
             return False
     else:
         return False
+
 
 def IndexUploadedFilesText(file_name, text):
     '''
@@ -120,33 +123,20 @@ def QueryText(file_name):
             return False
 
 
-def IndexLocationName(engine, name, places):
+def IndexLocationName(name, places):
     '''
     Index location name for each file.
     '''
-    if engine == "local":
-        if create_core(COLLECTION_NAME):
-            try:
-                p = ",".join(places)
-                url = SOLR_URL + COLLECTION_NAME + '/update?stream.body=[{%22id%22:%22' + name + '%22,%22locations%22:{%22set%22:"' + p + '"}}]&commit=true'
-                urllib2.urlopen(url)
-                return (True, "Location name/s indexed to Solr successfully.")
-            except:
-                return (False, "Cannot index location name/s to Solr.")
-        else:
-            return (False, "Either Solr not running or cannot create Core.")
-    elif engine == "solr":
-        if create_core(name):
-            try:
-                p = ",".join(places)
-                url = SOLR_URL + name + '/update?stream.body=[{%22id%22:%22' + name + '%22,%22locations%22:{%22set%22:"' + p + '"}}]&commit=true'
-                urllib2.urlopen(url)
-                return (True, "Location name/s indexed to Solr successfully.")
-            except:
-                return (False, "Cannot index location name/s to Solr.")
-    elif engine == "elasticsearch":
-        if create_core(name):
-            pass
+    if create_core(COLLECTION_NAME):
+        try:
+            p = ",".join(places)
+            url = SOLR_URL + COLLECTION_NAME + '/update?stream.body=[{%22id%22:%22' + name + '%22,%22locations%22:{%22set%22:"' + p + '"}}]&commit=true'
+            urllib2.urlopen(url)
+            return (True, "Location name/s indexed to Solr successfully.")
+        except:
+            return (False, "Cannot index location name/s to Solr.")
+    else:
+        return (False, "Either Solr not running or cannot create Core.")
 
 
 def QueryLocationName(file_name):
@@ -190,3 +180,19 @@ def QueryPoints(file_name):
             return eval(response.read())['response']['docs'][0]['points'][0]
         except:
             return False
+
+
+def IndexCrawledPoints(core_name, name, points):
+    '''
+    Index geopoints extracted from crawled data
+    '''
+    try:
+        for each in (0, len(points), 50):
+            sub_points = points[each:each+50]
+            geo_points = ",".join(str(p) for p in sub_points)
+            geo_points = urllib2.quote(geo_points)
+            url = SOLR_URL + core_name + '/update?stream.body=[{%22id%22:%22' + name + '%22,%22points' + str(each) + '%22:{%22set%22:%22' + geo_points + '%22}}]&commit=true'
+            urllib2.urlopen(url)
+        return (True, "Crwaled data geopoints indexed to Solr successfully.")
+    except:
+        return (False, "Cannot index geopoints from crawled data to Solr.")
