@@ -79,10 +79,26 @@ def IndexFile(core_name, file_name):
             else:
                 try:
                     if core_name == COLLECTION_NAME:
-                        url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3Cfield%20name=%22text%22%3E%22none%22%3C/field%3E%3Cfield%20name=%22location%22%3E%22none%22%3C/field%3E%3Cfield%20name=%22points%22%3E%22none%22%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
+                        payload = {
+                            "add":{
+                                "doc":{
+                                    "id" : str(file_name) ,
+                                    "text" : "none",
+                                    "location" : "none",
+                                    "points" : "none"
+                                }
+                            }
+                        }
+                        r = requests.post("{0}{1}/update".format(SOLR_URL, COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
                     else:
-                        url = '{0}{1}/update?stream.body=%3Cadd%3E%3Cdoc%3E%3Cfield%20name=%22id%22%3E{2}%3C/field%3E%3C/doc%3E%3C/add%3E&commit=true'.format(SOLR_URL, core_name, file_name)
-                    urllib2.urlopen(url)
+                        payload = {
+                            "add":{
+                                "doc":{
+                                    "id" : str(file_name)
+                                }
+                            }
+                        }
+                        r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
                     return True
                 except:
                     print "Cannot index status fields"

@@ -39,17 +39,6 @@ def index(request):
     return render_to_response('index.html', {'form': form, 'subdomian':SUBDOMAIN},  RequestContext(request))
 
 
-def upload_file(request, file_name):
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            instance = Document(docfile=request.FILES['file'])
-            instance.save()
-    else:
-        form = UploadFileForm()
-    return render_to_response('index.html',  {'form': form, 'subdomian':SUBDOMAIN}, RequestContext(request))
-
-
 def index_file(request, file_name):
     IndexFile("uploaded_files", file_name)
     return HttpResponse(status=200)
