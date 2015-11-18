@@ -137,14 +137,14 @@ def find_latlon(request, file_name):
         return HttpResponse(status=200, content="Loading...")
 
 
-def return_points(request, file_name):
+def return_points(request, file_name, core_name):
     '''
         Returns geo point for give file
     '''
-    points = QueryPoints(file_name)
+    points = QueryPoints(file_name, core_name)
 
     if points:
-        return HttpResponse(status=200, content='['+points+']')
+        return HttpResponse(status=200, content=points)
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
 
