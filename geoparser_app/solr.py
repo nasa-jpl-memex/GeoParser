@@ -84,7 +84,7 @@ def IndexFile(core_name, file_name):
                                 "doc":{
                                     "id" : str(file_name) ,
                                     "text" : "none",
-                                    "location" : "none",
+                                    "locations" : "none",
                                     "points" : "none"
                                 }
                             }
