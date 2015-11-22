@@ -70,7 +70,7 @@ def IndexFile(core_name, file_name):
     '''
     if create_core(core_name):
         try:
-            url = "{0}{1}/select?q=*%3A*&fl=id&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME)
+            url = "{0}{1}/select?q=*%3A*&fl=id&wt=json&indent=true".format(SOLR_URL, core_name)
             response = urllib2.urlopen(url)
             files = eval(response.read())['response']['docs']
             files = [f['id'] for f in files]
@@ -104,6 +104,7 @@ def IndexFile(core_name, file_name):
                     print "Cannot index status fields"
                     return False
         except:
+            print "Error calling solr"
             return False
     else:
         return False
