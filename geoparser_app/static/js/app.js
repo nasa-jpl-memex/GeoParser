@@ -204,9 +204,11 @@ var getStatus = function(res, file) {
 	});
 
 }
-
+/**
+ * Fetches points for uploaded file and paint data
+ */
 var fetchAndDrawPoints = function(res, file, displayArea) {
-	callRESTApi('return_points/' + res.file_name, 'GET', false, {}, function(data) {
+	callRESTApi('return_points/' + res.file_name + '/uploaded_files', 'GET', false, {}, function(data) {
 		data = eval(data);// REMOVE THIS ONCE API RETURNS JSON
 		displayArea.textContent = '';
 
@@ -220,8 +222,8 @@ var fetchAndDrawPoints = function(res, file, displayArea) {
 
 		displayArea.appendChild(Dropzone.createElement(list));
 		
-		var fileLabels = file.previewElement.getElementsByClassName('glyphicon-minus')[0];
-		fileLabels=$(fileLabels).parent();
+		var fileLabels = $(file.previewElement).find('glyphicon-minus');
+		fileLabels = fileLabels.parent();
 		fileLabels.append(
 				Dropzone.createElement("<span class='glyphicon glyphicon-map-marker left-buffer' style='color: "+colorArr[colorIndex]+";'>"));
 
@@ -318,23 +320,22 @@ var collapseFile = function(ele){
 	$(ele).toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
 }
 
-
+//Save Index functions below
 $(function() {
 	$("#saveIndex").bind("click", function() {
 		var domain = $("#indexDomain");
 		var index = $("#indexPath");
+		var error = false;
 		domain.parent().removeClass("has-error");
 		index.parent().removeClass("has-error");
 
-		if (!domain.val() || domain.val().toString().trim() == "") {
-			domain.parent().addClass("has-error");
-			return;
-		}
-		if (!index.val() || index.val().toString().trim() == "") {
-			index.parent().addClass("has-error");
-			return;
-		}
+		error = markEmtyError(domain);
+		error = markEmtyError(index) || error;
 
+		if(error){
+			return;
+		}
+		
 		// add "/" in index if not present already
 		if (index.val().lastIndexOf("/") + 1 != index.val().length) {
 			index.val(index.val() + "/");
@@ -347,5 +348,32 @@ $(function() {
 	})
 
 })
+
+var markEmtyError = function (inputEle){
+	if (!inputEle.val() || inputEle.val().toString().trim() == "") {
+		inputEle.parent().addClass("has-error");
+		return true;
+	}
+	return false;
+}
+
+// Search Index functions below
+$(function() {
+	$("#viewIndexResults").parent().find('.search-icon').bind("click", function() {
+		var indexResult = $("#viewIndexResults")
+		
+		if(markEmtyError(indexResult)){
+			return;
+		}
+		
+		callRESTApi("/return_points/" + indexResult.val() , 'GET', 'true', null, function(d) {
+			d=eval(d);
+			drawPoints(d);
+		});
+	})
+}) 
+
+
+
 
 
