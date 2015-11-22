@@ -317,3 +317,35 @@ var collapseFile = function(ele){
 	$(t1).toggle();
 	$(ele).toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
 }
+
+
+$(function() {
+	$("#saveIndex").bind("click", function() {
+		var domain = $("#indexDomain");
+		var index = $("#indexPath");
+		domain.parent().removeClass("has-error");
+		index.parent().removeClass("has-error");
+
+		if (!domain.val() || domain.val().toString().trim() == "") {
+			domain.parent().addClass("has-error");
+			return;
+		}
+		if (!index.val() || index.val().toString().trim() == "") {
+			index.parent().addClass("has-error");
+			return;
+		}
+
+		// add "/" in index if not present already
+		if (index.val().lastIndexOf("/") + 1 != index.val().length) {
+			index.val(index.val() + "/");
+		}
+		
+		callRESTApi("/query_crawled_index/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
+			alert("Successfully added Index");
+		});
+
+	})
+
+})
+
+
