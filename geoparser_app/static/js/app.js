@@ -34,7 +34,7 @@ $(function() {
  * Generic AJAX call to REST APIs Sample usage - callRESTApi (url, typeMethod,
  * asyncBoolean, data, successFunction)
  */
-var callRESTApi = function(url, type, async, data, success) {
+var callRESTApi = function(url, type, async, data, success, errorFn) {
 	return $.ajax({
 		'url' : url,
 		'type' : type,
@@ -43,6 +43,7 @@ var callRESTApi = function(url, type, async, data, success) {
 		'success' : success,
 		error : function(jqXHR, textStatus, errorThrown) {
 			console.error('Issue while calling API - ' + url + ' - ' + textStatus + ' - ' + errorThrown);
+			errorFn();
 		}
 	});
 }
@@ -330,6 +331,7 @@ $(function() {
 	$("#saveIndex").bind("click", function() {
 		var domain = $("#indexDomain");
 		var index = $("#indexPath");
+		var button = $("#saveIndex");
 		var error = false;
 		domain.parent().removeClass("has-error");
 		index.parent().removeClass("has-error");
@@ -337,22 +339,34 @@ $(function() {
 		error = markEmtyError(domain);
 		error = markEmtyError(index) || error;
 
-		if(error){
+		if (error) {
 			return;
 		}
-		
+
 		// add "/" in index if not present already
 		if (index.val().lastIndexOf("/") + 1 != index.val().length) {
 			index.val(index.val() + "/");
 		}
-		
+
+		toggleSpinner(button, true);
 		callRESTApi("/query_crawled_index/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
+			toggleSpinner(button, false);
 			alert("Successfully added Index");
+		}, function(d) {
+			toggleSpinner(button, false);
 		});
 
 	})
 
 })
+/**
+ * Toggle active class and set disabled = bool
+ */
+var toggleSpinner = function(ele, bool) {
+	ele.toggleClass('active');
+	ele.prop("disabled", bool);
+
+}
 
 var markEmtyError = function (inputEle){
 	if (!inputEle.val() || inputEle.val().toString().trim() == "") {
