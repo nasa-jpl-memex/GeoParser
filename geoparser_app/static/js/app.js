@@ -155,6 +155,20 @@ var drawPoints = function(dataPoints) {
 	map.draw();
 }
 
+var paintDataFromAPI = function(data, docName) {
+	for ( var i in data) {
+		data[i].file = docName;
+		data[i].color = colorArr[colorIndex];
+	}
+	colorIndex++;
+	if (colorIndex >= colorArr.length) {
+		colorIndex = 0;
+	}
+	// KEEP ON APPENDING POINTS
+	dataPointsAll = data.concat(dataPointsAll);
+	drawPoints(data);
+}
+
 /**
  * Below code stores #progress-template once and removes it from DOM
  */
@@ -214,8 +228,6 @@ var fetchAndDrawPoints = function(res, file, displayArea) {
 
 		var list = '<ol>';
 		for ( var i in data) {
-			data[i].file = file.name;
-			data[i].color = colorArr[colorIndex];
 			list += '<li>' + data[i].loc_name + '</li>';
 		}
 		list += '</ol>'
@@ -226,15 +238,8 @@ var fetchAndDrawPoints = function(res, file, displayArea) {
 		fileLabels = fileLabels.parent();
 		fileLabels.append(
 				Dropzone.createElement("<span class='glyphicon glyphicon-map-marker left-buffer' style='color: "+colorArr[colorIndex]+";'>"));
-
-		colorIndex++;
-		if (colorIndex >= colorArr.length) {
-			colorIndex = 0;
-		}
 		
-		// KEEP ON APPENDING POINTS
-		dataPointsAll = data.concat(dataPointsAll);
-		drawPoints(data);
+		paintDataFromAPI(data, file.name);
 	});
 }
 
@@ -361,14 +366,14 @@ var markEmtyError = function (inputEle){
 $(function() {
 	$("#viewIndexResults").parent().find('.search-icon').bind("click", function() {
 		var indexResult = $("#viewIndexResults")
-		
-		if(markEmtyError(indexResult)){
+
+		if (markEmtyError(indexResult)) {
 			return;
 		}
-		
-		callRESTApi("/return_points/" + indexResult.val() , 'GET', 'true', null, function(d) {
-			d=eval(d);
-			drawPoints(d);
+
+		callRESTApi("/return_points/" + indexResult.val(), 'GET', 'true', null, function(d) {
+			d = eval(d);
+			paintDataFromAPI(d, indexResult.val());
 		});
 	})
 }) 

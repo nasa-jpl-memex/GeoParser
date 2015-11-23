@@ -149,11 +149,11 @@ def query_crawled_index(request, core_name, indexed_path):
             points = []
             query_range = 500
             try:
-                url = "{0}/{1}/select?q=*%3A*&wt=json&rows=1".format(indexed_path, core_name)
+                url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 response = urllib2.urlopen(url)
                 numFound = eval(response.read())['response']['numFound']
                 for row in range(0, int(numFound), query_range):
-                    query_url = "{0}/{1}/select?q=*%3A*&start={2}&rows={3}&wt=json".format(indexed_path, core_name, row, row+query_range)
+                    query_url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
                     places = geograpy.get_place_context(url=query_url)
                     location_names.append(places.regions)
                     location_names.append(places.countries)
