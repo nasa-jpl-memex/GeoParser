@@ -164,7 +164,7 @@ def query_crawled_index(request, core_name, indexed_path):
                     try:
                         geolocation = geolocator.geocode(location)
                         points.append(
-                            {'loc_name': location,
+                            {'loc_name': "{0}".format(location),
                             'position':{
                                 'x': geolocation.longitude,
                                 'y': geolocation.latitude
