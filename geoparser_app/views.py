@@ -160,6 +160,8 @@ def query_crawled_index(request, core_name, indexed_path):
                     location_names.append(places.cities)
                     location_names.append(places.other)
                     location_names = flatten(location_names)
+                print "Found {0} Locations for {1}".format(len(location_names), indexed_path)
+                print "Finding coordinates.." 
                 for location in location_names:
                     try:
                         geolocation = geolocator.geocode(location)
@@ -173,6 +175,7 @@ def query_crawled_index(request, core_name, indexed_path):
                         )
                     except:
                         pass
+                print "Found {0} coordinates..".format(len(points))
                 status = IndexCrawledPoints(core_name, indexed_path.lower(), points)
                 return HttpResponse(status=200, content=status)
             except Exception as e:

@@ -43,7 +43,9 @@ var callRESTApi = function(url, type, async, data, success, errorFn) {
 		'success' : success,
 		error : function(jqXHR, textStatus, errorThrown) {
 			console.error('Issue while calling API - ' + url + ' - ' + textStatus + ' - ' + errorThrown);
-			errorFn();
+			if (errorFn && typeof errorFn == "function") {
+				errorFn(jqXHR, textStatus, errorThrown);
+			}
 		}
 	});
 }
