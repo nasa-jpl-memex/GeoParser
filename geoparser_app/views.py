@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 
 from .forms import UploadFileForm
 from .models import Document
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores
 
 from tika import parser
 import geograpy
@@ -24,6 +24,7 @@ flip = True
 APP_NAME = "geoparser_app"
 UPLOADED_FILES_PATH = "static/uploaded_files"
 SUBDOMAIN = ""
+
 
 def index(request):
     file_name = ""
@@ -54,6 +55,17 @@ def list_of_uploaded_files(request):
         if not f.startswith('.'):
             files_list.append(f)
     return HttpResponse(status=200, content="{0}".format(files_list))
+
+
+def list_of_domains(request):
+    '''
+    Returns list of Solr cores except "uploaded_files"
+    '''
+    all_cores = get_all_cores()
+    if all_cores:
+        if "uploaded_files" in all_cores:
+            all_cores.remove("uploaded_files")
+    return HttpResponse(status=200, content=",".join(all_cores))
 
 
 def extract_text(request, file_name):

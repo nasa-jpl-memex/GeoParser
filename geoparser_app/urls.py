@@ -12,4 +12,5 @@ urlpatterns = patterns('geoparser_app.views',
     url(r'list_of_uploaded_files$', views.list_of_uploaded_files, name='list_of_uploaded_files'),
     url(r'index_file/(?P<file_name>\S+)$', views.index_file, name='index_file'),
     url(r'query_crawled_index/(?P<indexed_path>\S+)/(?P<core_name>\S+)$', views.query_crawled_index, name='query_crawled_index'),
+    url(r'list_of_domains/$', views.list_of_domains, name='list_of_domains'),
 )

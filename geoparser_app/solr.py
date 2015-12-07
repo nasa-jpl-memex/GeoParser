@@ -55,13 +55,27 @@ def create_core(core_name):
         print False
 
 
+def get_all_cores():
+    '''
+    Return all existing cores
+    '''
+    try:
+        url = "{0}admin/cores?action=STATUS&wt=json".format(SOLR_URL)
+        r = requests.get(url, headers=headers)
+        response = r.json()
+        return response["status"].keys()
+    except:
+        return None
+
+
 def IndexStatus(step, file_name):
     try:
         url = "{0}{1}/select?q=*%3A*&fq=id%3A+%22{2}%22&fl={3}&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME, file_name, step)
-        response = urllib2.urlopen(url)
-        return eval(response.read())['response']['docs'][0][step][0]
+        r = requests.get(url, headers=headers)
+        response = r.json()
+        return response['response']['docs'][0][step][0]
     except Exception as e:
-        return False
+        return "none"
 
 
 def IndexFile(core_name, file_name):
