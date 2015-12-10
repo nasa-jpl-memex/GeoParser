@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 
 from .forms import UploadFileForm
 from .models import Document
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores, get_domains_urls
 
 from tika import parser
 import geograpy
@@ -61,11 +61,15 @@ def list_of_domains(request):
     '''
     Returns list of Solr cores except "uploaded_files"
     '''
+    domains = {}
     all_cores = get_all_cores()
     if all_cores:
         if "uploaded_files" in all_cores:
             all_cores.remove("uploaded_files")
-    return HttpResponse(status=200, content=",".join(all_cores))
+        for core in all_cores:
+            ids = get_domains_urls(core)
+            domains[core] = ids
+    return HttpResponse(status=200, content=str(domains))
 
 
 def extract_text(request, file_name):

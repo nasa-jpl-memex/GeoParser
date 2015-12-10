@@ -68,6 +68,19 @@ def get_all_cores():
         return None
 
 
+def get_domains_urls(core):
+    '''
+    Return list of urls (ids) inside that core
+    '''
+    try:
+        url = "{0}{1}/select?q=*%3A*&fl=id&wt=json&indent=true".format(SOLR_URL, core)
+        r = requests.get(url, headers=headers)
+        response = r.json()
+        return [each['id'] for each in response["response"]["docs"]]
+    except:
+        return None
+
+
 def IndexStatus(step, file_name):
     try:
         url = "{0}{1}/select?q=*%3A*&fq=id%3A+%22{2}%22&fl={3}&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME, file_name, step)
