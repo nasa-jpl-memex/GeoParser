@@ -12,7 +12,9 @@ Geoparser extracts locations, such as cities or geographic coordinates expressed
 
 -pip 
 
-- Django
+- Django 
+
+- Apache Tika
 
 ###Instructions
 
@@ -30,7 +32,42 @@ Change directory to where you cloned the project
 Solr/solr-5.3.1/bin/solr start
 ```
 
-2.Run Dajgno server
+2.Clone lucene-geo-gazetteer repo
+```
+git clone https://github.com/chrismattmann/lucene-geo-gazetteer.git
+cd lucene-geo-gazetteer
+mvn install assembly:assembly
+add lucene-geo-gazetteer/src/lucene-geo-gazetteer/src/main/bin to your PATH environment variable
+```
+make sure it is working
+```
+lucene-geo-gazetteer --help
+```
+
+3.You will now need to build a Gazetteer using the Geonames.org dataset. (1.2 GB)
+```
+cd lucene-geo-gazetteer/src/lucene-geo-gazetteer
+curl -O http://download.geonames.org/export/dump/allCountries.zip
+unzip allCountries.zip
+lucene-geo-gazetteer -i geoIndex -b allCountries.txt
+```
+make sure it is working
+```
+ucene-geo-gazetteer -s Pasadena Texas
+[
+{"Texas" : [
+"Texas",
+"-91.92139",
+"18.05333"
+]},
+{"Pasadena" : [
+"Pasadena",
+"-74.06446",
+"4.6964"
+]}
+]
+```
+.Run Dajgno server
 
 ```
 python manage.py runserver
