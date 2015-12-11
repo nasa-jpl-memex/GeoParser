@@ -43,6 +43,14 @@ add lucene-geo-gazetteer/src/lucene-geo-gazetteer/src/main/bin to your PATH envi
 make sure it is working
 ```
 lucene-geo-gazetteer --help
+usage: lucene-geo-gazetteer
+ -b,--build <gazetteer file>           The Path to the Geonames
+                                       allCountries.txt
+ -h,--help                             Print this message.
+ -i,--index <directoryPath>            The path to the Lucene index
+                                       directory to either create or read
+ -s,--search <set of location names>   Location names to search the
+                                       Gazetteer for
 ```
 
 3.You will now need to build a Gazetteer using the Geonames.org dataset. (1.2 GB)
