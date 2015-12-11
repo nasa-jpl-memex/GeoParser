@@ -68,7 +68,7 @@ def list_of_domains(request):
             all_cores.remove("uploaded_files")
         for core in all_cores:
             ids = get_domains_urls(core)
-            domains[core] = ids
+            domains["{0}".format(core)] = ids
     return HttpResponse(status=200, content=str(domains))
 
 
