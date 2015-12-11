@@ -127,14 +127,14 @@ def find_location(request, file_name):
     if "none" in IndexStatus("locations", file_name):
         text_content = QueryText(file_name)
         if text_content:
-            with open("{0}/{1}/tmp.txt".format(APP_NAME, STATIC), 'w') as f:
+            with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
                 f.write(text_content)
                 f.close()
-            cmd = "java -classpath {0}/{1}:{0}/GeoTopicParser/location-ner-model/:{0}/GeoTopicParser/geotopic-mime/ org.apache.tika.cli.TikaCLI -m {0}/{2}/tmp.txt".format(APP_NAME, TIKA_APP, STATIC)
+            cmd = "java -classpath {0}/{1}:{0}/GeoTopicParser/location-ner-model/:{0}/GeoTopicParser/geotopic-mime/ org.apache.tika.cli.TikaCLI -m {0}/{2}/tmp.geot".format(APP_NAME, TIKA_APP, STATIC)
             locations = os.popen(cmd).read()
             points = parse_lat_lon(locations)
             status = IndexLocationName(file_name, points)
-            os.remove("{0}/{1}/tmp.txt".format(APP_NAME, STATIC))
+            os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
             if status[0]:
                 return HttpResponse(status=200, content="Location/s found and index to Solr.")
             else:
@@ -210,13 +210,13 @@ def query_crawled_index(request, core_name, indexed_path):
                     response = r.json()
                     text = response['response']['docs']
                     text_content = text_content + str(text)
-                with open("{0}/{1}/tmp.txt".format(APP_NAME, STATIC), 'w') as f:
+                with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
                     f.write(str(text_content))
                     f.close()
-                cmd = "java -classpath {0}/{1}:{0}/GeoTopicParser/location-ner-model/:{0}/GeoTopicParser/geotopic-mime/ org.apache.tika.cli.TikaCLI -m {0}/{2}/tmp.txt".format(APP_NAME, TIKA_APP, STATIC)
+                cmd = "java -classpath {0}/{1}:{0}/GeoTopicParser/location-ner-model/:{0}/GeoTopicParser/geotopic-mime/ org.apache.tika.cli.TikaCLI -m {0}/{2}/tmp.geot".format(APP_NAME, TIKA_APP, STATIC)
                 locations = os.popen(cmd).read()
                 location_names = parse_lat_lon(locations)
-                os.remove("{0}/{1}/tmp.txt".format(APP_NAME, STATIC))
+                os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
                 for key, values in location_names.iteritems():
                     try:
                         points.append(

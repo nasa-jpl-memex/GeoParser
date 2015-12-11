@@ -142,14 +142,16 @@ def IndexUploadedFilesText(file_name, text):
     Index extracted text for given file.
     '''
     text = text.replace("'", " ")
+    text = text.rstrip('\n')
+    text = text.rstrip()#replace("\n", "")
     file_dir = os.path.realpath(__file__).split("solr.py")[0]
-    tmp_json = "{0}/static/json/tmp.json".format(file_dir)
+    tmp_json = "{0}static/json/tmp.json".format(file_dir)
     with open(tmp_json, 'w') as f:
         f.write("[{{'id':'{0}', 'text':'{1}', 'locations':'\"none\"', 'points':'\"none\"'}}]".format(file_name, text.encode('ascii', 'ignore')))
         f.close()
     if create_core(COLLECTION_NAME):
         try:
-            command = "{0}/../Solr/solr-5.3.1/bin/post -c {1} {2}".format(file_dir, COLLECTION_NAME, tmp_json)
+            command = "{0}../Solr/solr-5.3.1/bin/post -c {1} {2}".format(file_dir, COLLECTION_NAME, tmp_json)
             os.system(command)
             os.remove(tmp_json)
             return (True, "Text indexed to Solr successfully.")
