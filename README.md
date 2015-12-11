@@ -29,7 +29,8 @@ pip install -r requirements.txt
 
 Change directory to where you cloned the project
 ```
-Solr/solr-5.3.1/bin/solr start
+cd Solr/solr-5.3.1/
+./bin/solr start
 ```
 
 2.Clone lucene-geo-gazetteer repo
