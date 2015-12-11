@@ -3,16 +3,18 @@
   <img src="https://raw.githubusercontent.com/MBoustani/GeoParser/master/logo.png"  width="250"/>
 </p>
 # GeoParser
-Geoparser extracts locations, such as cities or geographic coordinates expressed as latitude-longitude from any file and visualizes the points on a map. 
+The Geoparser is a sofware tool that can process information from any type of file, extract geographic coordinates, and visualize locations on a map. Users who are interested in seeing a geographical representation of information or data can choose to search for locations using the Geoparser, through a search index or by uploading files from their computer. The Geoparser will parse the files and visualizes cities or latitude-longitude points on the map. After the infromation is parsed and points are plotted on the map, users are able to filter their results by density, or by searching a key word and applying a "facet" to the parsed information. On the map, users can click on location points to reveal more information about the location and how it is related to their search.
 
 ##How to Install 
 
 ###Requirements
--Python 2.7 
+-Python 2.7
 
 -pip 
 
-- Django
+-Django 
+
+-Apache Tika
 
 ###Instructions
 
@@ -27,10 +29,54 @@ pip install -r requirements.txt
 
 Change directory to where you cloned the project
 ```
-Solr/solr-5.3.1/bin/solr start
+cd Solr/solr-5.3.1/
+./bin/solr start
 ```
 
-2.Run Dajgno server
+2.Clone lucene-geo-gazetteer repo
+```
+git clone https://github.com/chrismattmann/lucene-geo-gazetteer.git
+cd lucene-geo-gazetteer
+mvn install assembly:assembly
+add lucene-geo-gazetteer/src/lucene-geo-gazetteer/src/main/bin to your PATH environment variable
+```
+make sure it is working
+```
+lucene-geo-gazetteer --help
+usage: lucene-geo-gazetteer
+ -b,--build <gazetteer file>           The Path to the Geonames
+                                       allCountries.txt
+ -h,--help                             Print this message.
+ -i,--index <directoryPath>            The path to the Lucene index
+                                       directory to either create or read
+ -s,--search <set of location names>   Location names to search the
+                                       Gazetteer for
+```
+
+3.You will now need to build a Gazetteer using the Geonames.org dataset. (1.2 GB)
+```
+cd lucene-geo-gazetteer/src/lucene-geo-gazetteer
+curl -O http://download.geonames.org/export/dump/allCountries.zip
+unzip allCountries.zip
+lucene-geo-gazetteer -i geoIndex -b allCountries.txt
+```
+make sure it is working
+```
+ucene-geo-gazetteer -s Pasadena Texas
+[
+{"Texas" : [
+"Texas",
+"-91.92139",
+"18.05333"
+]},
+{"Pasadena" : [
+"Pasadena",
+"-74.06446",
+"4.6964"
+]}
+]
+```
+.Run Dajgno server
 
 ```
 python manage.py runserver
