@@ -62,7 +62,7 @@ lucene-geo-gazetteer -i geoIndex -b allCountries.txt
 ```
 make sure it is working
 ```
-ucene-geo-gazetteer -s Pasadena Texas
+lucene-geo-gazetteer -s Pasadena Texas
 [
 {"Texas" : [
 "Texas",
@@ -76,7 +76,7 @@ ucene-geo-gazetteer -s Pasadena Texas
 ]}
 ]
 ```
-4.Run Dajgno server
+4.Run Django server
 
 ```
 python manage.py runserver
