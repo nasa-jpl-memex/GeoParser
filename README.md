@@ -8,10 +8,10 @@ The Geoparser is a sofware tool that can process information from any type of fi
 ##How to Install 
 
 ###Requirements
--Python 2.7 
+-Python 2.7
 -pip 
-- Django 
-- Apache Tika
+-Django 
+-Apache Tika
 
 ###Instructions
 
