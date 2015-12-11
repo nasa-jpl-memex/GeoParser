@@ -86,7 +86,6 @@ python manage.py runserver
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
-- [Geograpy](https://github.com/ushahidi/geograpy)
-- [Geopy](https://github.com/geopy/geopy)
+
 
 
