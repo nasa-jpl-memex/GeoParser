@@ -1,6 +1,8 @@
 from django.shortcuts import render
 import glob, os
 import urllib2
+import ast
+import requests
 from compiler.ast import flatten
 from os.path import isfile
 from django.shortcuts import render, render_to_response
@@ -13,18 +15,17 @@ from .models import Document
 from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores, get_domains_urls
 
 from tika import parser
-import geograpy
-from geograpy import extraction
-from geograpy import places
-from geopy.geocoders import Nominatim
 
-geolocator = Nominatim()
 flip = True
 
 APP_NAME = "geoparser_app"
 UPLOADED_FILES_PATH = "static/uploaded_files"
+STATIC = "static"
+TIKA_APP = "tika/tika-app/target/tika-app-1.12-SNAPSHOT.jar"
 SUBDOMAIN = ""
-
+geotopic_server = "http://localhost:9997/"
+headers = {"content-type" : "application/json" }
+params = {"commit" : "true" }
 
 def index(request):
     file_name = ""
@@ -72,6 +73,36 @@ def list_of_domains(request):
     return HttpResponse(status=200, content=str(domains))
 
 
+def parse_lat_lon(locations):
+    points = {}
+    lines = locations.split("\n")
+    Geographic_NAME = None
+    for line in lines:
+        if len(line.split("Geographic_NAME:")) == 2:
+            Geographic_NAME = line.split("Geographic_NAME:")[1]
+        if len(line.split("Geographic_LONGITUDE:")) == 2:
+            Geographic_LONGITUDE = line.split("Geographic_LONGITUDE:")[1]
+        if len(line.split("Geographic_LATITUDE:")) == 2:
+            Geographic_LATITUDE = line.split("Geographic_LATITUDE:")[1]
+    if Geographic_NAME:
+        points[Geographic_NAME.replace(" ","")] = [Geographic_LATITUDE.replace(" ",""), Geographic_LONGITUDE.replace(" ","")]
+
+    optional_count = locations.count("Optional_NAME")
+    for num in range(1, optional_count+1):
+        Optional_NAME = None
+        for line in lines:
+            if len(line.split("Optional_NAME{0}:".format(str(num)))) == 2:
+                Optional_NAME = line.split("Optional_NAME{0}:".format(str(num)))[1]
+            if len(line.split("Optional_LONGITUDE{0}:".format(str(num)))) == 2:
+                Optional_LONGITUDE = line.split("Optional_LONGITUDE{0}:".format(str(num)))[1]
+            if len(line.split("Optional_LATITUDE{0}:".format(str(num)))) == 2:
+                Optional_LATITUDE = line.split("Optional_LATITUDE{0}:".format(str(num)))[1]
+        if Optional_NAME:
+            points[Optional_NAME.replace(" ","")] = [Optional_LATITUDE.replace(" ",""), Optional_LONGITUDE.replace(" ","")]
+
+    return points
+
+
 def extract_text(request, file_name):
     '''
         Using Tika to extract text from given file
@@ -96,9 +127,14 @@ def find_location(request, file_name):
     if "none" in IndexStatus("locations", file_name):
         text_content = QueryText(file_name)
         if text_content:
-            e = extraction.Extractor(text=text_content)
-            e.find_entities()
-            status = IndexLocationName(file_name, e.places)
+            with open("{0}/{1}/tmp.txt".format(APP_NAME, STATIC), 'w') as f:
+                f.write(text_content)
+                f.close()
+            cmd = "java -classpath {0}/{1}:{0}/GeoTopicParser/location-ner-model/:{0}/GeoTopicParser/geotopic-mime/ org.apache.tika.cli.TikaCLI -m {0}/{2}/tmp.txt".format(APP_NAME, TIKA_APP, STATIC)
+            locations = os.popen(cmd).read()
+            points = parse_lat_lon(locations)
+            status = IndexLocationName(file_name, points)
+            os.remove("{0}/{1}/tmp.txt".format(APP_NAME, STATIC))
             if status[0]:
                 return HttpResponse(status=200, content="Location/s found and index to Solr.")
             else:
@@ -118,14 +154,14 @@ def find_latlon(request, file_name):
         location_names = QueryLocationName(file_name)
         if location_names:
             points = []
-            for location in location_names:
+            location_names = ast.literal_eval(location_names)
+            for key, values in location_names.iteritems():
                 try:
-                    geolocation = geolocator.geocode(location)
                     points.append(
-                        {'loc_name': location,
+                        {'loc_name': key,
                         'position':{
-                            'x': geolocation.longitude,
-                            'y': geolocation.latitude
+                            'x': values[1],
+                            'y': values[0]
                         }
                         }
                     )
@@ -161,32 +197,34 @@ def query_crawled_index(request, core_name, indexed_path):
     '''
     if "solr" in indexed_path.lower():
         if IndexFile(core_name, indexed_path.lower()):
-            location_names = []
             points = []
             query_range = 500
+            text_content = ""
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 response = urllib2.urlopen(url)
                 numFound = eval(response.read())['response']['numFound']
                 for row in range(0, int(numFound), query_range):
-                    query_url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
-                    places = geograpy.get_place_context(url=query_url)
-                    location_names.append(places.regions)
-                    location_names.append(places.countries)
-                    location_names.append(places.cities)
-                    location_names.append(places.other)
-                    location_names = flatten(location_names)
-                print "Found {0} Locations for {1}".format(len(location_names), indexed_path)
-                print "Finding coordinates.." 
-                for location in location_names:
+                    url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
+                    r = requests.get(url, headers=headers)
+                    response = r.json()
+                    text = response['response']['docs']
+                    text_content = text_content + str(text)
+                with open("{0}/{1}/tmp.txt".format(APP_NAME, STATIC), 'w') as f:
+                    f.write(str(text_content))
+                    f.close()
+                cmd = "java -classpath {0}/{1}:{0}/GeoTopicParser/location-ner-model/:{0}/GeoTopicParser/geotopic-mime/ org.apache.tika.cli.TikaCLI -m {0}/{2}/tmp.txt".format(APP_NAME, TIKA_APP, STATIC)
+                locations = os.popen(cmd).read()
+                location_names = parse_lat_lon(locations)
+                os.remove("{0}/{1}/tmp.txt".format(APP_NAME, STATIC))
+                for key, values in location_names.iteritems():
                     try:
-                        geolocation = geolocator.geocode(location)
                         points.append(
-                            {'loc_name': "{0}".format(location),
+                            {'loc_name': key,
                             'position':{
-                                'x': geolocation.longitude,
-                                'y': geolocation.latitude
-                                    }
+                                'x': values[1],
+                                'y': values[0]
+                            }
                             }
                         )
                     except:
