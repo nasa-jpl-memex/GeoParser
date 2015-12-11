@@ -76,13 +76,13 @@ ucene-geo-gazetteer -s Pasadena Texas
 ]}
 ]
 ```
-.Run Dajgno server
+4.Run Dajgno server
 
 ```
 python manage.py runserver
 ```
 
-3.Open in browser [http://localhost:8000/](http://localhost:8000/)
+5.Open in browser [http://localhost:8000/](http://localhost:8000/)
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
