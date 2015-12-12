@@ -69,7 +69,7 @@ def list_of_domains(request):
         for core in all_cores:
             ids = get_domains_urls(core)
             domains["{0}".format(core)] = ids
-    return HttpResponse(status=200, content=str(domains))
+    return HttpResponse(status=200, content="[" + str(domains) + "]")
 
 
 def extract_text(request, file_name):
