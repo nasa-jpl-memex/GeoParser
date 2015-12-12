@@ -30,7 +30,7 @@ Change directory to where you cloned the project
 Solr/solr-5.3.1/bin/solr start
 ```
 
-2.Run Dajgno server
+2.Run Django server
 
 ```
 python manage.py runserver
