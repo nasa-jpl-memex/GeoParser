@@ -182,7 +182,7 @@
 
             <div class="row">
               <div class="col-md-1"></div>
-              <div class="col-md-10 no-left-padding  bottom-buffer form-group">
+              <div class="col-md-10 no-left-padding form-group">
                 <label class="control-label" for="indexPath">Indexed Engine path</label>
                 <input id="indexPath" type="text" class="form-control" placeholder="Type link to index.."
                   aria-describedby="sizing-addon1">
@@ -193,12 +193,30 @@
             <div class="clear"></div>
             <div class="row">
               <div class="col-md-9"></div>
-              <div class="col-md-3">
+              <div class="col-md-3 bottom-buffer">
                 <button id="saveIndex" type="button" class="btn btn-primary has-spinner">
                     <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
                     Save
                 </button>
               </div>
+            </div>
+            <div class="clear"></div>
+            <div class="row">
+              <div class="col-md-3">
+                <select id="savedDomain" class="dropdown-toggle-full-width">  </select>
+              </div>
+              <div class="col-md-6">
+                <select id="savedIndexes" class="dropdown-toggle-full-width">  </select>
+              </div>
+              <div class="col-md-3">
+                <button id="viewIndex" type="button" class="btn btn-primary has-spinner">
+                    <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+                    View
+                </button>
+              </div>
+            </div>
+            <div class="row" >
+              <div class="col-md-12" id="resultsIndex"></div>
             </div>
           </div>
           <!-- Add Index Box end-->
