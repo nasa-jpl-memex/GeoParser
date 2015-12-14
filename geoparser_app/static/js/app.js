@@ -353,6 +353,7 @@ $(function() {
 		toggleSpinner(button, true);
 		callRESTApi("/query_crawled_index/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
 			toggleSpinner(button, false);
+			fillDomain();
 			alert("Successfully added Index");
 		}, function(d) {
 			toggleSpinner(button, false);
@@ -378,18 +379,43 @@ var markEmtyError = function (inputEle){
 	return false;
 }
 
-// Search Index functions below
-$(function() {
-	$("#viewIndexResults").parent().find('.search-icon').bind("click", function() {
-		var indexResult = $("#viewIndexResults")
-
-		if (markEmtyError(indexResult)) {
-			return;
+var listOfDomains;
+var fillDomain = function(){
+	callRESTApi("/list_of_domains/", 'GET', 'true', null, function(d) {
+		listOfDomains = eval(d)[0];
+		if(!listOfDomains || $.isEmptyObject(listOfDomains) ){
+			$("#savedDomain").parent().parent().hide();
+		}else{
+			$("#savedDomain").parent().parent().show();
 		}
+		var domainsList = $.map(listOfDomains, function(element,index) {return "<option>"+index+"</option>"});
+		
+		$("#savedDomain").html(domainsList);
+		
+		fillURL();
+		
+	});	
+}
+var fillURL = function() {
+	var selectedIndexes = listOfDomains[$("#savedDomain").val()];
+	
+	$("#savedIndexes").html("");
+	for ( var i in selectedIndexes) {
+		$("#savedIndexes").append("<option>" + selectedIndexes[i] + "</option>");
+	}
+}
 
-		callRESTApi("/return_points/" + indexResult.val(), 'GET', 'true', null, function(d) {
+$(function() {
+	fillDomain();
+	$("#savedDomain").bind("change",fillURL);
+	$("#viewIndex").bind("click", function() {
+		var indexDisp = $("#savedIndexes").val();
+		var domainDisp = $("#savedDomain").val();
+		
+		callRESTApi("/return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
 			d = eval(d);
-			paintDataFromAPI(d, indexResult.val());
+			$("#resultsIndex").append("<li>"+ d.length + " found in " + domainDisp + " - " + indexDisp + "</li>");
+			paintDataFromAPI(d, domainDisp + " - " + indexDisp);
 		});
 	})
 }) 

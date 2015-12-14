@@ -76,7 +76,7 @@ def get_domains_urls(core):
         url = "{0}{1}/select?q=*%3A*&fl=id&wt=json&indent=true".format(SOLR_URL, core)
         r = requests.get(url, headers=headers)
         response = r.json()
-        return [each['id'] for each in response["response"]["docs"]]
+        return ["{0}".format(each['id']) for each in response["response"]["docs"]]
     except:
         return None
 
