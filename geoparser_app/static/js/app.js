@@ -55,17 +55,28 @@ var callRESTApi = function(url, type, async, data, success, errorFn) {
  * 
  */
 var colorIndex = 0
-var colorArr = [ 'black', 'red', 'yellow', 'blue', 'green', 'orange' ];
+var colorArr = [ 'red', 'yellow', 'blue', 'green', 'orange', 'white', 'grey'];
 var map = null;
+
 $(function() {
-	map = geo.map({
-		'node' : '#map',
-		zoom : 2
+	var layer = new ol.layer.Tile({
+		source: new ol.source.XYZ({
+      url: 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+      attributions: [new ol.Attribution({ html: ['&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'] })]
+    })
 	});
-	map.createLayer('osm', {
-		baseUrl : 'http://a.basemaps.cartocdn.com/light_all/'
+
+	var view = new ol.View({
+    center: ol.proj.transform([37.41, 8.82], 'EPSG:4326', 'EPSG:3857'),
+	  zoom: 2
 	});
-	map.createLayer('ui').createWidget('slider');
+
+	map = new ol.Map({
+	  layers: [layer],
+	  target: 'map',
+	  view: view
+	});
+
 });
 
 /**
@@ -111,54 +122,55 @@ $(function() {
 /**
  * Function to draw points on #map
  */
-var dataPointsAll = {
-	position : {}
-};
+var dataPointsAll = {};
 var drawPoints = function(dataPoints) {
+
 	if (!dataPoints.length || dataPoints.length == 0) {
 		return;
 	}
+	
+	for(var i in dataPoints){
+		var point = dataPoints[i];
+		var overlay = new ol.Overlay({
+		  position: ol.proj.transform(
+			    [point.position.y, point.position.x],
+			    'EPSG:4326',
+			    'EPSG:3857'
+			  ),
+			  element: $('<span class="glyphicon glyphicon-map-marker"><div style="display: none;">' + point.loc_name + '<br/>Extracted from: ' + point.file + '</div></span>')
+			  					.css({'color':point.color})
+			  					.mouseover(function() {
+			  						$(this).children().show();	
+			  					})
+			  					.mouseout(function(){
+			  						$(this).children().hide()
+			  					})[0],
+			  file: point.file
+			});
+		map.addOverlay(overlay);
+		// KEEP ON APPENDING POINTS
+		if( !dataPointsAll[point.file]){
+			dataPointsAll[point.file] = [];
+		}
+		dataPointsAll[point.file].push(overlay)
+	}
 
-	var featureLayer = map.createLayer('feature', {
-		renderer : 'vgl'
-	});
-	var uiLayer = map.createLayer('ui');
-
-	featureLayer.createFeature('point', {
-		selectionAPI : true
-	}).data(dataPoints).position(function(d) {
-		return {
-			'x' : d.position.x,
-			'y' : d.position.y
-		};
-	}).style('fillColor', function(d) {
-		if (d.color)
-			return d.color;
-		return 'yellow'
-	}).geoOn(
-			geo.event.feature.mouseover,
-			function(evt) {
-				$(uiLayer.node()).append(
-						'<div id="example-overlay">' + evt.data.loc_name + '<br/> Extracted from: ' + evt.data.file + '</div>');
-
-				var pos = map.gcsToDisplay({
-					x : evt.data.position.x,
-					y : evt.data.position.y
-				});
-
-				$('#example-overlay').css('position', 'absolute');
-				$('#example-overlay').css('left', pos.x + 'px');
-				$('#example-overlay').css('top', pos.y + 'px');
-			}).geoOn(geo.event.feature.mouseout, function(evt) {
-		$('#example-overlay').remove();
-	}).geoOn(geo.event.pan, function(evt) {
-		// Do something on pan
-	});
-
-	map.draw();
 }
 
+var deletePoints = function(dataPoints) {
+	if (!dataPoints || !dataPoints.length || dataPoints.length == 0) {
+		return;
+	}
+	
+	for(var i in dataPoints){
+		map.removeOverlay(dataPoints[i]);
+	}
+}
+
+
 var paintDataFromAPI = function(data, docName) {
+	data = [{'loc_name': 'Informationcenter', 'position': {'y': '29.98663', 'x': '31.43867'}}, {'loc_name': 'NewYork', 'position': {'y': '53.07897', 'x': '-0.14008'}}, {'loc_name': 'Ca', 'position': {'y': '-7.0877', 'x': '109.2894'}}, {'loc_name': 'Nasa', 'position': {'y': '35.35611', 'x': '129.33861'}}, {'loc_name': 'California', 'position': {'y': '-29.8804', 'x': '-51.3193'}}]
+
 	for ( var i in data) {
 		data[i].file = docName;
 		data[i].color = colorArr[colorIndex];
@@ -167,8 +179,7 @@ var paintDataFromAPI = function(data, docName) {
 	if (colorIndex >= colorArr.length) {
 		colorIndex = 0;
 	}
-	// KEEP ON APPENDING POINTS
-	dataPointsAll = data.concat(dataPointsAll);
+	
 	drawPoints(data);
 }
 
@@ -237,10 +248,10 @@ var fetchAndDrawPoints = function(res, file, displayArea) {
 
 		displayArea.appendChild(Dropzone.createElement(list));
 		
-		var fileLabels = $(file.previewElement).find('glyphicon-minus');
+		var fileLabels = $(file.previewElement).find('.glyphicon-minus');
 		fileLabels = fileLabels.parent();
 		fileLabels.append(
-				Dropzone.createElement("<span class='glyphicon glyphicon-map-marker left-buffer' style='color: "+colorArr[colorIndex]+";'>"));
+				Dropzone.createElement("<span class='glyphicon glyphicon-map-marker fill-bg' style='color: "+colorArr[colorIndex]+";'>"));
 		
 		paintDataFromAPI(data, file.name);
 	});
@@ -286,15 +297,15 @@ $(function() {
 		document.querySelector("#total-progress").style.opacity = "0";
 	});
 
-	document.querySelector("#actions .cancel").onclick = function() {
-		myDropzone.removeAllFiles(true);
-	};
-
 	myDropzone.on("success", function(file, res) {
 		callRESTApi("index_file/" + res.file_name, "GET", false, {}, function(d) {
 			// Start looking for geo parse status and show pointers on map if found
 			getStatus(res, file);
 		});
+	});
+	
+	myDropzone.on("removedfile", function(file) {
+		deletePoints(dataPointsAll[file.name]);
 	});
 	// Dropzone end
 
@@ -419,8 +430,3 @@ $(function() {
 		});
 	})
 }) 
-
-
-
-
-

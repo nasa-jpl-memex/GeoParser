@@ -125,6 +125,7 @@ html, body {
 	position: absolute;
 	left: 0px;
 	top: 0px;
+	margin-top: 51px !important;
 }
 
 .input-box-bg {
@@ -143,6 +144,10 @@ html, body {
 
 .left-buffer {
 	padding-left: 10px;
+}
+
+.right-buffer {
+	padding-right: 10px;
 }
 
 .no-left-padding {
@@ -269,4 +274,9 @@ hr {
 @-webkit-keyframes spin2 {
     from { -webkit-transform: rotate(0deg); }
     to { -webkit-transform: rotate(360deg); }
+}
+
+.fill-bg{
+	border: 1px solid black;
+	background-color: black;
 }
