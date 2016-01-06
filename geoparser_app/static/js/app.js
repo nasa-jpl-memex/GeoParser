@@ -67,7 +67,7 @@ $(function() {
 	});
 
 	var view = new ol.View({
-    center: ol.proj.transform([37.41, 8.82], 'EPSG:4326', 'EPSG:3857'),
+    center: ol.proj.transform([-98.5,39.76], 'EPSG:4326', 'EPSG:3857'),
 	  zoom: 2
 	});
 
@@ -133,7 +133,7 @@ var drawPoints = function(dataPoints) {
 		var point = dataPoints[i];
 		var overlay = new ol.Overlay({
 		  position: ol.proj.transform(
-			    [point.position.y, point.position.x],
+			    [parseFloat(point.position.y), parseFloat(point.position.x)],
 			    'EPSG:4326',
 			    'EPSG:3857'
 			  ),
