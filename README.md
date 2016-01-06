@@ -76,13 +76,20 @@ lucene-geo-gazetteer -s Pasadena Texas
 ]}
 ]
 ```
-4.Run Django server
+Now start lucene-geo-gazetteer server
+```
+lucene-geo-gazetteer -server
+```
+4.Run tika server as mentioned in `https://wiki.apache.org/tika/GeoTopicParser` on port `8081`. Port is mentioned in `https://github.com/MBoustani/GeoParser/blob/master/geoparser_app/views.py#L117`
+
+
+5.Run Django server
 
 ```
 python manage.py runserver
 ```
 
-5.Open in browser [http://localhost:8000/](http://localhost:8000/)
+6.Open in browser [http://localhost:8000/](http://localhost:8000/)
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
