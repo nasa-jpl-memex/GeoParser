@@ -72,33 +72,17 @@ def list_of_domains(request):
             domains["{0}".format(core)] = ids
     return HttpResponse(status=200, content="[" + str(domains) + "]")
 
-
+    
 def parse_lat_lon(locations):
     points = {}
-    lines = locations.split("\n")
-    Geographic_NAME = None
-    for line in lines:
-        if len(line.split("Geographic_NAME:")) == 2:
-            Geographic_NAME = line.split("Geographic_NAME:")[1]
-        if len(line.split("Geographic_LONGITUDE:")) == 2:
-            Geographic_LONGITUDE = line.split("Geographic_LONGITUDE:")[1]
-        if len(line.split("Geographic_LATITUDE:")) == 2:
-            Geographic_LATITUDE = line.split("Geographic_LATITUDE:")[1]
-    if Geographic_NAME:
-        points[Geographic_NAME.replace(" ","")] = [Geographic_LATITUDE.replace(" ",""), Geographic_LONGITUDE.replace(" ","")]
-
-    optional_count = locations.count("Optional_NAME")
-    for num in range(1, optional_count+1):
-        Optional_NAME = None
-        for line in lines:
-            if len(line.split("Optional_NAME{0}:".format(str(num)))) == 2:
-                Optional_NAME = line.split("Optional_NAME{0}:".format(str(num)))[1]
-            if len(line.split("Optional_LONGITUDE{0}:".format(str(num)))) == 2:
-                Optional_LONGITUDE = line.split("Optional_LONGITUDE{0}:".format(str(num)))[1]
-            if len(line.split("Optional_LATITUDE{0}:".format(str(num)))) == 2:
-                Optional_LATITUDE = line.split("Optional_LATITUDE{0}:".format(str(num)))[1]
-        if Optional_NAME:
-            points[Optional_NAME.replace(" ","")] = [Optional_LATITUDE.replace(" ",""), Optional_LONGITUDE.replace(" ","")]
+    optionalCount = 0
+    for key in locations.keys():
+        if key.startswith("Optional_NAME"):
+            optionalCount = optionalCount + 1 
+    
+    points[locations["Geographic_NAME"].replace(" ","")] = [locations["Geographic_LATITUDE"].replace(" ",""), locations["Geographic_LONGITUDE"].replace(" ","")]
+    for x in range(1, optionalCount+1):
+        points[locations["Optional_NAME{0}".format(x)].replace(" ","")] = [locations["Optional_LATITUDE{0}".format(x)].replace(" ",""), locations["Optional_LONGITUDE{0}".format(x)].replace(" ","")]
 
     return points
 
@@ -130,9 +114,10 @@ def find_location(request, file_name):
             with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
                 f.write(text_content)
                 f.close()
-            cmd = "java -classpath {0}/{1}:{0}/GeoTopicParser/location-ner-model/:{0}/GeoTopicParser/geotopic-mime/ org.apache.tika.cli.TikaCLI -m {0}/{2}/tmp.geot".format(APP_NAME, TIKA_APP, STATIC)
-            locations = os.popen(cmd).read()
-            points = parse_lat_lon(locations)
+            parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "http://localhost:8001")
+
+            points = parse_lat_lon(parsed["metadata"])
+            
             status = IndexLocationName(file_name, points)
             os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
             if status[0]:
@@ -158,10 +143,10 @@ def find_latlon(request, file_name):
             for key, values in location_names.iteritems():
                 try:
                     points.append(
-                        {'loc_name': key,
+                        {'loc_name': "{0}".format(key),
                         'position':{
-                            'x': values[1],
-                            'y': values[0]
+                            'x': "{0}".format(values[0]),
+                            'y': "{0}".format(values[1])
                         }
                         }
                     )
@@ -213,17 +198,18 @@ def query_crawled_index(request, core_name, indexed_path):
                 with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
                     f.write(str(text_content))
                     f.close()
-                cmd = "java -classpath {0}/{1}:{0}/GeoTopicParser/location-ner-model/:{0}/GeoTopicParser/geotopic-mime/ org.apache.tika.cli.TikaCLI -m {0}/{2}/tmp.geot".format(APP_NAME, TIKA_APP, STATIC)
-                locations = os.popen(cmd).read()
-                location_names = parse_lat_lon(locations)
+                
+                parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "http://localhost:8001")
+                location_names = parse_lat_lon(parsed["metadata"])
+                
                 os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
                 for key, values in location_names.iteritems():
                     try:
                         points.append(
-                            {'loc_name': key,
+                            {'loc_name': "{0}".format(key),
                             'position':{
-                                'x': values[1],
-                                'y': values[0]
+                                'x': "{0}".format(values[0]),
+                                'y': "{0}".format(values[1])
                             }
                             }
                         )
