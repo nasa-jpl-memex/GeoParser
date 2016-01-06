@@ -169,8 +169,6 @@ var deletePoints = function(dataPoints) {
 
 
 var paintDataFromAPI = function(data, docName) {
-	data = [{'loc_name': 'Informationcenter', 'position': {'y': '29.98663', 'x': '31.43867'}}, {'loc_name': 'NewYork', 'position': {'y': '53.07897', 'x': '-0.14008'}}, {'loc_name': 'Ca', 'position': {'y': '-7.0877', 'x': '109.2894'}}, {'loc_name': 'Nasa', 'position': {'y': '35.35611', 'x': '129.33861'}}, {'loc_name': 'California', 'position': {'y': '-29.8804', 'x': '-51.3193'}}]
-
 	for ( var i in data) {
 		data[i].file = docName;
 		data[i].color = colorArr[colorIndex];
