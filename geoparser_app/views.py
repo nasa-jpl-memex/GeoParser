@@ -183,39 +183,45 @@ def query_crawled_index(request, core_name, indexed_path):
     if "solr" in indexed_path.lower():
         if IndexFile(core_name, indexed_path.lower()):
             points = []
-            query_range = 500
-            text_content = ""
+            query_range = 10
+            # 1 QUERY solr 10 records at a time
+            # 2 save it in temporary file
+            # 3 Run GeotopicParser on tmp file
+            # After all 3 steps are completed for whole index we save it in local solr instance
+            # TODO - save points in local solr after every step
+            # TODO - make mechanism for resurrection post failure. It should start geo tagging only for documents which were previously not geo tagged.  
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 response = urllib2.urlopen(url)
                 numFound = eval(response.read())['response']['numFound']
+                print "Total number of records to be geotagged {0}".format(numFound)
                 for row in range(0, int(numFound), query_range):
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
+                    print "solr query - {0}".format(url)
                     r = requests.get(url, headers=headers)
                     response = r.json()
                     text = response['response']['docs']
-                    text_content = text_content + str(text)
-                with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
-                    f.write(str(text_content))
-                    f.close()
-                
-                parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "http://localhost:8001")
-                location_names = parse_lat_lon(parsed["metadata"])
-                
-                os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
-                for key, values in location_names.iteritems():
-                    try:
-                        points.append(
-                            {'loc_name': "{0}".format(key),
-                            'position':{
-                                'x': "{0}".format(values[0]),
-                                'y': "{0}".format(values[1])
-                            }
-                            }
-                        )
-                    except:
-                        pass
-                print "Found {0} coordinates..".format(len(points))
+                    text_content = str(text)
+                    with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
+                        f.write(str(text_content))
+                        f.close()
+                    
+                    parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "http://localhost:8001")
+                    location_names = parse_lat_lon(parsed["metadata"])
+                    os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
+                    for key, values in location_names.iteritems():
+                        try:
+                            points.append(
+                                {'loc_name': "{0}".format(key),
+                                'position':{
+                                    'x': "{0}".format(values[0]),
+                                    'y': "{0}".format(values[1])
+                                }
+                                }
+                            )
+                        except:
+                            pass
+                    print "Found {0} coordinates..".format(len(points))
                 status = IndexCrawledPoints(core_name, indexed_path.lower(), points)
                 return HttpResponse(status=200, content=status)
             except Exception as e:
