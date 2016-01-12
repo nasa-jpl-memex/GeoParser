@@ -1,10 +1,13 @@
 import os
 import urllib2
 import requests
+from ConfigParser import SafeConfigParser
 
+conf_parser = SafeConfigParser()
+conf_parser.read('config.txt')
 
-SOLR_URL = "http://localhost:8983/solr/"
-COLLECTION_NAME = "uploaded_files"
+SOLR_URL = conf_parser.get('general', 'SOLR_URL')
+UPLOADED_FILES_COLLECTION_NAME = conf_parser.get('general', 'UPLOADED_FILES_COLLECTION_NAME')
 
 
 headers = {"content-type" : "application/json" }
@@ -83,7 +86,7 @@ def get_domains_urls(core):
 
 def IndexStatus(step, file_name):
     try:
-        url = "{0}{1}/select?q=*%3A*&fq=id%3A+%22{2}%22&fl={3}&wt=json&indent=true".format(SOLR_URL, COLLECTION_NAME, file_name, step)
+        url = "{0}{1}/select?q=*%3A*&fq=id%3A+%22{2}%22&fl={3}&wt=json&indent=true".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME, file_name, step)
         r = requests.get(url, headers=headers)
         response = r.json()
         return response['response']['docs'][0][step][0]
@@ -105,7 +108,7 @@ def IndexFile(core_name, file_name):
                 return True
             else:
                 try:
-                    if core_name == COLLECTION_NAME:
+                    if core_name == UPLOADED_FILES_COLLECTION_NAME:
                         payload = {
                             "add":{
                                 "doc":{
@@ -116,7 +119,7 @@ def IndexFile(core_name, file_name):
                                 }
                             }
                         }
-                        r = requests.post("{0}{1}/update".format(SOLR_URL, COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
+                        r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
                     else:
                         payload = {
                             "add":{
@@ -149,9 +152,9 @@ def IndexUploadedFilesText(file_name, text):
     with open(tmp_json, 'w') as f:
         f.write("[{{'id':'{0}', 'text':'{1}', 'locations':'\"none\"', 'points':'\"none\"'}}]".format(file_name, text.encode('ascii', 'ignore')))
         f.close()
-    if create_core(COLLECTION_NAME):
+    if create_core(UPLOADED_FILES_COLLECTION_NAME):
         try:
-            command = "{0}../Solr/solr-5.3.1/bin/post -c {1} {2}".format(file_dir, COLLECTION_NAME, tmp_json)
+            command = "{0}../Solr/solr-5.3.1/bin/post -c {1} {2}".format(file_dir, UPLOADED_FILES_COLLECTION_NAME, tmp_json)
             os.system(command)
             os.remove(tmp_json)
             return (True, "Text indexed to Solr successfully.")
@@ -165,9 +168,9 @@ def QueryText(file_name):
     '''
     Return extracted and indexed text for each file.
     '''
-    if create_core(COLLECTION_NAME):
+    if create_core(UPLOADED_FILES_COLLECTION_NAME):
         try:
-            url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json&indent=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
+            url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json&indent=true'.format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME, file_name)
             response = urllib2.urlopen(url)
             return eval(response.read())['response']['docs'][0]['text'][0]
         except:
@@ -178,7 +181,7 @@ def IndexLocationName(name, locations):
     '''
     Index location name for each file.
     '''
-    if create_core(COLLECTION_NAME):
+    if create_core(UPLOADED_FILES_COLLECTION_NAME):
         try:
             payload = {
                 "add":{
@@ -188,7 +191,7 @@ def IndexLocationName(name, locations):
                     }
                 }
             }
-            r = requests.post("{0}{1}/update".format(SOLR_URL, COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
+            r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
             return (True, "Location name/s indexed to Solr successfully.")
         except:
             return (False, "Cannot index location name/s to Solr.")
@@ -200,9 +203,9 @@ def QueryLocationName(file_name):
     '''
     Return location names for given filename
     '''
-    if create_core(COLLECTION_NAME):
+    if create_core(UPLOADED_FILES_COLLECTION_NAME):
         try:
-            url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json&indent=true'.format(SOLR_URL, COLLECTION_NAME, file_name)
+            url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json&indent=true'.format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME, file_name)
             response = urllib2.urlopen(url)
             return eval(response.read())['response']['docs'][0]['locations'][0]
         except:
@@ -213,7 +216,7 @@ def IndexLatLon(file_name, points):
     '''
     Index points for given file
     '''
-    if create_core(COLLECTION_NAME):
+    if create_core(UPLOADED_FILES_COLLECTION_NAME):
         try:
             payload = {
                 "add":{
@@ -223,7 +226,7 @@ def IndexLatLon(file_name, points):
                     }
                 }
             }
-            r = requests.post("{0}{1}/update".format(SOLR_URL, COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
+            r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
             return (True, "Latitude and longitude indexed to Solr successfully.")
         except:
             return (False, "Cannot index latitude and longitude to Solr.")

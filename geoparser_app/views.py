@@ -3,27 +3,33 @@ import glob, os
 import urllib2
 import ast
 import requests
+from ConfigParser import SafeConfigParser
 from compiler.ast import flatten
 from os.path import isfile
+
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-
 from .forms import UploadFileForm
 from .models import Document
+
 from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores, get_domains_urls
 
 from tika import parser
 
 flip = True
 
-APP_NAME = "geoparser_app"
-UPLOADED_FILES_PATH = "static/uploaded_files"
-STATIC = "static"
-TIKA_APP = "tika/tika-app/target/tika-app-1.12-SNAPSHOT.jar"
-SUBDOMAIN = ""
-geotopic_server = "http://localhost:9997/"
+conf_parser = SafeConfigParser()
+conf_parser.read('config.txt')
+
+
+APP_NAME = conf_parser.get('general', 'APP_NAME')
+UPLOADED_FILES_PATH = conf_parser.get('general', 'UPLOADED_FILES_PATH')
+STATIC = conf_parser.get('general', 'STATIC')
+SUBDOMAIN = conf_parser.get('general', 'SUBDOMAIN')
+TIKA_SERVER = conf_parser.get('general', 'TIKA_SERVER')
+
 headers = {"content-type" : "application/json" }
 params = {"commit" : "true" }
 
@@ -114,7 +120,7 @@ def find_location(request, file_name):
             with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
                 f.write(text_content)
                 f.close()
-            parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "http://localhost:8001")
+            parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "{0}".format(TIKA_SERVER))
 
             points = parse_lat_lon(parsed["metadata"])
             
@@ -206,7 +212,7 @@ def query_crawled_index(request, core_name, indexed_path):
                         f.write(str(text_content))
                         f.close()
                     
-                    parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "http://localhost:8001")
+                    parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "{0}".format(TIKA_SERVER))
                     location_names = parse_lat_lon(parsed["metadata"])
                     os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
                     for key, values in location_names.iteritems():
