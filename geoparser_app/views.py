@@ -3,6 +3,7 @@ import glob, os
 import urllib2
 import ast
 import requests
+from requests.auth import HTTPBasicAuth
 from ConfigParser import SafeConfigParser
 from compiler.ast import flatten
 from os.path import isfile
@@ -30,7 +31,7 @@ STATIC = conf_parser.get('general', 'STATIC')
 SUBDOMAIN = conf_parser.get('general', 'SUBDOMAIN')
 TIKA_SERVER = conf_parser.get('general', 'TIKA_SERVER')
 
-headers = {"content-type" : "application/json" }
+headers = {"content-type" : "application/json"}
 params = {"commit" : "true" }
 
 def index(request):
@@ -198,13 +199,14 @@ def query_crawled_index(request, core_name, indexed_path):
             # TODO - make mechanism for resurrection post failure. It should start geo tagging only for documents which were previously not geo tagged.  
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
-                response = urllib2.urlopen(url)
-                numFound = eval(response.read())['response']['numFound']
+                r = requests.get(url, headers=headers, auth=HTTPBasicAuth('username', 'password'))
+                response = r.json()
+                numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
                 for row in range(0, int(numFound), query_range):
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
                     print "solr query - {0}".format(url)
-                    r = requests.get(url, headers=headers)
+                    r = requests.get(url, headers=headers, auth=HTTPBasicAuth('username', 'password'))
                     response = r.json()
                     text = response['response']['docs']
                     text_content = str(text)
@@ -228,9 +230,11 @@ def query_crawled_index(request, core_name, indexed_path):
                         except:
                             pass
                     print "Found {0} coordinates..".format(len(points))
-                status = IndexCrawledPoints(core_name, indexed_path.lower(), points)
+                    #TODO: ADD to Solr
+                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points)
                 return HttpResponse(status=200, content=status)
             except Exception as e:
+                print e
                 return False
     else:
         pass
