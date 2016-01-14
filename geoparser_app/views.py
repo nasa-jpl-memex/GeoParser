@@ -12,6 +12,7 @@ from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
+from django.utils.encoding import smart_str, smart_unicode
 from .forms import UploadFileForm
 from .models import Document
 
@@ -86,8 +87,10 @@ def parse_lat_lon(locations):
     for key in locations.keys():
         if key.startswith("Optional_NAME"):
             optionalCount = optionalCount + 1 
-    
-    points[locations["Geographic_NAME"].replace(" ","")] = [locations["Geographic_LATITUDE"].replace(" ",""), locations["Geographic_LONGITUDE"].replace(" ","")]
+    if 'Geographic_NAME' in locations:
+        points[locations["Geographic_NAME"].replace(" ","")] = [locations["Geographic_LATITUDE"].replace(" ",""), locations["Geographic_LONGITUDE"].replace(" ","")]
+    else:
+        print "No main location found"
     for x in range(1, optionalCount+1):
         points[locations["Optional_NAME{0}".format(x)].replace(" ","")] = [locations["Optional_LATITUDE{0}".format(x)].replace(" ",""), locations["Optional_LONGITUDE{0}".format(x)].replace(" ","")]
 
@@ -182,7 +185,7 @@ def return_points(request, file_name, core_name):
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
 
 
-def query_crawled_index(request, core_name, indexed_path):
+def query_crawled_index(request, core_name, indexed_path, username, passwd):
     '''
         To query crawled data that has been indexed into
         Solr or Elastichsearch and return location names
@@ -199,14 +202,14 @@ def query_crawled_index(request, core_name, indexed_path):
             # TODO - make mechanism for resurrection post failure. It should start geo tagging only for documents which were previously not geo tagged.  
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
-                r = requests.get(url, headers=headers, auth=HTTPBasicAuth('username', 'password'))
+                r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
                 for row in range(0, int(numFound), query_range):
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
                     print "solr query - {0}".format(url)
-                    r = requests.get(url, headers=headers, auth=HTTPBasicAuth('username', 'password'))
+                    r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
                     response = r.json()
                     text = response['response']['docs']
                     text_content = str(text)
@@ -220,20 +223,23 @@ def query_crawled_index(request, core_name, indexed_path):
                     for key, values in location_names.iteritems():
                         try:
                             points.append(
-                                {'loc_name': "{0}".format(key),
+                                {'loc_name': smart_str(key),
                                 'position':{
-                                    'x': "{0}".format(values[0]),
-                                    'y': "{0}".format(values[1])
+                                    'x': smart_str(values[0]),
+                                    'y': smart_str(values[1])
                                 }
                                 }
                             )
-                        except:
+                        except Exception as e:
+                            print "Error while transforming points "
+                            print e
                             pass
                     print "Found {0} coordinates..".format(len(points))
                     #TODO: ADD to Solr
                     status = IndexCrawledPoints(core_name, indexed_path.lower(), points)
                 return HttpResponse(status=200, content=status)
             except Exception as e:
+                print "Error::: "
                 print e
                 return False
     else:

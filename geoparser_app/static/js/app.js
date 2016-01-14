@@ -342,6 +342,8 @@ $(function() {
 	$("#saveIndex").bind("click", function() {
 		var domain = $("#indexDomain");
 		var index = $("#indexPath");
+		var username = $("#indexUsername");
+		var passwd = $("#indexPasswd");
 		var button = $("#saveIndex");
 		var error = false;
 		domain.parent().removeClass("has-error");
@@ -360,7 +362,7 @@ $(function() {
 		}
 
 		toggleSpinner(button, true);
-		callRESTApi("/query_crawled_index/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
+		callRESTApi("/query_crawled_index/" + index.val() + domain.val() + "/" + username.val() +  "/" + passwd.val() , 'GET', 'true', null, function(d) {
 			toggleSpinner(button, false);
 			fillDomain();
 			alert("Successfully added Index");
@@ -378,6 +380,14 @@ var toggleSpinner = function(ele, bool) {
 	ele.toggleClass('active');
 	ele.prop("disabled", bool);
 
+}
+var hideOtherChild = function(ele){
+	//get element which hold location data
+	var t1 = $(ele).parent().siblings()[0];
+	var t2 = $(ele).parent().siblings()[1];
+	$(t1).toggle();
+	$(t2).toggle();
+	$(ele).toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
 }
 
 var markEmtyError = function (inputEle){
