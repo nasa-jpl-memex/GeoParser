@@ -180,7 +180,7 @@ def return_points(request, file_name, core_name):
     points = QueryPoints(file_name, core_name)
 
     if points:
-        return HttpResponse(status=200, content=points)
+        return HttpResponse(status=200, content=str(points) )
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
 
@@ -192,13 +192,11 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
     '''
     if "solr" in indexed_path.lower():
         if IndexFile(core_name, indexed_path.lower()):
-            points = []
             query_range = 10
             # 1 QUERY solr 10 records at a time
             # 2 save it in temporary file
             # 3 Run GeotopicParser on tmp file
-            # After all 3 steps are completed for whole index we save it in local solr instance
-            # TODO - save points in local solr after every step
+            # 4 save it in local solr instance
             # TODO - make mechanism for resurrection post failure. It should start geo tagging only for documents which were previously not geo tagged.  
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
@@ -207,6 +205,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
                 for row in range(0, int(numFound), query_range):
+                    points = []
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
                     print "solr query - {0}".format(url)
                     r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
@@ -235,7 +234,6 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                             print e
                             pass
                     print "Found {0} coordinates..".format(len(points))
-                    #TODO: ADD to Solr
                     status = IndexCrawledPoints(core_name, indexed_path.lower(), points)
                 return HttpResponse(status=200, content=status)
             except Exception as e:
