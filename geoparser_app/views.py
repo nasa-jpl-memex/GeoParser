@@ -205,6 +205,10 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
+                
+                if r.status_code != 200:
+                    return HttpResponse(status=r.status_code, content=r.reason)
+                
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)

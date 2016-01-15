@@ -339,6 +339,7 @@ var collapseFile = function(ele){
 }
 
 //Save Index functions below
+var timer;
 $(function() {
 	$("#saveIndex").bind("click", function() {
 		var domain = $("#indexDomain");
@@ -366,15 +367,15 @@ $(function() {
 		callRESTApi("/query_crawled_index/" + index.val() + domain.val() + "/" + username.val() +  "/" + passwd.val() , 'GET', 'true', null, function(d) {
 			toggleSpinner(button, false);
 			fillDomain();
-			alert("Successfully added Index");
+			alert("Successfully Geotagged Index");
 		}, function(d) {
+			alert("Error while GeoTagging Index: " + d.status + " - " + d.responseText);
 			toggleSpinner(button, false);
 		});
 		
-		setInterval(function() {
+		timer = setInterval(function() {
 			callRESTApi("/return_points/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
 			d = eval(d)[0];
-			console.log(d.total_docs + ' - ' + d.rows_processed)
 			var progress = 0
 			if(d.total_docs && d.rows_processed){
 				progress = (d.rows_processed / d.total_docs) * 100
@@ -384,6 +385,9 @@ $(function() {
 			ele.find(".progress-bar").css('width', progress+'%').attr('aria-valuenow', progress).html(d.rows_processed + ' / ' + d.total_docs);
 			
 			paintDataFromAPI(d.points, domain.val() + " - " + index.val());
+			if(d.total_docs == d.rows_processed){
+		    clearInterval(timer);
+			}
 			});
 		}, 10000)
 	})
