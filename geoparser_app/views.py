@@ -182,7 +182,7 @@ def return_points(request, file_name, core_name):
     results['points'] = points
     results['total_docs'] = total_docs
     results['rows_processed'] = rows_processed
-    if total_docs:
+    if total_docs or points:
         return HttpResponse(status=200, content=str(results))
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
@@ -201,14 +201,14 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
             # 2 save it in temporary file
             # 3 Run GeotopicParser on tmp file
             # 4 save it in local solr instance
-            # TODO - make mechanism for resurrection post failure. It should start geo tagging only for documents which were previously not geo tagged.  
+            _, _, rows_processed = QueryPoints(file_name, core_name)
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
-                for row in range(0, int(numFound), query_range):
+                for row in range(rows_processed, int(numFound), query_range):
                     points = []
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
                     print "solr query - {0}".format(url)

@@ -245,14 +245,14 @@ def QueryPoints(file_name, core_name):
             url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json&indent=true'.format(SOLR_URL, core_name, file_name)
             response = requests.get(url)
             response = response.json()
-            list = response['response']['docs'][0]['points']
+            points = response['response']['docs'][0]['points']
             if 'total_docs' in response['response']['docs'][0]:
                 total_docs = response['response']['docs'][0]['total_docs'][0]
                 rows_processed = response['response']['docs'][0]['rows_processed'][0]
             listNew = []
-            for item in list:
-                listNew = listNew + eval(item)
-            return listNew,total_docs,rows_processed
+            for point in points:
+                listNew = listNew + eval(point)
+            return listNew, total_docs, rows_processed
         except Exception as e:
             print e
             return False
