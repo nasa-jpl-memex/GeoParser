@@ -179,11 +179,11 @@ def return_points(request, file_name, core_name):
     '''
     results = {}
     points, total_docs, rows_processed = QueryPoints(file_name, core_name)
-    results['points'] = points
-    results['total_docs'] = total_docs
-    results['rows_processed'] = rows_processed
+    results["points"] = points
+    results["total_docs"] = total_docs
+    results["rows_processed"] = rows_processed
     if total_docs or points:
-        return HttpResponse(status=200, content=str(results))
+        return HttpResponse(status=200, content="[{0}]".format(results))
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
 
@@ -201,7 +201,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
             # 2 save it in temporary file
             # 3 Run GeotopicParser on tmp file
             # 4 save it in local solr instance
-            _, _, rows_processed = QueryPoints(file_name, core_name)
+            _, _, rows_processed = QueryPoints(indexed_path.lower(), core_name)
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))

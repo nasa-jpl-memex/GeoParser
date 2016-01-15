@@ -235,8 +235,8 @@ var getStatus = function(res, file) {
  */
 var fetchAndDrawPoints = function(res, file, displayArea) {
 	callRESTApi('return_points/' + res.file_name + '/uploaded_files', 'GET', false, {}, function(d) {
-		d = eval(d);// REMOVE THIS ONCE API RETURNS JSON
-		data = d.points
+		d = eval(d)[0];// REMOVE THIS ONCE API RETURNS JSON
+		var data = d.points
 		displayArea.textContent = '';
 
 		var list = '<ol>';
