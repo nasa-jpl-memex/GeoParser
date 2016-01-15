@@ -375,7 +375,15 @@ $(function() {
 			callRESTApi("/return_points/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
 			d = eval(d)[0];
 			console.log(d.total_docs + ' - ' + d.rows_processed)
-			paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
+			var progress = 0
+			if(d.total_docs && d.rows_processed){
+				progress = (d.rows_processed / d.total_docs) * 100
+			}
+			var ele = $("#indexProgress")
+			ele.show();
+			ele.find(".progress-bar").css('width', progress+'%').attr('aria-valuenow', progress).html(d.rows_processed + ' / ' + d.total_docs);
+			
+			paintDataFromAPI(d.points, domain.val() + " - " + index.val());
 			});
 		}, 10000)
 	})
