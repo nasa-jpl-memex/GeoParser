@@ -177,10 +177,13 @@ def return_points(request, file_name, core_name):
     '''
         Returns geo point for give file
     '''
-    points = QueryPoints(file_name, core_name)
-
-    if points:
-        return HttpResponse(status=200, content=str(points) )
+    results = {}
+    points, total_docs, rows_processed = QueryPoints(file_name, core_name)
+    results['points'] = points
+    results['total_docs'] = total_docs
+    results['rows_processed'] = rows_processed
+    if total_docs:
+        return HttpResponse(status=200, content=str(results))
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude.")
 
@@ -191,6 +194,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
         Solr or Elastichsearch and return location names
     '''
     if "solr" in indexed_path.lower():
+        # TODO Query solr check existing results
         if IndexFile(core_name, indexed_path.lower()):
             query_range = 10
             # 1 QUERY solr 10 records at a time
@@ -234,7 +238,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                             print e
                             pass
                     print "Found {0} coordinates..".format(len(points))
-                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points)
+                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row)
                 return HttpResponse(status=200, content=status)
             except Exception as e:
                 print "Error::: "

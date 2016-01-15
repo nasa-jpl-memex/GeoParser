@@ -241,18 +241,21 @@ def QueryPoints(file_name, core_name):
     if create_core(core_name):
         try:
             url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json&indent=true'.format(SOLR_URL, core_name, file_name)
-            response = urllib2.urlopen(url)
-            list = eval(response.read())['response']['docs'][0]['points']
+            response = requests.get(url)
+            response = response.json()
+            list = response['response']['docs'][0]['points']
+            total_docs = response['response']['docs'][0]['total_docs'][0]
+            rows_processed = response['response']['docs'][0]['rows_processed'][0]
             listNew = []
             for item in list:
                 listNew = listNew + eval(item)
-            return listNew
+            return listNew,total_docs,rows_processed
         except Exception as e:
             print e
             return False
 
 
-def IndexCrawledPoints(core_name, name, points):
+def IndexCrawledPoints(core_name, name, points, numFound, row):
     '''
     Index geopoints extracted from crawled data
     '''
@@ -261,7 +264,9 @@ def IndexCrawledPoints(core_name, name, points):
             "add":{
                 "doc":{
                     "id" : str(name) ,
-                    "points" : {"add":["{0}".format(points)]}
+                    "points" : {"add":["{0}".format(points)]},
+                    "total_docs" : numFound,
+                    "rows_processed" : row
                 }
             }
         }

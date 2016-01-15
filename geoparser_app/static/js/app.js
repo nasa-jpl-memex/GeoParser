@@ -234,8 +234,9 @@ var getStatus = function(res, file) {
  * Fetches points for uploaded file and paint data
  */
 var fetchAndDrawPoints = function(res, file, displayArea) {
-	callRESTApi('return_points/' + res.file_name + '/uploaded_files', 'GET', false, {}, function(data) {
-		data = eval(data);// REMOVE THIS ONCE API RETURNS JSON
+	callRESTApi('return_points/' + res.file_name + '/uploaded_files', 'GET', false, {}, function(d) {
+		d = eval(d);// REMOVE THIS ONCE API RETURNS JSON
+		data = d.points
 		displayArea.textContent = '';
 
 		var list = '<ol>';
@@ -434,7 +435,7 @@ $(function() {
 		callRESTApi("/return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
 			d = eval(d);
 			$("#resultsIndex").append("<li>"+ d.length + " found in " + domainDisp + " - " + indexDisp + "</li>");
-			paintDataFromAPI(d, domainDisp + " - " + indexDisp);
+			paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
 		});
 	})
 }) 
