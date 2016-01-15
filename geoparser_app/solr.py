@@ -124,7 +124,8 @@ def IndexFile(core_name, file_name):
                         payload = {
                             "add":{
                                 "doc":{
-                                    "id" : str(file_name)
+                                    "id" : str(file_name),
+                                    "points" : "[]"
                                 }
                             }
                         }

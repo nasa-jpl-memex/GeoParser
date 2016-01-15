@@ -370,7 +370,14 @@ $(function() {
 		}, function(d) {
 			toggleSpinner(button, false);
 		});
-
+		
+		setInterval(function() {
+			callRESTApi("/return_points/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
+			d = eval(d)[0];
+			console.log(d.total_docs + ' - ' + d.rows_processed)
+			paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
+			});
+		}, 10000)
 	})
 
 })
@@ -433,8 +440,8 @@ $(function() {
 		var domainDisp = $("#savedDomain").val();
 		
 		callRESTApi("/return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
-			d = eval(d);
-			$("#resultsIndex").append("<li>"+ d.length + " found in " + domainDisp + " - " + indexDisp + "</li>");
+			d = eval(d)[0];
+			$("#resultsIndex").append("<li>"+ d.points.length + " found in " + domainDisp + " - " + indexDisp + "</li>");
 			paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
 		});
 	})
