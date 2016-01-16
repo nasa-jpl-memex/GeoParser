@@ -76,6 +76,34 @@ $(function() {
 	  target: 'map',
 	  view: view
 	});
+	
+	var element = $('<span></span>')[0];
+
+	var popup = new ol.Overlay({
+	  element: element,
+	  positioning: 'bottom-center',
+	  stopEvent: false
+	});
+	map.addOverlay(popup);
+
+	// display popup on hover
+	map.on('pointermove', function(evt) {
+	  var feature = map.forEachFeatureAtPixel(evt.pixel,
+	      function(feature, layer) {
+	        return feature;
+	      });
+	  if (feature) {
+	    popup.setPosition(evt.coordinate);
+	    $(element).popover({
+	      'placement': 'top',
+	      'html': true,
+	      'content': feature.get('name')
+	    });
+	    $(element).popover('show');
+	  } else {
+	    $(element).popover('destroy');
+	  }
+	});
 
 });
 
@@ -128,32 +156,45 @@ var drawPoints = function(dataPoints) {
 	if (!dataPoints.length || dataPoints.length == 0) {
 		return;
 	}
-	
-	for(var i in dataPoints){
+	var icon_feature = [];
+	for ( var i in dataPoints) {
 		var point = dataPoints[i];
-		var overlay = new ol.Overlay({
-		  position: ol.proj.transform(
-			    [parseFloat(point.position.y), parseFloat(point.position.x)],
-			    'EPSG:4326',
-			    'EPSG:3857'
-			  ),
-			  element: $('<span class="glyphicon glyphicon-map-marker"><div style="display: none;">' + point.loc_name + '<br/>Extracted from: ' + point.file + '</div></span>')
-			  					.css({'color':point.color})
-			  					.mouseover(function() {
-			  						$(this).children().show();	
-			  					})
-			  					.mouseout(function(){
-			  						$(this).children().hide()
-			  					})[0],
-			  file: point.file
-			});
-		map.addOverlay(overlay);
-		// KEEP ON APPENDING POINTS
-		if( !dataPointsAll[point.file]){
-			dataPointsAll[point.file] = [];
-		}
-		dataPointsAll[point.file].push(overlay)
+		var iconFeature = new ol.Feature({
+			geometry : new ol.geom.Point([ parseFloat(point.position.y), parseFloat(point.position.x) ]).transform('EPSG:4326', 'EPSG:3857'),
+			name : point.loc_name + '<br/>Extracted from: ' + point.file
+		});
+
+		var iconStyle = new ol.style.Style({
+			image : new ol.style.Circle({
+				radius : 6,
+				fill : new ol.style.Fill({
+					color : point.color
+				}),
+				stroke : new ol.style.Stroke({
+					color : 'silver',
+					width : 1
+				})
+			})
+		});
+
+		iconFeature.setStyle(iconStyle);
+		icon_feature.push(iconFeature)
 	}
+
+	var vectorSource = new ol.source.Vector({
+		features : icon_feature
+	});
+	var vectorLayer = new ol.layer.Vector({
+		source : vectorSource
+	});
+
+	map.addLayer(vectorLayer);
+
+	// KEEP ON APPENDING POINTS
+	if (!dataPointsAll[point.file]) {
+		dataPointsAll[point.file] = [];
+	}
+	dataPointsAll[point.file].push(vectorLayer)
 
 }
 
@@ -163,7 +204,7 @@ var deletePoints = function(dataPoints) {
 	}
 	
 	for(var i in dataPoints){
-		map.removeOverlay(dataPoints[i]);
+		map.removeLayer(dataPoints[i]);
 	}
 }
 
@@ -323,7 +364,7 @@ var processUploadedFile = function(name) {
 }
 
 setTimeout(function() {
-	callRESTApi("/list_of_uploaded_files", 'GET', 'true', null, function(d) {
+	callRESTApi("list_of_uploaded_files", 'GET', 'true', null, function(d) {
 		d = eval(d);
 		for ( var i in d) {
 			processUploadedFile(d[i]);
@@ -364,7 +405,7 @@ $(function() {
 		}
 
 		toggleSpinner(button, true);
-		callRESTApi("/query_crawled_index/" + index.val() + domain.val() + "/" + username.val() +  "/" + passwd.val() , 'GET', 'true', null, function(d) {
+		callRESTApi("query_crawled_index/" + index.val() + domain.val() + "/" + username.val() +  "/" + passwd.val() , 'GET', 'true', null, function(d) {
 			toggleSpinner(button, false);
 			fillDomain();
 			alert("Successfully Geotagged Index");
@@ -374,7 +415,7 @@ $(function() {
 		});
 		
 		timer = setInterval(function() {
-			callRESTApi("/return_points/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
+			callRESTApi("return_points/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
 			d = eval(d)[0];
 			var progress = 0
 			if(d.total_docs && d.rows_processed){
@@ -420,7 +461,7 @@ var markEmtyError = function (inputEle){
 
 var listOfDomains;
 var fillDomain = function(){
-	callRESTApi("/list_of_domains/", 'GET', 'true', null, function(d) {
+	callRESTApi("list_of_domains/", 'GET', 'true', null, function(d) {
 		listOfDomains = eval(d)[0];
 		if(!listOfDomains || $.isEmptyObject(listOfDomains) ){
 			$("#savedDomain").parent().parent().hide();
@@ -451,7 +492,7 @@ $(function() {
 		var indexDisp = $("#savedIndexes").val();
 		var domainDisp = $("#savedDomain").val();
 		
-		callRESTApi("/return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
+		callRESTApi("return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
 			d = eval(d)[0];
 			$("#resultsIndex").append("<li>"+ d.points.length + " found in " + domainDisp + " - " + indexDisp + "</li>");
 			paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
