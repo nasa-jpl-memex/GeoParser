@@ -236,7 +236,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                             print e
                             pass
                     print "Found {0} coordinates..".format(len(points))
-                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+query_range)
+                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+len(text))
                 return HttpResponse(status=200, content=status)
             except Exception as e:
                 print "Error::: "
