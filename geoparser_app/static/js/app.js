@@ -194,6 +194,7 @@ var drawPoints = function(dataPoints) {
 	if (!dataPointsAll[point.file]) {
 		dataPointsAll[point.file] = [];
 	}
+	vectorLayer.color=point.color
 	dataPointsAll[point.file].push(vectorLayer)
 
 }
@@ -210,15 +211,21 @@ var deletePoints = function(dataPoints) {
 
 
 var paintDataFromAPI = function(data, docName) {
+	var color;
+	if(dataPointsAll[docName] && dataPointsAll[docName][0].color ){
+		color = dataPointsAll[docName][0].color
+	}else{
+		color = colorArr[colorIndex];
+		colorIndex++;
+		if (colorIndex >= colorArr.length) {
+			colorIndex = 0;
+		}
+	}
 	for ( var i in data) {
 		data[i].file = docName;
-		data[i].color = colorArr[colorIndex];
+		data[i].color = color;
 	}
-	colorIndex++;
-	if (colorIndex >= colorArr.length) {
-		colorIndex = 0;
-	}
-	
+
 	drawPoints(data);
 }
 
