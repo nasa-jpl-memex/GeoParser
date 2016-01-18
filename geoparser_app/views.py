@@ -19,6 +19,8 @@ from .models import Document
 from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores, get_domains_urls
 
 from tika import parser
+from tika.tika import ServerEndpoint
+from tika.tika import callServer
 
 flip = True
 
@@ -121,15 +123,10 @@ def find_location(request, file_name):
     if "none" in IndexStatus("locations", file_name):
         text_content = QueryText(file_name)
         if text_content:
-            with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
-                f.write(text_content)
-                f.close()
-            parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "{0}".format(TIKA_SERVER))
-
-            points = parse_lat_lon(parsed["metadata"])
+            parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json',  'Content-Type' : 'application/geotopic'}, False)
+            points = parse_lat_lon(eval(parsed[1])[0])
             
             status = IndexLocationName(file_name, points)
-            os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
             if status[0]:
                 return HttpResponse(status=200, content="Location/s found and index to Solr.")
             else:
@@ -214,19 +211,16 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                 print "Total number of records to be geotagged {0}".format(numFound)
                 for row in range(rows_processed, int(numFound), query_range):
                     points = []
-                    url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, row+query_range)
+                    url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, query_range)
                     print "solr query - {0}".format(url)
                     r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
                     response = r.json()
                     text = response['response']['docs']
                     text_content = str(text)
-                    with open("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), 'w') as f:
-                        f.write(str(text_content))
-                        f.close()
-                    
-                    parsed = parser.from_file("{0}/{1}/tmp.geot".format(APP_NAME, STATIC), "{0}".format(TIKA_SERVER))
-                    location_names = parse_lat_lon(parsed["metadata"])
-                    os.remove("{0}/{1}/tmp.geot".format(APP_NAME, STATIC))
+
+                    parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json',  'Content-Type' : 'application/geotopic'}, False)
+                    location_names = parse_lat_lon(eval(parsed[1])[0])
+
                     for key, values in location_names.iteritems():
                         try:
                             points.append(
@@ -242,7 +236,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                             print e
                             pass
                     print "Found {0} coordinates..".format(len(points))
-                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row)
+                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+query_range)
                 return HttpResponse(status=200, content=status)
             except Exception as e:
                 print "Error::: "
