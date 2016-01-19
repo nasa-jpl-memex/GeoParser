@@ -501,7 +501,7 @@ $(function() {
 		
 		callRESTApi("return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
 			d = eval(d)[0];
-			$("#resultsIndex").append("<li>"+ d.points.length + " found in " + domainDisp + " - " + indexDisp + "</li>");
+			$("#resultsIndex").append("<li>"+ d.points.length + " found in " + domainDisp + " - " + indexDisp + " - "+d.rows_processed + ' / ' + d.total_docs + "</li>");
 			paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
 		});
 	})
