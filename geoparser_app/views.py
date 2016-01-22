@@ -21,6 +21,7 @@ from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLoca
 from tika import parser
 from tika.tika import ServerEndpoint
 from tika.tika import callServer
+import traceback
 
 flip = True
 
@@ -193,11 +194,10 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
     if "solr" in indexed_path.lower():
         # TODO Query solr check existing results
         if IndexFile(core_name, indexed_path.lower()):
-            query_range = 10
-            # 1 QUERY solr 10 records at a time
-            # 2 save it in temporary file
-            # 3 Run GeotopicParser on tmp file
-            # 4 save it in local solr instance
+            query_range = 100
+            # 1 QUERY solr 100 records at a time
+            # 2     Run GeotopicParser on each doc one at a time
+            # 4     Save it in local solr instance
             _, _, rows_processed = QueryPoints(indexed_path.lower(), core_name)
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
@@ -209,34 +209,55 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
-                for row in range(rows_processed, int(numFound), query_range):
-                    points = []
+                for row in range(rows_processed, int(numFound), query_range): #loop solr query
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, query_range)
                     print "solr query - {0}".format(url)
                     r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
                     response = r.json()
                     text = response['response']['docs']
-                    text_content = str(text)
-
-                    parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json',  'Content-Type' : 'application/geotopic'}, False)
-                    location_names = parse_lat_lon(eval(parsed[1])[0])
-
-                    for key, values in location_names.iteritems():
+                    docCount = 0
+                    for t in text: #loop tika server starts
+                        points = []
+                        docCount+=1
+                        text_content = ''
                         try:
-                            points.append(
-                                {'loc_name': smart_str(key),
-                                'position':{
-                                    'x': smart_str(values[0]),
-                                    'y': smart_str(values[1])
-                                }
-                                }
-                            )
+                            for v in t.values():
+                                if(hasattr(v, '__iter__')):
+                                    a =u' '.join(v)
+                                elif(isinstance(v, unicode) ):
+                                    a = v.encode('ascii','ignore')
+                                else:
+                                    a=str(v)
+                                text_content+=a.encode('ascii','ignore')
                         except Exception as e:
-                            print "Error while transforming points "
-                            print e
-                            pass
-                    print "Found {0} coordinates..".format(len(points))
-                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+len(text))
+                            print traceback.format_exc()
+                            text_content=str(t.values())
+                        
+                        # simplify text
+                        text_content= ' '.join(text_content.split())
+                        
+                        parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json',  'Content-Type' : 'application/geotopic'}, False)
+                        location_names = parse_lat_lon(eval(parsed[1])[0])
+    
+                        for key, values in location_names.iteritems():
+                            try:
+                                ## TODO - ADD META DATA
+                                points.append(
+                                    {'loc_name': smart_str(key),
+                                    'position':{
+                                        'x': smart_str(values[0]),
+                                        'y': smart_str(values[1])
+                                    }
+                                    }
+                                )
+                            except Exception as e:
+                                print "Error while transforming points "
+                                print e
+                                pass
+                        print "Found {0} coordinates..".format(len(points))
+                        status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+docCount)
+                        #loop tika server ends
+                    #loop solr query ends       
                 return HttpResponse(status=200, content=status)
             except Exception as e:
                 print "Error::: "
