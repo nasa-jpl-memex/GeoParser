@@ -252,7 +252,7 @@ def QueryPoints(file_name, core_name):
                 rows_processed = response['response']['docs'][0]['rows_processed'][0]
             listNew = []
             for point in points:
-                listNew = listNew + eval(point)
+                listNew += eval(point)
             return listNew, total_docs, rows_processed
         except Exception as e:
             print e
