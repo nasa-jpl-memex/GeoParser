@@ -218,45 +218,49 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                     text = response['response']['docs']
                     docCount = 0
                     for t in text: #loop tika server starts
-                        points = []
-                        docCount+=1
-                        text_content = ''
                         try:
-                            for v in t.values():
-                                if(hasattr(v, '__iter__')):
-                                    a =u' '.join(v)
-                                elif(isinstance(v, unicode) ):
-                                    a = v.encode('ascii','ignore')
-                                else:
-                                    a=str(v)
-                                text_content+=a.encode('ascii','ignore')
+                            points = []
+                            docCount+=1
+                            text_content = ''
+                            try:
+                                for v in t.values():
+                                    if(hasattr(v, '__iter__')):
+                                        a =u' '.join(v)
+                                    elif(isinstance(v, unicode) ):
+                                        a = v.encode('ascii','ignore')
+                                    else:
+                                        a=str(v)
+                                    text_content+=a.encode('ascii','ignore')
+                            except Exception as e:
+                                print traceback.format_exc()
+                                text_content=str(t.values())
+                            
+                            # simplify text
+                            text_content= ' '.join(text_content.split())
+                            
+                            parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json',  'Content-Type' : 'application/geotopic'}, False)
+                            location_names = parse_lat_lon(eval(parsed[1])[0])
+        
+                            for key, values in location_names.iteritems():
+                                try:
+                                    ## TODO - ADD META DATA
+                                    points.append(
+                                        {'loc_name': smart_str(key),
+                                        'position':{
+                                            'x': smart_str(values[0]),
+                                            'y': smart_str(values[1])
+                                        }
+                                        }
+                                    )
+                                except Exception as e:
+                                    print "Error while transforming points "
+                                    print e
+                                    pass
+                            print "Found {0} coordinates..".format(len(points))
+                            status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+docCount)
                         except Exception as e:
                             print traceback.format_exc()
-                            text_content=str(t.values())
-                        
-                        # simplify text
-                        text_content= ' '.join(text_content.split())
-                        
-                        parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json',  'Content-Type' : 'application/geotopic'}, False)
-                        location_names = parse_lat_lon(eval(parsed[1])[0])
-    
-                        for key, values in location_names.iteritems():
-                            try:
-                                ## TODO - ADD META DATA
-                                points.append(
-                                    {'loc_name': smart_str(key),
-                                    'position':{
-                                        'x': smart_str(values[0]),
-                                        'y': smart_str(values[1])
-                                    }
-                                    }
-                                )
-                            except Exception as e:
-                                print "Error while transforming points "
-                                print e
-                                pass
-                        print "Found {0} coordinates..".format(len(points))
-                        status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+docCount)
+                            pass
                         #loop tika server ends
                     #loop solr query ends       
                 return HttpResponse(status=200, content=status)
