@@ -13,6 +13,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_str, smart_unicode
+from django.views.decorators.gzip import gzip_page
 from .forms import UploadFileForm
 from .models import Document
 
@@ -170,7 +171,7 @@ def find_latlon(request, file_name):
     else:
         return HttpResponse(status=200, content="Loading...")
 
-
+@gzip_page
 def return_points(request, file_name, core_name):
     '''
         Returns geo point for give file
