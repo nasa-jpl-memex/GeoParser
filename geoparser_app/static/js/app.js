@@ -1,5 +1,6 @@
 'use strict';
 
+var SUB_DOMAIN = ""
 var csrfMiddlewareToken;
 var CSRF_MIDDLEWARE_TOKEN_PARAM = "csrfmiddlewaretoken";
 
@@ -259,18 +260,18 @@ var getStatus = function(res, file) {
 	var displayArea = progressTemplateCloned.children[0];
 
 	// AJAX 1
-	callRESTApi('extract_text/' + res.file_name, 'GET', false, {}, function(data) {
+	callRESTApi(SUB_DOMAIN + 'extract_text/' + res.file_name, 'GET', false, {}, function(data) {
 		displayArea.textContent = data + '..';
 	}).done(function(data) {
 		setTimeout(function() {
 			// AJAX 2
-			callRESTApi('find_location/' + res.file_name, 'GET', false, {}, function(data) {
+			callRESTApi(SUB_DOMAIN + 'find_location/' + res.file_name, 'GET', false, {}, function(data) {
 				displayArea.textContent = data + '..';
 
 			}).done(function(data) {
 				setTimeout(function() {
 					// AJAX 3
-					callRESTApi('find_latlon/' + res.file_name, 'GET', false, {}, function(data) {
+					callRESTApi(SUB_DOMAIN + 'find_latlon/' + res.file_name, 'GET', false, {}, function(data) {
 						displayArea.textContent = data + '..';
 					}).done(function(data) {
 						// AJAX 4
@@ -288,7 +289,7 @@ var getStatus = function(res, file) {
  * Fetches points for uploaded file and paint data
  */
 var fetchAndDrawPoints = function(res, file, displayArea) {
-	callRESTApi('return_points/' + res.file_name + '/uploaded_files', 'GET', false, {}, function(d) {
+	callRESTApi(SUB_DOMAIN + 'return_points/' + res.file_name + '/uploaded_files', 'GET', false, {}, function(d) {
 		d = eval(d)[0];// REMOVE THIS ONCE API RETURNS JSON
 		var data = d.points
 		displayArea.textContent = '';
@@ -323,7 +324,7 @@ $(function() {
 
 	myDropzone = new Dropzone(document.body, {// Whole body is a drop zone
 
-		url : '/',
+		url : SUB_DOMAIN + '/',
 		paramName : 'file',
 		parallelUploads : 2,
 		previewTemplate : previewTemplate,
@@ -351,7 +352,7 @@ $(function() {
 	});
 
 	myDropzone.on("success", function(file, res) {
-		callRESTApi("index_file/" + res.file_name, "GET", false, {}, function(d) {
+		callRESTApi(SUB_DOMAIN + "index_file/" + res.file_name, "GET", false, {}, function(d) {
 			// Start looking for geo parse status and show pointers on map if found
 			getStatus(res, file);
 		});
@@ -377,7 +378,7 @@ var processUploadedFile = function(name) {
 }
 
 setTimeout(function() {
-	callRESTApi("list_of_uploaded_files", 'GET', 'true', null, function(d) {
+	callRESTApi(SUB_DOMAIN + "list_of_uploaded_files", 'GET', 'true', null, function(d) {
 		d = eval(d);
 		for ( var i in d) {
 			processUploadedFile(d[i]);
@@ -418,7 +419,7 @@ $(function() {
 		}
 
 		toggleSpinner(button, true);
-		callRESTApi("query_crawled_index/" + index.val() + domain.val() + "/" + username.val() +  "/" + passwd.val() , 'GET', 'true', null, function(d) {
+		callRESTApi(SUB_DOMAIN + "query_crawled_index/" + index.val() + domain.val() + "/" + username.val() +  "/" + passwd.val() , 'GET', 'true', null, function(d) {
 			toggleSpinner(button, false);
 			fillDomain();
 			alert("Successfully Geotagged Index");
@@ -428,7 +429,7 @@ $(function() {
 		});
 		
 		timer = setInterval(function() {
-			callRESTApi("return_points/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
+			callRESTApi(SUB_DOMAIN + "return_points/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
 			d = eval(d)[0];
 			var progress = 0
 			if(d.total_docs && d.rows_processed){
@@ -474,7 +475,7 @@ var markEmtyError = function (inputEle){
 
 var listOfDomains;
 var fillDomain = function(){
-	callRESTApi("list_of_domains/", 'GET', 'true', null, function(d) {
+	callRESTApi(SUB_DOMAIN + "list_of_domains/", 'GET', 'true', null, function(d) {
 		listOfDomains = eval(d)[0];
 		if(!listOfDomains || $.isEmptyObject(listOfDomains) ){
 			$("#savedDomain").parent().parent().hide();
@@ -505,7 +506,7 @@ $(function() {
 		var indexDisp = $("#savedIndexes").val();
 		var domainDisp = $("#savedDomain").val();
 		
-		callRESTApi("return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
+		callRESTApi(SUB_DOMAIN + "return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
 			d = eval(d)[0];
 			$("#resultsIndex").append("<li>"+ d.points.length + " found in " + domainDisp + " - " + indexDisp + " - "+d.rows_processed + ' / ' + d.total_docs + "</li>");
 			paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
