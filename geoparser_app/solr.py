@@ -243,7 +243,7 @@ def QueryPoints(file_name, core_name):
     total_docs = 0
     if create_core(core_name):
         try:
-            url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json&indent=true'.format(SOLR_URL, core_name, file_name)
+            url = '{0}{1}/select?q=*%3A*&fq=id%3A%22{2}%22&wt=json'.format(SOLR_URL, core_name, file_name)
             response = requests.get(url)
             response = response.json()
             points = response['response']['docs'][0]['points']

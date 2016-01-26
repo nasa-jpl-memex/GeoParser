@@ -502,14 +502,24 @@ var fillURL = function() {
 $(function() {
 	fillDomain();
 	$("#savedDomain").bind("change",fillURL);
-	$("#viewIndex").bind("click", function() {
+	var viewindexButton = $("#viewIndex")
+	viewindexButton.bind("click", function() {
 		var indexDisp = $("#savedIndexes").val();
 		var domainDisp = $("#savedDomain").val();
+		toggleSpinner(viewindexButton, true);
 		
 		callRESTApi(SUB_DOMAIN + "return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
-			d = eval(d)[0];
-			$("#resultsIndex").append("<li>"+ d.points.length + " found in " + domainDisp + " - " + indexDisp + " - "+d.rows_processed + ' / ' + d.total_docs + "</li>");
-			paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
+			try{
+				d = eval(d)[0];
+				$("#resultsIndex").append("<li>"+ d.points.length + " found in " + domainDisp + " - " + indexDisp + " - "+d.rows_processed + ' / ' + d.total_docs + "</li>");
+				paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
+			}catch(e){
+				alert("Error while displaying co-ordinates: " + e)
+			}
+			toggleSpinner(viewindexButton, false);
+		}, function(d) {
+			alert("Error while retrieving co-ordinates: " + d.status + " - " + d.responseText);
+			toggleSpinner(viewindexButton, false);
 		});
 	})
 }) 
