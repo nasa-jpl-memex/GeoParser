@@ -156,6 +156,7 @@ var drawPoints = function(dataPoints) {
 	if (!dataPoints.length || dataPoints.length == 0) {
 		return;
 	}
+
 	var icon_feature = [];
 	for ( var i in dataPoints) {
 		var point = dataPoints[i];
@@ -184,8 +185,13 @@ var drawPoints = function(dataPoints) {
 	var vectorSource = new ol.source.Vector({
 		features : icon_feature
 	});
+
 	var vectorLayer = new ol.layer.Vector({
-		source : vectorSource
+		source: new ol.source.Cluster({
+		  distance: 40,
+		  source: vectorSource
+		}),
+		style: iconStyle
 	});
 
 	map.addLayer(vectorLayer);
