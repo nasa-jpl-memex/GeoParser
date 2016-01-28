@@ -58,6 +58,7 @@ var callRESTApi = function(url, type, async, data, success, errorFn) {
 var colorIndex = 0
 var colorArr = [ 'red', 'yellow', 'blue', 'green', 'orange', 'white', 'grey'];
 var map = null;
+var view=null;
 
 $(function() {
 	var layer = new ol.layer.Tile({
@@ -67,7 +68,7 @@ $(function() {
     })
 	});
 
-	var view = new ol.View({
+	view = new ol.View({
     center: ol.proj.transform([-98.5,39.76], 'EPSG:4326', 'EPSG:3857'),
 	  zoom: 2
 	});
@@ -183,6 +184,54 @@ var drawPoints = function(dataPoints) {
 		icon_feature.push(iconFeature)
 	}
 
+var maxFeatureCount;
+function calculateClusterInfo(resolution) {
+  maxFeatureCount = 0;
+  var features = vectorLayer.getSource().getFeatures();
+  var feature, radius;
+  for (var i = features.length - 1; i >= 0; --i) {
+    feature = features[i];
+    var originalFeatures = feature.get('features');
+    var extent = ol.extent.createEmpty();
+    for (var j = 0, jj = originalFeatures.length; j < jj; ++j) {
+      ol.extent.extend(extent, originalFeatures[j].getGeometry().getExtent());
+    }
+    maxFeatureCount = Math.max(maxFeatureCount, jj);
+  }
+  return maxFeatureCount
+}
+	var styleCache = {};
+	var s = function(feature, resolution) {
+		var max = calculateClusterInfo(resolution);
+		console.log(max);
+	    var size = feature.get('features').length;
+	    console.log(size);
+	    console.log("---");
+	    var style = styleCache[size];
+	    if (!style) {
+	      style = [new ol.style.Style({
+	        image: new ol.style.Circle({
+	          radius: (size/max) + 10,
+	          stroke: new ol.style.Stroke({
+	            color: '#fff'
+	          }),
+	          fill: new ol.style.Fill({
+	            color: '#3399CC'
+	          })
+	        }),
+	        text: new ol.style.Text({
+	          text: size.toString(),
+	          fill: new ol.style.Fill({
+	            color: '#fff'
+	          })
+	        })
+	      })];
+	      styleCache[size] = style;
+	    }
+	    return style;
+	}
+
+
 	var vectorSource = new ol.source.Vector({
 		features : icon_feature
 	});
@@ -192,7 +241,7 @@ var drawPoints = function(dataPoints) {
 		  distance: 40,
 		  source: vectorSource
 		}),
-		style: iconStyle
+		style: s
 	});
 
 	map.addLayer(vectorLayer);
