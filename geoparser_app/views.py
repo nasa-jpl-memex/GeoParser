@@ -224,7 +224,6 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                     docCount = 0
                     for t in text: #loop tika server starts
                         try:
-                            points = []
                             docCount+=1
                             text_content = ''
                             try:
