@@ -199,7 +199,11 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
             # 1 QUERY solr 100 records at a time
             # 2     Run GeotopicParser on each doc one at a time
             # 4     Save it in local solr instance
-            _, _, rows_processed = QueryPoints(indexed_path.lower(), core_name)
+            rows_processed =0
+            try:
+                _, _, rows_processed = QueryPoints(indexed_path.lower(), core_name)
+            except:
+                pass
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
@@ -211,6 +215,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
                 for row in range(rows_processed, int(numFound), query_range): #loop solr query
+                    points = []
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, query_range)
                     print "solr query - {0}".format(url)
                     r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
@@ -257,11 +262,11 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                                     print e
                                     pass
                             print "Found {0} coordinates..".format(len(points))
-                            status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+docCount)
                         except Exception as e:
                             print traceback.format_exc()
                             pass
                         #loop tika server ends
+                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+docCount)
                     #loop solr query ends       
                 return HttpResponse(status=200, content=status)
             except Exception as e:
