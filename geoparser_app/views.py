@@ -17,7 +17,7 @@ from django.views.decorators.gzip import gzip_page
 from .forms import UploadFileForm
 from .models import Document
 
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores, get_domains_urls
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores, get_domains_urls, SimplifyPoints
 
 from tika import parser
 from tika.tika import ServerEndpoint
@@ -195,7 +195,8 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
     if "solr" in indexed_path.lower():
         # TODO Query solr check existing results
         if IndexFile(core_name, indexed_path.lower()):
-            query_range = 100
+            query_range = 500
+            simplilfy_freq = query_range * 50
             # 1 QUERY solr 100 records at a time
             # 2     Run GeotopicParser on each doc one at a time
             # 4     Save it in local solr instance
@@ -214,7 +215,11 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
+                SimplifyPoints(core_name, indexed_path.lower())
                 for row in range(rows_processed, int(numFound), query_range): #loop solr query
+                    if row % simplilfy_freq == 0:
+                        SimplifyPoints(core_name, indexed_path.lower())
+
                     points = []
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, query_range)
                     print "solr query - {0}".format(url)
@@ -266,7 +271,8 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                             pass
                         #loop tika server ends
                     status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+docCount)
-                    #loop solr query ends       
+                    #loop solr query ends
+                SimplifyPoints(core_name, indexed_path.lower())
                 return HttpResponse(status=200, content=status)
             except Exception as e:
                 print "Error::: "

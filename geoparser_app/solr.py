@@ -275,7 +275,32 @@ def IndexCrawledPoints(core_name, name, points, numFound, row):
             }
         }
         r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
-        return (True, "Crwaled data geopoints indexed to Solr successfully.")
+        return (True, "Crawled data geopoints indexed to Solr successfully.")
     except:
         return (False, "Cannot index geopoints from crawled data to Solr.")
+
+def SimplifyPoints(core_name, name):
+    '''
+    Simplify multiple array of arrays by merging them into one array.
+    This increases speed of QueryPoints as it will have less array to concatenate
+    '''
+    points,_,_ = QueryPoints(name, core_name)
+    print "Simplifying {0} Points ".format(len(points))
+    try:
+        payload = {
+            "add":{
+                "doc":{
+                    "id" : str(name) ,
+                    "points" : {"set":["{0}".format(points)]}
+                }
+            }
+        }
+        r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
+        print r.status
+        
+        return (True, "Simplified points.. {0}".format(r.status))
+    except:
+        return (False, "Unable to simplify points..")
+
+
 
