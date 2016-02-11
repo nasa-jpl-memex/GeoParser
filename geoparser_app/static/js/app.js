@@ -24,11 +24,11 @@ if (!window.console) {
 // collapse "useInputDiv" on clicking +/- button
 $(function() {
 
-	$("#collapseIcon").bind('click', function(){ 
+	$("#collapseIcon").bind('click', function() {
 		$('#useInputDiv').toggle();
-		$("#collapseIcon").toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
+		$("#collapseIcon").toggleClass("glyphicon-minus").toggleClass("glyphicon-plus");
 	});
-	
+
 });
 
 /**
@@ -56,56 +56,62 @@ var callRESTApi = function(url, type, async, data, success, errorFn) {
  * 
  */
 var colorIndex = 0
-var colorArr = [ 'red', 'yellow', 'blue', 'green', 'orange', 'white', 'grey'];
+var colorArr = [ 'red', 'yellow', 'blue', 'green', 'orange', 'white', 'grey' ];
 var map = null;
-var view=null;
+var view = null;
 
 $(function() {
-	var layer = new ol.layer.Tile({
-		source: new ol.source.XYZ({
-      url: 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-      attributions: [new ol.Attribution({ html: ['&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'] })]
-    })
-	});
+	var layer = new ol.layer.Tile(
+			{
+				source : new ol.source.XYZ(
+						{
+							url : 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+							attributions : [ new ol.Attribution(
+									{
+										html : [ '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>' ]
+									}) ]
+						})
+			});
 
 	view = new ol.View({
-    center: ol.proj.transform([-98.5,39.76], 'EPSG:4326', 'EPSG:3857'),
-	  zoom: 2
+		center : ol.proj.transform([ -98.5, 39.76 ], 'EPSG:4326', 'EPSG:3857'),
+		zoom : 2
 	});
 
 	map = new ol.Map({
-	  layers: [layer],
-	  target: 'map',
-	  view: view
+		layers : [ layer ],
+		target : 'map',
+		view : view
 	});
-	
+
 	var element = $('<span></span>')[0];
 
 	var popup = new ol.Overlay({
-	  element: element,
-	  positioning: 'bottom-center',
-	  stopEvent: false
+		element : element,
+		positioning : 'bottom-center',
+		stopEvent : false
 	});
 	map.addOverlay(popup);
 
 	// display popup on hover
 	map.on('pointermove', function(evt) {
-	  var feature = map.forEachFeatureAtPixel(evt.pixel,
-	      function(feature, layer) {
-	        return feature;
-	      });
-	  if (feature) {
-	    popup.setPosition(evt.coordinate);
-	    $(element).popover({
-	      'placement': 'top',
-	      'html': true,
-	      'content': feature.get('name')
-	    });
-	    $(element).popover('show');
-	  } else {
-	    $(element).popover('destroy');
-	  }
+		var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+			return feature;
+		});
+		if (feature) {
+			popup.setPosition(evt.coordinate);
+			$(element).popover({
+				'placement' : 'top',
+				'html' : true,
+				'content' : feature.get('name')
+			});
+			$(element).popover('show');
+		} else {
+			$(element).popover('destroy');
+		}
 	});
+	// initialize khooshe
+	khooshe.init(map)
 
 });
 
@@ -139,6 +145,11 @@ $(function() {
 	});
 });
 
+// checks is ends with slash
+var notEndsWithSlash = function(string) {
+	return string.lastIndexOf("/") + 1 != string.length
+}
+
 /**
  * Dropdown text change bindings. Dropdown is used in #addIndexBox
  */
@@ -163,7 +174,8 @@ var drawPoints = function(dataPoints) {
 	for ( var i in dataPoints) {
 		var point = dataPoints[i];
 		var iconFeature = new ol.Feature({
-			geometry : new ol.geom.Point([ parseFloat(point.position.y), parseFloat(point.position.x) ]).transform('EPSG:4326', 'EPSG:3857'),
+			geometry : new ol.geom.Point([ parseFloat(point.position.y), parseFloat(point.position.x) ]).transform(
+					'EPSG:4326', 'EPSG:3857'),
 			name : point.loc_name + '<br/>Extracted from: ' + point.file
 		});
 
@@ -184,64 +196,63 @@ var drawPoints = function(dataPoints) {
 		icon_feature.push(iconFeature)
 	}
 
-var maxFeatureCount;
-function calculateClusterInfo(resolution) {
-  maxFeatureCount = 0;
-  var features = vectorLayer.getSource().getFeatures();
-  var feature, radius;
-  for (var i = features.length - 1; i >= 0; --i) {
-    feature = features[i];
-    var originalFeatures = feature.get('features');
-    var extent = ol.extent.createEmpty();
-    for (var j = 0, jj = originalFeatures.length; j < jj; ++j) {
-      ol.extent.extend(extent, originalFeatures[j].getGeometry().getExtent());
-    }
-    maxFeatureCount = Math.max(maxFeatureCount, jj);
-  }
-  return maxFeatureCount
-}
+	var maxFeatureCount;
+	function calculateClusterInfo(resolution) {
+		maxFeatureCount = 0;
+		var features = vectorLayer.getSource().getFeatures();
+		var feature, radius;
+		for (var i = features.length - 1; i >= 0; --i) {
+			feature = features[i];
+			var originalFeatures = feature.get('features');
+			var extent = ol.extent.createEmpty();
+			for (var j = 0, jj = originalFeatures.length; j < jj; ++j) {
+				ol.extent.extend(extent, originalFeatures[j].getGeometry().getExtent());
+			}
+			maxFeatureCount = Math.max(maxFeatureCount, jj);
+		}
+		return maxFeatureCount
+	}
 	var styleCache = {};
 	var s = function(feature, resolution) {
 		var max = calculateClusterInfo(resolution);
 		console.log(max);
-	    var size = feature.get('features').length;
-	    console.log(size);
-	    console.log("---");
-	    var style = styleCache[size];
-	    if (!style) {
-	      style = [new ol.style.Style({
-	        image: new ol.style.Circle({
-	          radius: (size/max) + 10,
-	          stroke: new ol.style.Stroke({
-	            color: '#fff'
-	          }),
-	          fill: new ol.style.Fill({
-	            color: '#3399CC'
-	          })
-	        }),
-	        text: new ol.style.Text({
-	          text: size.toString(),
-	          fill: new ol.style.Fill({
-	            color: '#fff'
-	          })
-	        })
-	      })];
-	      styleCache[size] = style;
-	    }
-	    return style;
+		var size = feature.get('features').length;
+		console.log(size);
+		console.log("---");
+		var style = styleCache[size];
+		if (!style) {
+			style = [ new ol.style.Style({
+				image : new ol.style.Circle({
+					radius : (size / max) + 10,
+					stroke : new ol.style.Stroke({
+						color : '#fff'
+					}),
+					fill : new ol.style.Fill({
+						color : '#3399CC'
+					})
+				}),
+				text : new ol.style.Text({
+					text : size.toString(),
+					fill : new ol.style.Fill({
+						color : '#fff'
+					})
+				})
+			}) ];
+			styleCache[size] = style;
+		}
+		return style;
 	}
-
 
 	var vectorSource = new ol.source.Vector({
 		features : icon_feature
 	});
 
 	var vectorLayer = new ol.layer.Vector({
-		source: new ol.source.Cluster({
-		  distance: 40,
-		  source: vectorSource
+		source : new ol.source.Cluster({
+			distance : 40,
+			source : vectorSource
 		}),
-		style: s
+		style : s
 	});
 
 	map.addLayer(vectorLayer);
@@ -250,7 +261,7 @@ function calculateClusterInfo(resolution) {
 	if (!dataPointsAll[point.file]) {
 		dataPointsAll[point.file] = [];
 	}
-	vectorLayer.color=point.color
+	vectorLayer.color = point.color
 	dataPointsAll[point.file].push(vectorLayer)
 
 }
@@ -259,23 +270,35 @@ var deletePoints = function(dataPoints) {
 	if (!dataPoints || !dataPoints.length || dataPoints.length == 0) {
 		return;
 	}
-	
-	for(var i in dataPoints){
+
+	for ( var i in dataPoints) {
 		map.removeLayer(dataPoints[i]);
 	}
 }
 
+var getNewColor = function() {
+	var color = colorArr[colorIndex];
+	colorIndex++;
+	if (colorIndex >= colorArr.length) {
+		colorIndex = 0;
+	}
+	return color;
+}
+
+var paintDataFromKhooshe = function(khoosheBaseDir, docName) {
+	if (notEndsWithSlash(khoosheBaseDir)) {
+		khoosheBaseDir = khoosheBaseDir + "/"
+	}
+	khooshe.initKhoosheLayer(khoosheBaseDir, getNewColor())
+
+}
 
 var paintDataFromAPI = function(data, docName) {
 	var color;
-	if(dataPointsAll[docName] && dataPointsAll[docName][0].color ){
+	if (dataPointsAll[docName] && dataPointsAll[docName][0].color) {
 		color = dataPointsAll[docName][0].color
-	}else{
-		color = colorArr[colorIndex];
-		colorIndex++;
-		if (colorIndex >= colorArr.length) {
-			colorIndex = 0;
-		}
+	} else {
+		color = getNewColor()
 	}
 	for ( var i in data) {
 		data[i].file = docName;
@@ -350,12 +373,12 @@ var fetchAndDrawPoints = function(res, file, displayArea) {
 		list += '</ol>'
 
 		displayArea.appendChild(Dropzone.createElement(list));
-		
+
 		var fileLabels = $(file.previewElement).find('.glyphicon-minus');
 		fileLabels = fileLabels.parent();
-		fileLabels.append(
-				Dropzone.createElement("<span class='glyphicon glyphicon-map-marker fill-bg' style='color: "+colorArr[colorIndex]+";'>"));
-		
+		fileLabels.append(Dropzone.createElement("<span class='glyphicon glyphicon-map-marker fill-bg' style='color: "
+				+ colorArr[colorIndex] + ";'>"));
+
 		paintDataFromAPI(data, file.name);
 	});
 }
@@ -406,7 +429,7 @@ $(function() {
 			getStatus(res, file);
 		});
 	});
-	
+
 	myDropzone.on("removedfile", function(file) {
 		deletePoints(dataPointsAll[file.name]);
 	});
@@ -422,7 +445,9 @@ var processUploadedFile = function(name) {
 	myDropzone.options.addedfile.call(myDropzone, mockFile);
 
 	myDropzone.emit("complete", mockFile);
-	myDropzone.emit("success", mockFile, { "file_name" : name });
+	myDropzone.emit("success", mockFile, {
+		"file_name" : name
+	});
 	myDropzone.files.push(mockFile);
 }
 
@@ -435,66 +460,71 @@ setTimeout(function() {
 	});
 }, 1000);
 
-var collapseFile = function(ele){
-	//get element which hold location data
+var collapseFile = function(ele) {
+	// get element which hold location data
 	var t1 = $(ele).parent().parent().parent().siblings()[2];
 	$(t1).toggle();
-	$(ele).toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
+	$(ele).toggleClass("glyphicon-minus").toggleClass("glyphicon-plus");
 }
 
-//Save Index functions below
+// Save Index functions below
 var timer;
 $(function() {
-	$("#saveIndex").bind("click", function() {
-		var domain = $("#indexDomain");
-		var index = $("#indexPath");
-		var username = $("#indexUsername");
-		var passwd = $("#indexPasswd");
-		var button = $("#saveIndex");
-		var error = false;
-		domain.parent().removeClass("has-error");
-		index.parent().removeClass("has-error");
+	$("#saveIndex").bind(
+			"click",
+			function() {
+				var domain = $("#indexDomain");
+				var index = $("#indexPath");
+				var username = $("#indexUsername");
+				var passwd = $("#indexPasswd");
+				var button = $("#saveIndex");
+				var error = false;
+				domain.parent().removeClass("has-error");
+				index.parent().removeClass("has-error");
 
-		error = markEmtyError(domain);
-		error = markEmtyError(index) || error;
+				error = markEmtyError(domain);
+				error = markEmtyError(index) || error;
 
-		if (error) {
-			return;
-		}
+				if (error) {
+					return;
+				}
 
-		// add "/" in index if not present already
-		if (index.val().lastIndexOf("/") + 1 != index.val().length) {
-			index.val(index.val() + "/");
-		}
+				// add "/" in index if not present already
+				if (notEndsWithSlash(index.val())) {
+					index.val(index.val() + "/");
+				}
 
-		toggleSpinner(button, true);
-		callRESTApi(SUB_DOMAIN + "query_crawled_index/" + index.val() + domain.val() + "/" + username.val() +  "/" + passwd.val() , 'GET', 'true', null, function(d) {
-			toggleSpinner(button, false);
-			fillDomain();
-			alert("Successfully Geotagged Index");
-		}, function(d) {
-			alert("Error while GeoTagging Index: " + d.status + " - " + d.responseText);
-			toggleSpinner(button, false);
-		});
-		
-		timer = setInterval(function() {
-			callRESTApi(SUB_DOMAIN + "return_points/" + index.val() + domain.val(), 'GET', 'true', null, function(d) {
-			d = eval(d)[0];
-			var progress = 0
-			if(d.total_docs && d.rows_processed){
-				progress = (d.rows_processed / d.total_docs) * 100
-			}
-			var ele = $("#indexProgress")
-			ele.show();
-			ele.find(".progress-bar").css('width', progress+'%').attr('aria-valuenow', progress).html(d.rows_processed + ' / ' + d.total_docs);
-			
-			paintDataFromAPI(d.points, domain.val() + " - " + index.val());
-			if(d.total_docs == d.rows_processed){
-		    clearInterval(timer);
-			}
-			});
-		}, 10000)
-	})
+				toggleSpinner(button, true);
+				callRESTApi(SUB_DOMAIN + "query_crawled_index/" + index.val() + domain.val() + "/" + username.val() + "/"
+						+ passwd.val(), 'GET', 'true', null, function(d) {
+					toggleSpinner(button, false);
+					fillDomain();
+					alert("Successfully Geotagged Index");
+				}, function(d) {
+					alert("Error while GeoTagging Index: " + d.status + " - " + d.responseText);
+					toggleSpinner(button, false);
+				});
+
+				timer = setInterval(function() {
+					callRESTApi(SUB_DOMAIN + "return_points_khooshe/" + index.val() + domain.val(), 'GET', 'true', null,
+							function(d) {
+								d = eval(d)[0];
+								var progress = 0
+								if (d.total_docs && d.rows_processed) {
+									progress = (d.rows_processed / d.total_docs) * 100
+								}
+								var ele = $("#indexProgress")
+								ele.show();
+								ele.find(".progress-bar").css('width', progress + '%').attr('aria-valuenow', progress).html(
+										d.rows_processed + ' / ' + d.total_docs);
+
+								paintDataFromKhooshe(d.khooshe_tile, domain.val() + " - " + index.val());
+								if (d.total_docs == d.rows_processed) {
+									clearInterval(timer);
+								}
+							});
+				}, 10000)
+			})
 
 })
 /**
@@ -505,16 +535,16 @@ var toggleSpinner = function(ele, bool) {
 	ele.prop("disabled", bool);
 
 }
-var hideOtherChild = function(ele){
-	//get element which hold location data
+var hideOtherChild = function(ele) {
+	// get element which hold location data
 	var t1 = $(ele).parent().siblings()[0];
 	var t2 = $(ele).parent().siblings()[1];
 	$(t1).toggle();
 	$(t2).toggle();
-	$(ele).toggleClass("glyphicon-minus"). toggleClass("glyphicon-plus");
+	$(ele).toggleClass("glyphicon-minus").toggleClass("glyphicon-plus");
 }
 
-var markEmtyError = function (inputEle){
+var markEmtyError = function(inputEle) {
 	if (!inputEle.val() || inputEle.val().toString().trim() == "") {
 		inputEle.parent().addClass("has-error");
 		return true;
@@ -523,25 +553,27 @@ var markEmtyError = function (inputEle){
 }
 
 var listOfDomains;
-var fillDomain = function(){
+var fillDomain = function() {
 	callRESTApi(SUB_DOMAIN + "list_of_domains/", 'GET', 'true', null, function(d) {
 		listOfDomains = eval(d)[0];
-		if(!listOfDomains || $.isEmptyObject(listOfDomains) ){
+		if (!listOfDomains || $.isEmptyObject(listOfDomains)) {
 			$("#savedDomain").parent().parent().hide();
-		}else{
+		} else {
 			$("#savedDomain").parent().parent().show();
 		}
-		var domainsList = $.map(listOfDomains, function(element,index) {return "<option>"+index+"</option>"});
-		
+		var domainsList = $.map(listOfDomains, function(element, index) {
+			return "<option>" + index + "</option>"
+		});
+
 		$("#savedDomain").html(domainsList);
-		
+
 		fillURL();
-		
-	});	
+
+	});
 }
 var fillURL = function() {
 	var selectedIndexes = listOfDomains[$("#savedDomain").val()];
-	
+
 	$("#savedIndexes").html("");
 	for ( var i in selectedIndexes) {
 		$("#savedIndexes").append("<option>" + selectedIndexes[i] + "</option>");
@@ -550,19 +582,22 @@ var fillURL = function() {
 
 $(function() {
 	fillDomain();
-	$("#savedDomain").bind("change",fillURL);
+	$("#savedDomain").bind("change", fillURL);
 	var viewindexButton = $("#viewIndex")
 	viewindexButton.bind("click", function() {
 		var indexDisp = $("#savedIndexes").val();
 		var domainDisp = $("#savedDomain").val();
 		toggleSpinner(viewindexButton, true);
-		
-		callRESTApi(SUB_DOMAIN + "return_points/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
-			try{
+
+		callRESTApi(SUB_DOMAIN + "return_points_khooshe/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
+			try {
 				d = eval(d)[0];
-				$("#resultsIndex").append("<li>"+ d.points.length + " found in " + domainDisp + " - " + indexDisp + " - "+d.rows_processed + ' / ' + d.total_docs + "</li>");
-				paintDataFromAPI(d.points, domainDisp + " - " + indexDisp);
-			}catch(e){
+				$("#resultsIndex").append(
+						"<li>" + d.points_count + " found in " + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
+								+ d.total_docs + "</li>");
+				paintDataFromKhooshe(d.khooshe_tile, domainDisp + " - " + indexDisp);
+			} catch (e) {
+				console.error(e.stack)
 				alert("Error while displaying co-ordinates: " + e)
 			}
 			toggleSpinner(viewindexButton, false);
@@ -571,4 +606,4 @@ $(function() {
 			toggleSpinner(viewindexButton, false);
 		});
 	})
-}) 
+})
