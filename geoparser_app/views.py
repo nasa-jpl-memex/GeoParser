@@ -198,8 +198,8 @@ def return_points_khooshe(request, file_name, core_name):
     results = {}
     points, total_docs, rows_processed = QueryPoints(file_name, core_name)
     for point in points:
-        x = point["position"]["x"]
-        y = point["position"]["y"]
+        x = float(point["position"]["x"])
+        y = float(point["position"]["y"])
         all_points.append([x,y])
     khooshe.run_khooshe(all_points, None, "static/tiles/{0}".format(file_name))
     results["total_docs"] = total_docs
