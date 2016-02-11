@@ -208,7 +208,7 @@ def return_points_khooshe(request, file_name, core_name):
     results["total_docs"] = total_docs
     results["rows_processed"] = rows_processed
     results["points_count"] = len(all_points)
-    results["khooshe_tile"] = "geoparser_app/static/tiles/{0}".format(file_name)
+    results["khooshe_tile"] = "static/tiles/{0}".format(file_name)
     if total_docs or points:
         return HttpResponse(status=200, content="[{0}]".format(results))
     else:
