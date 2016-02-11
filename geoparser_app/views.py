@@ -171,6 +171,7 @@ def find_latlon(request, file_name):
     else:
         return HttpResponse(status=200, content="Loading...")
 
+
 @gzip_page
 def return_points(request, file_name, core_name):
     '''
@@ -184,7 +185,29 @@ def return_points(request, file_name, core_name):
     if total_docs or points:
         return HttpResponse(status=200, content="[{0}]".format(results))
     else:
-        return HttpResponse(status=400, content="Cannot find latitude and longitude.")
+        return HttpResponse(status=400, content="Cannot find latitude and longitude(return_points).")
+
+
+def return_points_khooshe(request, file_name, core_name):
+    '''
+        Returns geo point for give file using khooshe
+    '''
+    all_points = []
+    results = {}
+    points, total_docs, rows_processed = QueryPoints(file_name, core_name)
+    for point in points:
+        x = point["position"]["x"]
+        y = point["position"]["y"]
+        all_points.append([x,y])
+    khooshe.run_khooshe(all_points, None, "static/tiles/{0}".format(file_name))
+    results["total_docs"] = total_docs
+    results["rows_processed"] = rows_processed
+    results["points_count"] = len(all_points)
+    results["khooshe_tile"] = "static/tiles/{0}".format(file_name)
+    if total_docs or points:
+        return HttpResponse(status=200, content="[{0}]".format(results))
+    else:
+        return HttpResponse(status=400, content="Cannot find latitude and longitude(return_points_khooshe).")
 
 
 def query_crawled_index(request, core_name, indexed_path, username, passwd):
