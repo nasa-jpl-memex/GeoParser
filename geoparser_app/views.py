@@ -24,6 +24,8 @@ from tika.tika import ServerEndpoint
 from tika.tika import callServer
 import traceback
 
+import khooshe
+
 flip = True
 
 conf_parser = SafeConfigParser()
