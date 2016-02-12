@@ -296,7 +296,7 @@ def SimplifyPoints(core_name, name):
         y = float(point["position"]["y"])
         all_points.append([x,y])
     exclude = set(string.punctuation)
-    file_name = ''.join(ch for ch in core_name if ch not in exclude)
+    file_name = ''.join(ch for ch in core_name+name if ch not in exclude)
     if len(all_points) > 0:
         khooshe.run_khooshe(all_points, None, "geoparser_app/static/tiles/{0}".format(file_name))
     print "Simplifying {0} Points and tiles created".format(len(points))

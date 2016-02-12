@@ -201,7 +201,7 @@ def return_points_khooshe(request, file_name, core_name):
     results["rows_processed"] = rows_processed
     results["points_count"] = len(points)
     exclude = set(string.punctuation)
-    file_name = ''.join(ch for ch in core_name if ch not in exclude)
+    file_name = ''.join(ch for ch in core_name+file_name if ch not in exclude)
     results["khooshe_tile"] = "static/tiles/{0}".format(file_name)
     if total_docs or points:
         return HttpResponse(status=200, content="[{0}]".format(results))
