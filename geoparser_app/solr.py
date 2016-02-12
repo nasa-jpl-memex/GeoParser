@@ -289,10 +289,16 @@ def SimplifyPoints(core_name, name):
     Simplify multiple array of arrays by merging them into one array.
     This increases speed of QueryPoints as it will have less array to concatenate
     '''
+    all_points = []
     points,_,_ = QueryPoints(name, core_name)
+    for point in points:
+        x = float(point["position"]["x"])
+        y = float(point["position"]["y"])
+        all_points.append([x,y])
     exclude = set(string.punctuation)
     file_name = ''.join(ch for ch in core_name if ch not in exclude)
-    khooshe.run_khooshe(points, None, "geoparser_app/static/tiles/{0}".format(file_name))
+    if len(all_points) > 0:
+        khooshe.run_khooshe(all_points, None, "geoparser_app/static/tiles/{0}".format(file_name))
     print "Simplifying {0} Points and tiles created".format(len(points))
     try:
         payload = {

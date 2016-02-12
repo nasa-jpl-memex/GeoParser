@@ -194,13 +194,8 @@ def return_points_khooshe(request, file_name, core_name):
     '''
         Returns geo point for give file using khooshe
     '''
-    all_points = []
     results = {}
     points, total_docs, rows_processed = QueryPoints(file_name, core_name)
-    for point in points:
-        x = float(point["position"]["x"])
-        y = float(point["position"]["y"])
-        all_points.append([x,y])
     results["total_docs"] = total_docs
     results["rows_processed"] = rows_processed
     results["points_count"] = len(all_points)
