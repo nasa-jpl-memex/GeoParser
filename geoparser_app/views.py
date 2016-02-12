@@ -7,7 +7,6 @@ from requests.auth import HTTPBasicAuth
 from ConfigParser import SafeConfigParser
 from compiler.ast import flatten
 from os.path import isfile
-import string
 
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
@@ -202,9 +201,6 @@ def return_points_khooshe(request, file_name, core_name):
         x = float(point["position"]["x"])
         y = float(point["position"]["y"])
         all_points.append([x,y])
-    exclude = set(string.punctuation)
-    file_name = ''.join(ch for ch in file_name if ch not in exclude)
-    khooshe.run_khooshe(all_points, None, "geoparser_app/static/tiles/{0}".format(file_name))
     results["total_docs"] = total_docs
     results["rows_processed"] = rows_processed
     results["points_count"] = len(all_points)
