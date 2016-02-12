@@ -7,6 +7,7 @@ from requests.auth import HTTPBasicAuth
 from ConfigParser import SafeConfigParser
 from compiler.ast import flatten
 from os.path import isfile
+import string
 
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
@@ -199,6 +200,8 @@ def return_points_khooshe(request, file_name, core_name):
     results["total_docs"] = total_docs
     results["rows_processed"] = rows_processed
     results["points_count"] = len(points)
+    exclude = set(string.punctuation)
+    file_name = ''.join(ch for ch in core_name if ch not in exclude)
     results["khooshe_tile"] = "static/tiles/{0}".format(file_name)
     if total_docs or points:
         return HttpResponse(status=200, content="[{0}]".format(results))
