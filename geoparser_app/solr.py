@@ -279,6 +279,7 @@ def IndexCrawledPoints(core_name, name, points, numFound, row):
             }
         }
         r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
+        print r.text
         return (True, "Crawled data geopoints indexed to Solr successfully.")
     except:
         return (False, "Cannot index geopoints from crawled data to Solr.")
@@ -303,9 +304,9 @@ def SimplifyPoints(core_name, name):
             }
         }
         r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
-        print r.status
+        print r.text
         
-        return (True, "Simplified points.. {0}".format(r.status))
+        return (True, "Simplified points..")
     except:
         return (False, "Unable to simplify points..")
 

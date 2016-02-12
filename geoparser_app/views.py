@@ -239,10 +239,10 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
-                SimplifyPoints(core_name, indexed_path.lower())
+                print SimplifyPoints(core_name, indexed_path.lower())
                 for row in range(rows_processed, int(numFound), query_range): #loop solr query
                     if row % simplilfy_freq == 0:
-                        SimplifyPoints(core_name, indexed_path.lower())
+                        print SimplifyPoints(core_name, indexed_path.lower())
 
                     points = []
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, query_range)
@@ -296,7 +296,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                         #loop tika server ends
                     status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+docCount)
                     #loop solr query ends
-                SimplifyPoints(core_name, indexed_path.lower())
+                print SimplifyPoints(core_name, indexed_path.lower())
                 return HttpResponse(status=200, content=status)
             except Exception as e:
                 print "Error::: "
