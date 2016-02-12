@@ -292,7 +292,7 @@ def SimplifyPoints(core_name, name):
     points,_,_ = QueryPoints(name, core_name)
     exclude = set(string.punctuation)
     file_name = ''.join(ch for ch in core_name if ch not in exclude)
-    khooshe.run_khooshe(all_points, None, "geoparser_app/static/tiles/{0}".format(file_name))
+    khooshe.run_khooshe(points, None, "geoparser_app/static/tiles/{0}".format(file_name))
     print "Simplifying {0} Points and tiles created".format(len(points))
     try:
         payload = {
