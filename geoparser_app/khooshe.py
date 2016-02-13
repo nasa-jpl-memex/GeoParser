@@ -129,9 +129,9 @@ def make_rest_of_layers(data, centroids, shapes, centroids_number, tile_name):
                     temp_lon = []
                     for point in data[key]:
                         writer.writerow([point[0], point[1], 'p'])
-                        temp_lat.append(point[0])
-                        temp_lon.append(point[1])
-                    temp.append([count, key, temp_lat, temp_lon])
+                        #temp_lat.append(point[0])
+                        #temp_lon.append(point[1])
+                    temp.append([count, key, [point[0]], [point[1]]])
             else:
                 centroids,_ = kmeans(data[key], centroids_number)
                 idx,_ = vq(data[key],centroids)

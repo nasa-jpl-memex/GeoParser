@@ -593,7 +593,7 @@ $(function() {
 			try {
 				d = eval(d)[0];
 				$("#resultsIndex").append(
-						"<li>" + d.points_count + " found in " + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
+						"<li>" + d.points_count + " points found in domain-" + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
 								+ d.total_docs + "</li>");
 				paintDataFromKhooshe(d.khooshe_tile, domainDisp + " - " + indexDisp);
 			} catch (e) {
