@@ -289,7 +289,7 @@ var paintDataFromKhooshe = function(khoosheBaseDir, docName) {
 	if (notEndsWithSlash(khoosheBaseDir)) {
 		khoosheBaseDir = khoosheBaseDir + "/"
 	}
-	khooshe.initKhoosheLayer(khoosheBaseDir, getNewColor())
+	khooshe.initKhoosheLayer(SUB_DOMAIN+khoosheBaseDir, getNewColor())
 
 }
 
