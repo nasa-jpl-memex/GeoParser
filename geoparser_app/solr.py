@@ -2,6 +2,7 @@ import os
 import urllib2
 import requests
 import string
+import re
 
 from ConfigParser import SafeConfigParser
 import khooshe
@@ -256,7 +257,12 @@ def QueryPoints(file_name, core_name):
                 rows_processed = response['response']['docs'][0]['rows_processed'][0]
             listNew = []
             for point in points:
-                listNew += eval(point)
+                #listNew += eval(point)
+                all_x = re.compile("'x': '([-+]?\d+\.*\d*)").findall(point)
+                all_y = re.compile("'y': '([-+]?\d+\.*\d*)").findall(point)
+                loc_name = re.compile("'loc_name': '(\w+)").findall(point)
+                for i in range(len(all_x)):
+                    listNew.append({"loc_name":loc_name[i],"x":all_x[i].encode(), "y":all_y[i].encode()})
             return listNew, total_docs, rows_processed
         except Exception as e:
             print e
@@ -283,6 +289,7 @@ def IndexCrawledPoints(core_name, name, points, numFound, row):
         return (True, "Crawled data geopoints indexed to Solr successfully.")
     except:
         return (False, "Cannot index geopoints from crawled data to Solr.")
+
 
 def SimplifyPoints(core_name, name):
     '''
