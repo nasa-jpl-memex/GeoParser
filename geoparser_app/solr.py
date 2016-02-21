@@ -6,6 +6,7 @@ import re
 
 from ConfigParser import SafeConfigParser
 import khooshe
+import traceback
 
 
 conf_parser = SafeConfigParser()
@@ -125,16 +126,6 @@ def IndexFile(core_name, file_name):
                             }
                         }
                         r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
-                    else:
-                        payload = {
-                            "add":{
-                                "doc":{
-                                    "id" : str(file_name),
-                                    "points" : "[]"
-                                }
-                            }
-                        }
-                        r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
                     return True
                 except:
                     print "Cannot index status fields"
@@ -269,25 +260,22 @@ def QueryPoints(file_name, core_name):
             return False
 
 
-def IndexCrawledPoints(core_name, name, points, numFound, row):
+def IndexCrawledPoints(core_name, docs):
     '''
     Index geopoints extracted from crawled data
     '''
     try:
-        payload = {
-            "add":{
-                "doc":{
-                    "id" : str(name) ,
-                    "points" : {"add":["{0}".format(points)]},
-                    "total_docs" : numFound,
-                    "rows_processed" : row
-                }
-            }
-        }
+        payload =  []
+        for key in docs.keys():
+            payload.append({"id":key,
+                             "points":"{0}".format(docs[key])
+                             })
         r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
         print r.text
         return (True, "Crawled data geopoints indexed to Solr successfully.")
-    except:
+    except Exception as e:
+        print traceback.format_exc()
+        print e
         return (False, "Cannot index geopoints from crawled data to Solr.")
 
 

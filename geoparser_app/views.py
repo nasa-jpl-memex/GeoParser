@@ -19,6 +19,7 @@ from .forms import UploadFileForm
 from .models import Document
 
 from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores, get_domains_urls, SimplifyPoints
+from solr_admin import get_index_core
 
 from tika import parser
 from tika.tika import ServerEndpoint
@@ -209,24 +210,28 @@ def return_points_khooshe(request, file_name, core_name):
         return HttpResponse(status=400, content="Cannot find latitude and longitude(return_points_khooshe).")
 
 
-def query_crawled_index(request, core_name, indexed_path, username, passwd):
+def query_crawled_index(request, domain_name, indexed_path, username, passwd):
     '''
         To query crawled data that has been indexed into
         Solr or Elastichsearch and return location names
     '''
     if "solr" in indexed_path.lower():
-        # TODO Query solr check existing results
-        if IndexFile(core_name, indexed_path.lower()):
+        '''
+        Query admin core to get core information for domain_name, indexed_path combination
+        '''
+        core_name = get_index_core(domain_name, indexed_path)
+        print core_name
+        if create_core(core_name):
             query_range = 500
             simplilfy_freq = query_range * 50
             # 1 QUERY solr 100 records at a time
             # 2     Run GeotopicParser on each doc one at a time
             # 4     Save it in local solr instance
-            rows_processed =0
-            try:
-                _, _, rows_processed = QueryPoints(indexed_path.lower(), core_name)
-            except:
-                pass
+            rows_processed = 0
+#             try:
+#                 _, _, rows_processed = QueryPointsIndex(core_name)
+#             except:
+#                 pass
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
@@ -237,12 +242,12 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
-                print SimplifyPoints(core_name, indexed_path.lower())
+                #print SimplifyPoints(domain_name, indexed_path.lower())
                 for row in range(rows_processed, int(numFound), query_range): #loop solr query
-                    if row % simplilfy_freq == 0:
-                        print SimplifyPoints(core_name, indexed_path.lower())
+#                     if row % simplilfy_freq == 0:
+#                         print SimplifyPoints(domain_name, indexed_path.lower())
 
-                    points = []
+                    docs = {}
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, query_range)
                     print "solr query - {0}".format(url)
                     r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
@@ -250,6 +255,7 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                     text = response['response']['docs']
                     docCount = 0
                     for t in text: #loop tika server starts
+                        points = []
                         try:
                             docCount+=1
                             text_content = ''
@@ -288,13 +294,15 @@ def query_crawled_index(request, core_name, indexed_path, username, passwd):
                                     print e
                                     pass
                             print "Found {0} coordinates..".format(len(points))
+                            docs[str(t['id'])] = points
+                            #print docs
                         except Exception as e:
                             print traceback.format_exc()
                             pass
                         #loop tika server ends
-                    status = IndexCrawledPoints(core_name, indexed_path.lower(), points, numFound, row+docCount)
+                    status = IndexCrawledPoints(core_name, docs)
                     #loop solr query ends
-                print SimplifyPoints(core_name, indexed_path.lower())
+                #print SimplifyPoints(domain_name, indexed_path.lower())
                 return HttpResponse(status=200, content=status)
             except Exception as e:
                 print "Error::: "
