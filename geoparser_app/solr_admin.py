@@ -58,7 +58,7 @@ def get_index_core(domain, index_path):
 								  }
 						   }
 				   }
-		print payload
+		
 		r = requests.post("{0}{1}/update".format(SOLR_URL, ADMIN_CORE), data=str(payload), params=params, headers=headers)
 		
 		print r.text

@@ -256,12 +256,15 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
                 #gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound)
                 khooshe_gen_freq_l = rows_processed 
                 for row in range(rows_processed, int(numFound), QUERY_RANGE):  # loop solr query
-                    if row <= khooshe_gen_freq_l <= row + QUERY_RANGE:
+                    if row <= khooshe_gen_freq_l <= (row + QUERY_RANGE):
+                        print "Generating khooshe tiles.."
                         gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound)
                         if (khooshe_gen_freq_l >= KHOOSHE_GEN_FREQ):
-                            khooshe_gen_freq_l = KHOOSHE_GEN_FREQ
+                            khooshe_gen_freq_l += KHOOSHE_GEN_FREQ
                         else:
-                            khooshe_gen_freq_l = row * 2
+                            khooshe_gen_freq_l = (row + QUERY_RANGE) * 2
+                    else:
+                        print "Skip generating khooshe tiles.. row - {0}, next scheduled - {1} ".format(row,khooshe_gen_freq_l)
 
                     docs = {}
                     url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, QUERY_RANGE)
