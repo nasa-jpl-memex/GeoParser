@@ -7,6 +7,7 @@ import re
 from ConfigParser import SafeConfigParser
 import khooshe
 import traceback
+import yaml
 
 
 conf_parser = SafeConfigParser()
@@ -278,38 +279,80 @@ def IndexCrawledPoints(core_name, docs):
         print e
         return (False, "Cannot index geopoints from crawled data to Solr.")
 
-
-def SimplifyPoints(core_name, name):
+def GetIndexSize(core_name):
+    
+    url = '{0}{1}/select?q=*&wt=json&rows=1'.format(SOLR_URL, core_name)
+    
+    rows_processed = requests.get(url, headers=headers).json()['response']['numFound']
+    return rows_processed
+    
+            
+def QueryPointsIndex(core_name):
     '''
-    Simplify multiple array of arrays by merging them into one array.
-    This increases speed of QueryPoints as it will have less array to concatenate
+    Return geopoints for given index
     '''
-    all_points = []
-    points,_,_ = QueryPoints(name, core_name)
-    for point in points:
-        x = float(point["position"]["x"])
-        y = float(point["position"]["y"])
-        all_points.append([x,y])
-    exclude = set(string.punctuation)
-    file_name = ''.join(ch for ch in core_name+name if ch not in exclude)
-    if len(all_points) > 0:
-        khooshe.run_khooshe(all_points, None, "geoparser_app/static/tiles/{0}".format(file_name))
-    print "Simplifying {0} Points and tiles created".format(len(points))
-    try:
-        payload = {
-            "add":{
-                "doc":{
-                    "id" : str(name) ,
-                    "points" : {"set":["{0}".format(points)]}
-                }
-            }
-        }
-        r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
-        print r.text
+    if create_core(core_name):
+        listNew = []
+        try:
+            # loop for all solr docs using numFound 
+            start = 0
+            rows = 50000
+            while(True):
+                url = '{0}{1}/select?q=*&fl=points&wt=json&start={2}&rows={3}'.format(SOLR_URL, core_name, start, rows)
+                print url
+                start += rows
+                response = requests.get(url)
+                response = yaml.safe_load(response.text)
+                
+                # loop ends when all docs are processed
+                if len(response['response']['docs']) == 0:
+                    break
+                
+                points = [d['points'][0] for d in response['response']['docs']]
+                
+                for point_t in points:
+                    # below is done to handle character in other encodings
+                    # it's a temporary hack we need to handle it better
+                    point = point_t.decode('string_escape').decode("ascii", "ignore").encode("ascii")
+    
+                    all_x = re.compile("'x': '([-+]?\d+\.*\d*)").findall(point)
+                    all_y = re.compile("'y': '([-+]?\d+\.*\d*)").findall(point)
+                    loc_name = re.compile("'loc_name': '(\w+)").findall(point)
+    
+                    for i in range(len(all_x)):
+                        listNew.append({"loc_name":loc_name[i], "x":all_x[i].encode(), "y":all_y[i].encode()})
         
-        return (True, "Simplified points..")
-    except:
-        return (False, "Unable to simplify points..")
+            return listNew
+        except Exception as e:
+            print traceback.format_exc()
+            print e
+            return listNew
+        
+def GenerateKhooshe(core_name):
+    '''
+    Generate Khooshe tiles for given core
+    '''
+    try:
+        all_points = []
+        points = QueryPointsIndex(core_name)
+
+        for point in points:
+            x = float(point["x"])
+            y = float(point["y"])
+            all_points.append([x, y])
+        exclude = set(string.punctuation)
+        file_name = ''.join(ch for ch in core_name if ch not in exclude)
+
+        if len(all_points) > 0:
+            khooshe.run_khooshe(all_points, None, "geoparser_app/static/tiles/{0}".format(file_name))
+            
+        print "Tiles created for {0} Points".format(len(points))
+        return len(all_points)
+    except Exception as e:
+        print traceback.format_exc()
+        print e
+        print "Unable to generate Khooshe tiles for given core"
+    return 0
 
 
 

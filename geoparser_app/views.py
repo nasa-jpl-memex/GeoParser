@@ -18,8 +18,8 @@ from django.views.decorators.gzip import gzip_page
 from .forms import UploadFileForm
 from .models import Document
 
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, get_all_cores, get_domains_urls, SimplifyPoints
-from solr_admin import get_index_core
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, GenerateKhooshe, GetIndexSize 
+from solr_admin import get_index_core, get_all_domain_details, get_idx_details, update_idx_details
 
 from tika import parser
 from tika.tika import ServerEndpoint
@@ -40,6 +40,9 @@ STATIC = conf_parser.get('general', 'STATIC')
 SUBDOMAIN = conf_parser.get('general', 'SUBDOMAIN')
 TIKA_SERVER = conf_parser.get('general', 'TIKA_SERVER')
 
+QUERY_RANGE = 500
+KHOOSHE_GEN_FREQ = QUERY_RANGE * 30
+            
 headers = {"content-type" : "application/json"}
 params = {"commit" : "true" }
 
@@ -50,11 +53,11 @@ def index(request):
         if form.is_valid():
             instance = Document(docfile=request.FILES['file'])
             instance.save()
-            file_name = str(instance.docfile).replace("{0}/{1}/".format(APP_NAME, UPLOADED_FILES_PATH),"")
+            file_name = str(instance.docfile).replace("{0}/{1}/".format(APP_NAME, UPLOADED_FILES_PATH), "")
             return HttpResponse(status=200, content="{{ \"file_name\":\"{0}\" }}".format(file_name), content_type="application/json")
     else:
         form = UploadFileForm()
-    return render_to_response('index.html', {'form': form, 'subdomian':SUBDOMAIN},  RequestContext(request))
+    return render_to_response('index.html', {'form': form, 'subdomian':SUBDOMAIN}, RequestContext(request))
 
 
 def index_file(request, file_name):
@@ -73,19 +76,12 @@ def list_of_uploaded_files(request):
             files_list.append(f)
     return HttpResponse(status=200, content="{0}".format(files_list))
 
-
+# TODO EDIT IT AS PER NEW SCHEMA
 def list_of_domains(request):
     '''
     Returns list of Solr cores except "uploaded_files"
     '''
-    domains = {}
-    all_cores = get_all_cores()
-    if all_cores:
-        if "uploaded_files" in all_cores:
-            all_cores.remove("uploaded_files")
-        for core in all_cores:
-            ids = get_domains_urls(core)
-            domains["{0}".format(core)] = ids
+    domains = get_all_domain_details()
     return HttpResponse(status=200, content="[" + str(domains) + "]")
 
     
@@ -96,11 +92,11 @@ def parse_lat_lon(locations):
         if key.startswith("Optional_NAME"):
             optionalCount = optionalCount + 1 
     if 'Geographic_NAME' in locations:
-        points[locations["Geographic_NAME"].replace(" ","")] = [locations["Geographic_LATITUDE"].replace(" ",""), locations["Geographic_LONGITUDE"].replace(" ","")]
+        points[locations["Geographic_NAME"].replace(" ", "").decode("UTF-8",'ignore')] = [locations["Geographic_LATITUDE"].replace(" ", ""), locations["Geographic_LONGITUDE"].replace(" ", "")]
     else:
         print "No main location found"
-    for x in range(1, optionalCount+1):
-        points[locations["Optional_NAME{0}".format(x)].replace(" ","")] = [locations["Optional_LATITUDE{0}".format(x)].replace(" ",""), locations["Optional_LONGITUDE{0}".format(x)].replace(" ","")]
+    for x in range(1, optionalCount + 1):
+        points[locations["Optional_NAME{0}".format(x)].replace(" ", "").decode("UTF-8",'ignore')] = [locations["Optional_LATITUDE{0}".format(x)].replace(" ", ""), locations["Optional_LONGITUDE{0}".format(x)].replace(" ", "")]
 
     return points
 
@@ -129,7 +125,7 @@ def find_location(request, file_name):
     if "none" in IndexStatus("locations", file_name):
         text_content = QueryText(file_name)
         if text_content:
-            parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json',  'Content-Type' : 'application/geotopic'}, False)
+            parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json', 'Content-Type' : 'application/geotopic'}, False)
             points = parse_lat_lon(eval(parsed[1])[0])
             
             status = IndexLocationName(file_name, points)
@@ -175,7 +171,11 @@ def find_latlon(request, file_name):
     else:
         return HttpResponse(status=200, content="Loading...")
 
-
+'''
+Works only for file uploads
+index geo tagging have different solr schema
+TODO - Consider having a unified approach
+'''
 @gzip_page
 def return_points(request, file_name, core_name):
     '''
@@ -191,23 +191,35 @@ def return_points(request, file_name, core_name):
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude(return_points).")
 
-
-def return_points_khooshe(request, file_name, core_name):
+'''
+Works only for index geo tagging 
+file uploads have different solr schema
+TODO - Consider having a unified approach
+'''
+def return_points_khooshe(request, indexed_path, domain_name):
     '''
         Returns geo point for give file using khooshe
     '''
+    
+    core_name = get_index_core(domain_name, indexed_path)
     results = {}
-    points, total_docs, rows_processed = QueryPoints(file_name, core_name)
-    results["total_docs"] = total_docs
-    results["rows_processed"] = rows_processed
-    results["points_count"] = len(points)
+    
+    results["rows_processed"] = GetIndexSize(core_name)
+    results["total_docs"], results["points_count"] = get_idx_details(domain_name, indexed_path)
+    
     exclude = set(string.punctuation)
-    file_name = ''.join(ch for ch in core_name+file_name if ch not in exclude)
+    file_name = ''.join(ch for ch in core_name if ch not in exclude)
     results["khooshe_tile"] = "static/tiles/{0}".format(file_name)
-    if total_docs or points:
+    if results["rows_processed"]:
         return HttpResponse(status=200, content="[{0}]".format(results))
     else:
         return HttpResponse(status=400, content="Cannot find latitude and longitude(return_points_khooshe).")
+
+
+
+def gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound):
+    points_len = GenerateKhooshe(core_name)
+    update_idx_details(domain_name, indexed_path, numFound, points_len)
 
 
 def query_crawled_index(request, domain_name, indexed_path, username, passwd):
@@ -222,16 +234,15 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
         core_name = get_index_core(domain_name, indexed_path)
         print core_name
         if create_core(core_name):
-            query_range = 500
-            simplilfy_freq = query_range * 50
-            # 1 QUERY solr 100 records at a time
+            # 1 query solr QUERY_RANGE records at a time
             # 2     Run GeotopicParser on each doc one at a time
-            # 4     Save it in local solr instance
+            # 3     keep appending results 
+            # 4 Save it in local solr instance
             rows_processed = 0
-#             try:
-#                 _, _, rows_processed = QueryPointsIndex(core_name)
-#             except:
-#                 pass
+            try:
+                rows_processed = GetIndexSize(core_name)
+            except:
+                pass
             try:
                 url = "{0}/select?q=*%3A*&wt=json&rows=1".format(indexed_path)
                 r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
@@ -242,45 +253,50 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
-                #print SimplifyPoints(domain_name, indexed_path.lower())
-                for row in range(rows_processed, int(numFound), query_range): #loop solr query
-#                     if row % simplilfy_freq == 0:
-#                         print SimplifyPoints(domain_name, indexed_path.lower())
+                #gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound)
+                khooshe_gen_freq_l = rows_processed 
+                for row in range(rows_processed, int(numFound), QUERY_RANGE):  # loop solr query
+                    if row <= khooshe_gen_freq_l <= row + QUERY_RANGE:
+                        gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound)
+                        if (khooshe_gen_freq_l >= KHOOSHE_GEN_FREQ):
+                            khooshe_gen_freq_l = KHOOSHE_GEN_FREQ
+                        else:
+                            khooshe_gen_freq_l = row * 2
 
                     docs = {}
-                    url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, query_range)
+                    url = "{0}/select?q=*%3A*&start={1}&rows={2}&wt=json".format(indexed_path, row, QUERY_RANGE)
                     print "solr query - {0}".format(url)
                     r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
                     response = r.json()
                     text = response['response']['docs']
                     docCount = 0
-                    for t in text: #loop tika server starts
+                    for t in text:  # loop tika server starts
                         points = []
                         try:
-                            docCount+=1
+                            docCount += 1
                             text_content = ''
                             try:
                                 for v in t.values():
                                     if(hasattr(v, '__iter__')):
-                                        a =u' '.join(v)
-                                    elif(isinstance(v, unicode) ):
-                                        a = v.encode('ascii','ignore')
+                                        a = u' '.join(v)
+                                    elif(isinstance(v, unicode)):
+                                        a = v.encode('ascii', 'ignore')
                                     else:
-                                        a=str(v)
-                                    text_content+=a.encode('ascii','ignore')
+                                        a = str(v)
+                                    text_content += a.encode('ascii', 'ignore')
                             except Exception as e:
                                 print traceback.format_exc()
-                                text_content=str(t.values())
+                                text_content = str(t.values())
                             
                             # simplify text
-                            text_content= ' '.join(text_content.split())
+                            text_content = ' '.join(text_content.split())
                             
-                            parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json',  'Content-Type' : 'application/geotopic'}, False)
+                            parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json', 'Content-Type' : 'application/geotopic'}, False)
                             location_names = parse_lat_lon(eval(parsed[1])[0])
         
                             for key, values in location_names.iteritems():
                                 try:
-                                    ## TODO - ADD META DATA
+                                    # # TODO - ADD META DATA
                                     points.append(
                                         {'loc_name': smart_str(key),
                                         'position':{
@@ -295,18 +311,21 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
                                     pass
                             print "Found {0} coordinates..".format(len(points))
                             docs[str(t['id'])] = points
-                            #print docs
+                            # print docs
                         except Exception as e:
                             print traceback.format_exc()
                             pass
-                        #loop tika server ends
+                        # loop tika server ends
                     status = IndexCrawledPoints(core_name, docs)
-                    #loop solr query ends
-                #print SimplifyPoints(domain_name, indexed_path.lower())
-                return HttpResponse(status=200, content=status)
+                    print status
+                    # loop solr query ends
+                gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound)
+                return HttpResponse(status=200, content= ("Crawled data geo parsed successfully."))
             except Exception as e:
-                print "Error::: "
+                print traceback.format_exc()
                 print e
-                return False
+                return HttpResponse(status=500, content= ("Error while geo parsing crawled data."))
+
     else:
-        pass
+        return HttpResponse(status=500, content= ("Only solr indexes supported for now"))
+    
