@@ -314,7 +314,10 @@ def QueryPointsIndex(core_name):
                     # below is done to handle character in other encodings
                     # it's a temporary hack we need to handle it better
                     point = point_t.decode('string_escape').decode("ascii", "ignore").encode("ascii")
-    
+                    # to handle cases with "
+                    # 'loc_name': '\"WilliamsSchoolofCommerce,Economics,andPolitics\"'
+                    point = point.replace("\"", "")
+                    
                     all_x = re.compile("'x': '([-+]?\d+\.*\d*)").findall(point)
                     all_y = re.compile("'y': '([-+]?\d+\.*\d*)").findall(point)
                     loc_name = re.compile("'loc_name': '(\w+)").findall(point)
