@@ -318,9 +318,14 @@ def QueryPointsIndex(core_name):
                     all_x = re.compile("'x': '([-+]?\d+\.*\d*)").findall(point)
                     all_y = re.compile("'y': '([-+]?\d+\.*\d*)").findall(point)
                     loc_name = re.compile("'loc_name': '(\w+)").findall(point)
-    
-                    for i in range(len(all_x)):
-                        listNew.append({"loc_name":loc_name[i], "x":all_x[i].encode(), "y":all_y[i].encode()})
+                    
+                    if(len(all_x) == len(all_y) == len(loc_name)):
+                        #if length of all_x,all_y,loc_name is not same our results are inconsistent
+                        for i in range(len(all_x)):
+                            listNew.append({"loc_name":loc_name[i], "x":all_x[i].encode(), "y":all_y[i].encode()})
+                    else:
+                        print "length of all_x,all_y,loc_name is not same"
+                        print point
         
             return listNew
         except Exception as e:
