@@ -8,6 +8,7 @@ from ConfigParser import SafeConfigParser
 import khooshe
 import traceback
 import yaml
+import time
 
 
 conf_parser = SafeConfigParser()
@@ -341,9 +342,12 @@ def GenerateKhooshe(core_name):
     Generate Khooshe tiles for given core
     '''
     try:
+        start_time = time.time()
+        print "GenerateKhooshe Started.."
         all_points = []
         points = QueryPointsIndex(core_name)
-
+        print "Retrieved {0} points in {1} seconds".format(len(points), time.time() - start_time)
+        
         for point in points:
             x = float(point["x"])
             y = float(point["y"])
@@ -354,7 +358,8 @@ def GenerateKhooshe(core_name):
         if len(all_points) > 0:
             khooshe.run_khooshe(all_points, None, "geoparser_app/static/tiles/{0}".format(file_name))
             
-        print "Tiles created for {0} Points".format(len(points))
+        print "Tiles created for {0} Points. Total time {1} seconds".format(len(points), time.time() - start_time)
+
         return len(all_points)
     except Exception as e:
         print traceback.format_exc()

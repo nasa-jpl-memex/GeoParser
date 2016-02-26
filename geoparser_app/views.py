@@ -26,7 +26,7 @@ from tika.tika import ServerEndpoint
 from tika.tika import callServer
 import traceback
 
-import khooshe
+import thread
 
 flip = True
 
@@ -216,11 +216,14 @@ def return_points_khooshe(request, indexed_path, domain_name):
         return HttpResponse(status=400, content="Cannot find latitude and longitude(return_points_khooshe).")
 
 
-
-def gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound):
+def _gen_khooshe_update_admin_thread(core_name, domain_name, indexed_path, numFound):
     points_len = GenerateKhooshe(core_name)
     update_idx_details(domain_name, indexed_path, numFound, points_len)
 
+def gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound):
+    thread.start_new_thread(_gen_khooshe_update_admin_thread, (core_name, domain_name, indexed_path, numFound))
+
+    
 
 def query_crawled_index(request, domain_name, indexed_path, username, passwd):
     '''
