@@ -27,6 +27,7 @@ from tika.tika import callServer
 import traceback
 
 import thread
+import time
 
 flip = True
 
@@ -45,6 +46,8 @@ KHOOSHE_GEN_FREQ = QUERY_RANGE * 30
             
 headers = {"content-type" : "application/json"}
 params = {"commit" : "true" }
+
+accept_new_khooshe_request = True
 
 def index(request):
     file_name = ""
@@ -217,11 +220,19 @@ def return_points_khooshe(request, indexed_path, domain_name):
 
 
 def _gen_khooshe_update_admin_thread(core_name, domain_name, indexed_path, numFound):
+    global accept_new_khooshe_request
     points_len = GenerateKhooshe(core_name)
     update_idx_details(domain_name, indexed_path, numFound, points_len)
+    accept_new_khooshe_request = True
+    
 
 def gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound):
-    thread.start_new_thread(_gen_khooshe_update_admin_thread, (core_name, domain_name, indexed_path, numFound))
+    global accept_new_khooshe_request
+    if(accept_new_khooshe_request) :
+        accept_new_khooshe_request = False
+        thread.start_new_thread(_gen_khooshe_update_admin_thread, (core_name, domain_name, indexed_path, numFound))
+    else:
+        print "Rejected Khooshe generation request.. Waiting for previous request to get completed"
 
     
 
