@@ -93,6 +93,7 @@ python manage.py runserver
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
-
+- [Lucene Geo Gazetteer] (https://github.com/chrismattmann/lucene-geo-gazetteer)
+- Apache Solr
 
 
