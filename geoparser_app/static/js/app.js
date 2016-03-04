@@ -93,8 +93,9 @@ $(function() {
 	});
 	map.addOverlay(popup);
 
+	//Below is disabled for now, need to enable it for files only
 	// display popup on hover
-	map.on('pointermove', function(evt) {
+/*	map.on('pointermove', function(evt) {
 		var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
 			return feature;
 		});
@@ -109,9 +110,9 @@ $(function() {
 		} else {
 			$(element).popover('destroy');
 		}
-	});
+	});*/
 	// initialize khooshe
-	khooshe.init(map)
+	khooshe.init(map, true)
 
 });
 

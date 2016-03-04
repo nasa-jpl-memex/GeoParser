@@ -125,12 +125,8 @@ def make_rest_of_layers(data, centroids, shapes, centroids_number, tile_name):
                 with open('{0}/{1}/{2}.csv'.format(tile_name, count, key), 'w') as csv_n:
                     writer = csv.writer(csv_n)
                     writer.writerow(['latitude', 'longitude', 'label'])
-                    temp_lat = []
-                    temp_lon = []
                     for point in data[key]:
                         writer.writerow([point[0], point[1], 'p'])
-                        #temp_lat.append(point[0])
-                        #temp_lon.append(point[1])
                     temp.append([count, key, [point[0]], [point[1]]])
             else:
                 centroids,_ = kmeans(data[key], centroids_number)
@@ -139,24 +135,26 @@ def make_rest_of_layers(data, centroids, shapes, centroids_number, tile_name):
                     points = data[key][idx==each]
                     new_datas['{0}_{1}'.format(key, each)] = points
                     shapes.append(points.shape[0])
-                with open('{0}/{1}/{2}.csv'.format(tile_name, count, key),'w') as csv_n:
+                with open('{0}/{1}/{2}.csv'.format(tile_name, count, key), 'w') as csv_n:
                     writer = csv.writer(csv_n)
                     writer.writerow(['latitude', 'longitude', 'label'])
                     temp_lat = []
                     temp_lon = []
                     for a, centroid in enumerate(centroids):
-                        writer.writerow([centroid[0], centroid[1], shapes[a]])
-                        temp_lat.append(centroid[0])
-                        temp_lon.append(centroid[1])
-                    temp.append([count, key, temp_lat, temp_lon])
+                        if shapes[a] > 1:
+                            writer.writerow([centroid[0], centroid[1], shapes[a]])
+                            temp_lat.append(centroid[0])
+                            temp_lon.append(centroid[1])
+                    if len(temp_lat) >= 1 and len(temp_lon)>= 1:
+                        temp.append([count, key, temp_lat, temp_lon])
                 shapes = []
         data = 0
         data = new_datas
         new_datas = 0
         count += 1
+        make_dictionary(temp, tile_name)
         if data == {}:
             break
-        make_dictionary(temp, tile_name)
 
 
 def run_khooshe(points_obj, points_file, tile_name):
