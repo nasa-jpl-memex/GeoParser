@@ -1,6 +1,6 @@
 'use strict';
 
-var SUB_DOMAIN = ""
+var SUB_DOMAIN = "/"
 var csrfMiddlewareToken;
 var CSRF_MIDDLEWARE_TOKEN_PARAM = "csrfmiddlewaretoken";
 
@@ -396,7 +396,7 @@ $(function() {
 
 	myDropzone = new Dropzone(document.body, {// Whole body is a drop zone
 
-		url : SUB_DOMAIN + '/',
+		url : SUB_DOMAIN ,
 		paramName : 'file',
 		parallelUploads : 2,
 		previewTemplate : previewTemplate,
