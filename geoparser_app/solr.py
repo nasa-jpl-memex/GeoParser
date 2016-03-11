@@ -237,7 +237,7 @@ def IndexLatLon(file_name, points):
 def get_all_points(point):
     # below is done to handle character in other encodings
     # it's a temporary hack we need to handle it better
-    point = point.decode('unicode-escape').decode('string_escape').decode("ascii","ignore").encode("ascii","ignore")
+    point = point.decode('unicode-escape','ignore').decode('string_escape','ignore').decode("ascii","ignore").encode("ascii","ignore")
     
     # to handle cases with ",', and other punctuation
     # 'loc_name': '\"WilliamsSchoolofCommerce,Economics,andPolitics\"'
@@ -325,7 +325,7 @@ def QueryPointsIndex(core_name):
                 points = [d['points'][0] for d in response['response']['docs']]
                 
                 for point in points:
-                    all_x, loc_name, all_y = get_all_points(point)
+                    all_x, loc_name, all_y = get_all_points(str(point) )
                     if(len(all_x) == len(all_y) == len(loc_name)):
                         #if length of all_x,all_y,loc_name is not same our results are inconsistent
                         for i in range(len(all_x)):

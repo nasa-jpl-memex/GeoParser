@@ -221,8 +221,12 @@ def return_points_khooshe(request, indexed_path, domain_name):
 
 def _gen_khooshe_update_admin_thread(core_name, domain_name, indexed_path, numFound):
     global accept_new_khooshe_request
-    points_len = GenerateKhooshe(core_name)
-    update_idx_details(domain_name, indexed_path, numFound, points_len)
+    try:
+        points_len = GenerateKhooshe(core_name)
+        update_idx_details(domain_name, indexed_path, numFound, points_len)
+    except Exception as e:
+        print traceback.format_exc()
+        print e
     accept_new_khooshe_request = True
     
 

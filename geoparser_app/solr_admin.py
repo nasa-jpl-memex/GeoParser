@@ -120,6 +120,7 @@ def update_idx_details(domain, index_path, idx_size, pnt_size):
 		
 		print r.text
 		if(not r.ok):
+			print payload
 			raise "Can't update idx details with core name {0} - {1}".format(domain, index_path)
 		
 		return True
