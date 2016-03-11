@@ -231,10 +231,19 @@ def gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound):
     if(accept_new_khooshe_request) :
         accept_new_khooshe_request = False
         thread.start_new_thread(_gen_khooshe_update_admin_thread, (core_name, domain_name, indexed_path, numFound))
+        return True
     else:
         print "Rejected Khooshe generation request.. Waiting for previous request to get completed"
+        return False
 
-    
+def refresh_khooshe_tiles(request, domain_name, indexed_path):
+    core_name = get_index_core(domain_name, indexed_path)
+    numFound = GetIndexSize(core_name)
+    is_in_queue = gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound)
+    if(is_in_queue):
+        return HttpResponse(status=200, content="[{'msg':'Queued Khooshe generation'}]")
+    else:
+        return HttpResponse(status=200, content="[{'msg':'Can't queue another Khooshe generation'}]")
 
 def query_crawled_index(request, domain_name, indexed_path, username, passwd):
     '''

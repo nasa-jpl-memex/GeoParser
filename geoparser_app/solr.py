@@ -233,6 +233,22 @@ def IndexLatLon(file_name, points):
         return (False, "Either Solr not running or cannot create Core.")
 
 
+
+def get_all_points(point):
+    # below is done to handle character in other encodings
+    # it's a temporary hack we need to handle it better
+    point = point.decode('unicode-escape').decode('string_escape').decode("ascii","ignore").encode("ascii","ignore")
+    
+    # to handle cases with ",', and other punctuation
+    # 'loc_name': '\"WilliamsSchoolofCommerce,Economics,andPolitics\"'
+    stop_char = string.punctuation.replace(".", "")
+    point = "".join([i for i in point if (i not in stop_char) ])
+    
+    all_x = re.compile("x ([-+]?\d+\.*\d*)").findall(point)
+    all_y = re.compile("y ([-+]?\d+\.*\d*)").findall(point)
+    loc_name = re.compile("locname (\w+)").findall(point)
+    return all_x, loc_name, all_y
+
 def QueryPoints(file_name, core_name):
     '''
     Return geopoints for given filename
@@ -250,12 +266,9 @@ def QueryPoints(file_name, core_name):
                 rows_processed = response['response']['docs'][0]['rows_processed'][0]
             listNew = []
             for point in points:
-                #listNew += eval(point)
-                all_x = re.compile("'x': '([-+]?\d+\.*\d*)").findall(point)
-                all_y = re.compile("'y': '([-+]?\d+\.*\d*)").findall(point)
-                loc_name = re.compile("'loc_name': '(\w+)").findall(point)
+                all_x, loc_name, all_y = get_all_points(point)
                 for i in range(len(all_x)):
-                    listNew.append({"loc_name":loc_name[i],"x":all_x[i].encode(), "y":all_y[i].encode()})
+                    listNew.append({"loc_name":loc_name[i].encode(),"position":{"x":all_x[i].encode(), "y":all_y[i].encode()}})
             return listNew, total_docs, rows_processed
         except Exception as e:
             print e
@@ -311,18 +324,8 @@ def QueryPointsIndex(core_name):
                 
                 points = [d['points'][0] for d in response['response']['docs']]
                 
-                for point_t in points:
-                    # below is done to handle character in other encodings
-                    # it's a temporary hack we need to handle it better
-                    point = point_t.decode('string_escape').decode("ascii", "ignore").encode("ascii")
-                    # to handle cases with "
-                    # 'loc_name': '\"WilliamsSchoolofCommerce,Economics,andPolitics\"'
-                    point = point.replace("\"", "")
-                    
-                    all_x = re.compile("'x': '([-+]?\d+\.*\d*)").findall(point)
-                    all_y = re.compile("'y': '([-+]?\d+\.*\d*)").findall(point)
-                    loc_name = re.compile("'loc_name': '(\w+)").findall(point)
-                    
+                for point in points:
+                    all_x, loc_name, all_y = get_all_points(point)
                     if(len(all_x) == len(all_y) == len(loc_name)):
                         #if length of all_x,all_y,loc_name is not same our results are inconsistent
                         for i in range(len(all_x)):
