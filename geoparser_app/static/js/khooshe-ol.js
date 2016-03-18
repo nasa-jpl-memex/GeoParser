@@ -135,7 +135,8 @@ var khooshe = {
 			var iconFeature = new ol.Feature({
 				geometry : new ol.geom.Point([ parseFloat(point.longitude), parseFloat(point.latitude) ]).transform(
 						'EPSG:4326', 'EPSG:3857'),
-				popup_content : point.info
+				popup_content : point.info,
+				layer : layer
 			});
 			var ccl = new ol.style.Circle({
 				// radius : isNaN(point.label) ? 5 : point.label,

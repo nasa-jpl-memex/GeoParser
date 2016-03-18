@@ -127,7 +127,7 @@ def IndexFile(core_name, file_name):
                                 }
                             }
                         }
-                        r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
+                        r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params, headers=headers)
                     return True
                 except:
                     print "Cannot index status fields"
@@ -145,7 +145,7 @@ def IndexUploadedFilesText(file_name, text):
     '''
     text = text.replace("'", " ")
     text = text.rstrip('\n')
-    text = text.rstrip()#replace("\n", "")
+    text = text.rstrip()
     file_dir = os.path.realpath(__file__).split("solr.py")[0]
     tmp_json = "{0}static/json/tmp.json".format(file_dir)
     with open(tmp_json, 'w') as f:
@@ -190,7 +190,7 @@ def IndexLocationName(name, locations):
                     }
                 }
             }
-            r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
+            r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params, headers=headers)
             return (True, "Location name/s indexed to Solr successfully.")
         except:
             return (False, "Cannot index location name/s to Solr.")
@@ -225,7 +225,7 @@ def IndexLatLon(file_name, points):
                     }
                 }
             }
-            r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params,  headers=headers)
+            r = requests.post("{0}{1}/update".format(SOLR_URL, UPLOADED_FILES_COLLECTION_NAME), data=str(payload), params=params, headers=headers)
             return (True, "Latitude and longitude indexed to Solr successfully.")
         except:
             return (False, "Cannot index latitude and longitude to Solr.")
@@ -237,7 +237,7 @@ def IndexLatLon(file_name, points):
 def get_all_points(point):
     # below is done to handle character in other encodings
     # it's a temporary hack we need to handle it better
-    point = point.decode('unicode-escape','ignore').decode('string_escape','ignore').decode("ascii","ignore").encode("ascii","ignore")
+    point = point.decode('unicode-escape', 'ignore').encode("ascii", "ignore").decode('string_escape', 'ignore').decode("ascii", "ignore").encode("ascii", "ignore")
     
     # to handle cases with ",', and other punctuation
     # 'loc_name': '\"WilliamsSchoolofCommerce,Economics,andPolitics\"'
@@ -268,7 +268,7 @@ def QueryPoints(file_name, core_name):
             for point in points:
                 all_x, loc_name, all_y = get_all_points(point)
                 for i in range(len(all_x)):
-                    listNew.append({"loc_name":loc_name[i].encode(),"position":{"x":all_x[i].encode(), "y":all_y[i].encode()}})
+                    listNew.append({"loc_name":loc_name[i].encode(), "position":{"x":all_x[i].encode(), "y":all_y[i].encode()}})
             return listNew, total_docs, rows_processed
         except Exception as e:
             print e
@@ -280,12 +280,12 @@ def IndexCrawledPoints(core_name, docs):
     Index geopoints extracted from crawled data
     '''
     try:
-        payload =  []
+        payload = []
         for key in docs.keys():
             payload.append({"id":key,
                              "points":"{0}".format(docs[key])
                              })
-        r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params,  headers=headers)
+        r = requests.post("{0}{1}/update".format(SOLR_URL, core_name), data=str(payload), params=params, headers=headers)
         print r.text
         return (True, "Crawled data geopoints indexed to Solr successfully.")
     except Exception as e:
@@ -312,7 +312,7 @@ def QueryPointsIndex(core_name):
             start = 0
             rows = 50000
             while(True):
-                url = '{0}{1}/select?q=*&fl=points&wt=json&start={2}&rows={3}'.format(SOLR_URL, core_name, start, rows)
+                url = '{0}{1}/select?q=-points%3A%22%5B%5D%22&fl=points,id&wt=json&start={2}&rows={3}'.format(SOLR_URL, core_name, start, rows)
                 print url
                 start += rows
                 response = requests.get(url)
@@ -322,14 +322,16 @@ def QueryPointsIndex(core_name):
                 if len(response['response']['docs']) == 0:
                     break
                 
-                points = [d['points'][0] for d in response['response']['docs']]
+                points = response['response']['docs']
                 
                 for point in points:
-                    all_x, loc_name, all_y = get_all_points(str(point) )
+                    docId = point['id']
+                    point = point['points'][0]
+                    all_x, loc_name, all_y = get_all_points(point)
                     if(len(all_x) == len(all_y) == len(loc_name)):
-                        #if length of all_x,all_y,loc_name is not same our results are inconsistent
+                        # if length of all_x,all_y,loc_name is not same our results are inconsistent
                         for i in range(len(all_x)):
-                            listNew.append({"loc_name":loc_name[i], "x":all_x[i].encode(), "y":all_y[i].encode()})
+                            listNew.append({"popup_info":"'{0}','{1}'".format(loc_name[i],docId), "x":all_x[i].encode(), "y":all_y[i].encode()})
                     else:
                         print "length of all_x,all_y,loc_name is not same"
                         print point
@@ -354,7 +356,7 @@ def GenerateKhooshe(core_name):
         for point in points:
             x = float(point["x"])
             y = float(point["y"])
-            all_points.append([x, y])
+            all_points.append([x, y, point["popup_info"]])
         exclude = set(string.punctuation)
         file_name = ''.join(ch for ch in core_name if ch not in exclude)
 

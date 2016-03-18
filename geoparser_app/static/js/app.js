@@ -59,6 +59,11 @@ var colorIndex = 0
 var colorArr = [ 'red', 'yellow', 'blue', 'green', 'orange', 'white', 'grey' ];
 var map = null;
 var view = null;
+/**
+ * layerToIndexMap has key as base directory for khooshe tiles and value as actual solr index.
+ * {'static/tiles/test1/':'http://localhost:8983/solr/test'}
+ */
+var layerToIndexMap = {}
 
 $(function() {
 	var layer = new ol.layer.Tile(
@@ -95,24 +100,50 @@ $(function() {
 
 	//Below is disabled for now, need to enable it for files only
 	// display popup on hover
-/*	map.on('pointermove', function(evt) {
+	map.on('pointermove', function(evt) {
 		var feature = map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
 			return feature;
 		});
 		if (feature) {
+			//close any existing popovers
+			$(element).popover('destroy');
+			
+			var popupData =  $.csv.toArray(feature.get('popup_content'))
+			
+			var docLink = layerToIndexMap[feature.get('layer')] + "/select?q=id:%22"+eval(popupData[1])+"%22&wt=json&indent=true"
+			
 			popup.setPosition(evt.coordinate);
+			
 			$(element).popover({
+        trigger: 'manual',
 				'placement' : 'top',
 				'html' : true,
-				'content' : feature.get('name')
-			});
+				'content' : function() {
+					if (popupData[1]) {
+						return "<a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>" + docLink + "</a>";
+					} else {
+						return ""
+					}
+				},
+        container: $(element), // This makes popover part of element
+				'title': eval(popupData[0])	
+	    })
+			
 			$(element).popover('show');
 		} else {
-			$(element).popover('destroy');
+
+			//On mouse leave close popover after 3 seconds
+			setTimeout(function() {
+        if (!$(".popover:hover").length) { 
+       // This check ensure we close popover only if mouse is not hovered over .popover
+        	$(element).popover('destroy');
+        }
+			}, 3000)
+		
 		}
-	});*/
+	});
 	// initialize khooshe
-	khooshe.init(map, true)
+	khooshe.init(map, false)
 
 });
 
@@ -287,10 +318,15 @@ var getNewColor = function() {
 }
 
 var paintDataFromKhooshe = function(khoosheBaseDir, docName) {
+	
 	if (notEndsWithSlash(khoosheBaseDir)) {
 		khoosheBaseDir = khoosheBaseDir + "/"
 	}
-	khooshe.initKhoosheLayer(SUB_DOMAIN+khoosheBaseDir, getNewColor())
+	khoosheBaseDir = SUB_DOMAIN + khoosheBaseDir
+	
+	layerToIndexMap[khoosheBaseDir] = docName
+	
+	khooshe.initKhoosheLayer(khoosheBaseDir, getNewColor())
 
 }
 
@@ -519,7 +555,7 @@ $(function() {
 								ele.find(".progress-bar").css('width', progress + '%').attr('aria-valuenow', progress).html(
 										d.rows_processed + ' / ' + d.total_docs);
 
-								paintDataFromKhooshe(d.khooshe_tile, domain.val() + " - " + index.val());
+								paintDataFromKhooshe(d.khooshe_tile, index.val());
 								if (d.total_docs == d.rows_processed) {
 									clearInterval(timer);
 								}
@@ -596,7 +632,7 @@ $(function() {
 				$("#resultsIndex").append(
 						"<li>" + d.points_count + " points found in domain-" + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
 								+ d.total_docs + "</li>");
-				paintDataFromKhooshe(d.khooshe_tile, domainDisp + " - " + indexDisp);
+				paintDataFromKhooshe(d.khooshe_tile, indexDisp);
 			} catch (e) {
 				console.error(e.stack)
 				alert("Error while displaying co-ordinates: " + e)

@@ -16,7 +16,7 @@ import os
 import shutil
 import csv
 import numpy as np
-from scipy.cluster.vq import kmeans,vq
+from scipy.cluster.vq import kmeans, vq
 
 
 def remove_tiles_folder(tile_name):
@@ -43,17 +43,29 @@ def get_points_count(points_file):
     return count
 
 
-def read_point_data(points_file, point_array):
+def read_point_data(points_file):
     '''
     '''
-    with open(points_file) as csv_f:
+    tmp1 = []
+    tmp2 = []
+    with open(points_file, 'rU') as csv_f:
         reader = csv.reader(csv_f)
         try:
             for index, row in enumerate(reader):
-                point_array[index] = [float(row[0]),float(row[1])]
+                if row[0] and  row[1] and row[2]:
+                    tmp1.append([float(row[0]), float(row[1])])
+                    tmp2.append([float(row[0]), float(row[1]), row[2]])
         except:
-            raise error("Cannot read data from point text file.")
-    return point_array
+            raise Exception("Cannot read data from point text file.")
+    return tmp1, tmp2
+
+def read_point_obj(points_obj):
+    '''
+    '''
+    tmp1 = []
+    for point in points_obj:
+        tmp1.append(point[0:2])
+    return tmp1, points_obj
 
 
 def unique_array(point_array):
@@ -70,8 +82,7 @@ def init_dictionary(tile_name):
     '''
     with open('{0}/dict.csv'.format(tile_name), 'w') as dic_csv:
         writer = csv.writer(dic_csv)
-        #adding header
-        writer.writerow(['folder','file','extent'])
+        writer.writerow(['folder', 'file', 'extent'])
 
 
 def make_dictionary(temp, tile_name):
@@ -80,15 +91,15 @@ def make_dictionary(temp, tile_name):
     with open('{0}/dict.csv'.format(tile_name), 'a') as dic_csv:
         writer = csv.writer(dic_csv)
         for each in temp:
-            writer.writerow([each[0], each[1], "{0}, {1}, {2}, {3}".format(min(each[3]),min(each[2]),max(each[3]), max(each[2]))])
+            writer.writerow([each[0], each[1], "{0}, {1}, {2}, {3}".format(min(each[3]), min(each[2]), max(each[3]), max(each[2]))])
 
 
 def make_first_layer(unique_points, centroids_number, tile_name):
     '''
     '''
     new_data = {}
-    centroids,_ = kmeans(unique_points,centroids_number)
-    idx,_ = vq(unique_points,centroids)
+    centroids, _ = kmeans(unique_points, centroids_number)
+    idx, _ = vq(unique_points, centroids)
     shapes = []
     temp = []
     for each in range(len(centroids)):
@@ -98,11 +109,11 @@ def make_first_layer(unique_points, centroids_number, tile_name):
     create_folder('{0}/0'.format(tile_name))
     with open('{0}/0/0.csv'.format(tile_name),'w') as csv_n:
         writer = csv.writer(csv_n, delimiter=',')
-        writer.writerow(['latitude', 'longitude', 'label'])
+        writer.writerow(['latitude', 'longitude', 'label', 'info'])
         temp_lat = []
         temp_lon = []
         for index, centroid in enumerate(centroids):
-            writer.writerow([centroid[0],centroid[1], shapes[index]])
+            writer.writerow([centroid[0], centroid[1], shapes[index], shapes[index]])
             temp_lat.append(centroid[0])
             temp_lon.append(centroid[1])
         temp.append([0, 0, temp_lat, temp_lon])
@@ -112,7 +123,7 @@ def make_first_layer(unique_points, centroids_number, tile_name):
     return centroids, shapes, new_data
 
 
-def make_rest_of_layers(data, centroids, shapes, centroids_number, tile_name):
+def make_rest_of_layers(data, centroids, shapes, centroids_number, tile_name, point_dict):
     '''
     '''
     count = 1
@@ -124,9 +135,10 @@ def make_rest_of_layers(data, centroids, shapes, centroids_number, tile_name):
             if data[key].shape[0] < 10:
                 with open('{0}/{1}/{2}.csv'.format(tile_name, count, key), 'w') as csv_n:
                     writer = csv.writer(csv_n)
-                    writer.writerow(['latitude', 'longitude', 'label'])
+                    writer.writerow(['latitude', 'longitude', 'label', 'info'])
                     for point in data[key]:
-                        writer.writerow([point[0], point[1], 'p'])
+                        info = point_dict["{0}_{1}".format(point[0], point[1])]
+                        writer.writerow([point[0], point[1], 'p', info])
                     temp.append([count, key, [point[0]], [point[1]]])
             else:
                 centroids,_ = kmeans(data[key], centroids_number)
@@ -137,15 +149,15 @@ def make_rest_of_layers(data, centroids, shapes, centroids_number, tile_name):
                     shapes.append(points.shape[0])
                 with open('{0}/{1}/{2}.csv'.format(tile_name, count, key), 'w') as csv_n:
                     writer = csv.writer(csv_n)
-                    writer.writerow(['latitude', 'longitude', 'label'])
+                    writer.writerow(['latitude', 'longitude', 'label', 'info'])
                     temp_lat = []
                     temp_lon = []
                     for a, centroid in enumerate(centroids):
                         if shapes[a] > 1:
-                            writer.writerow([centroid[0], centroid[1], shapes[a]])
+                            writer.writerow([centroid[0], centroid[1], shapes[a], shapes[a]])
                             temp_lat.append(centroid[0])
                             temp_lon.append(centroid[1])
-                    if len(temp_lat) >= 1 and len(temp_lon)>= 1:
+                    if len(temp_lat) >= 1 and len(temp_lon) >= 1:
                         temp.append([count, key, temp_lat, temp_lon])
                 shapes = []
         data = 0
@@ -163,19 +175,22 @@ def run_khooshe(points_obj, points_file, tile_name):
     CENTROIDS_NUMBER = 15
     remove_tiles_folder(tile_name)
     if points_file:
-        points_count = get_points_count(points_file)
-        point_array = np.zeros([points_count, 2])
-        point_array = read_point_data(points_file, point_array)
+        point_array, point_array2 = read_point_data(points_file)
         print "Reading points --> DONE."
     else:
-        point_array = points_obj
+        point_array , point_array2 = read_point_obj(points_obj)
+
+    point_dict = {}
+    for point in point_array2:
+        point_dict['{0}_{1}'.format(point[0], point[1])] = str(point[2])
+
 
     unique_points = unique_array(point_array)
     print "Finding unique points --> DONE."
 
     centroids, shapes, new_data = make_first_layer(unique_points, CENTROIDS_NUMBER, tile_name)
 
-    make_rest_of_layers(new_data, centroids, shapes, CENTROIDS_NUMBER, tile_name)
+    make_rest_of_layers(new_data, centroids, shapes, CENTROIDS_NUMBER, tile_name, point_dict)
     print "Creating layers --> DONE."
 
 
