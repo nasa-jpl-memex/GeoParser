@@ -241,7 +241,7 @@ def get_all_points(point):
     
     # to handle cases with ",', and other punctuation
     # 'loc_name': '\"WilliamsSchoolofCommerce,Economics,andPolitics\"'
-    stop_char = string.punctuation.replace(".", "")
+    stop_char = string.punctuation.replace(".", "").replace("-", "")
     point = "".join([i for i in point if (i not in stop_char) ])
     
     all_x = re.compile("x ([-+]?\d+\.*\d*)").findall(point)

@@ -203,9 +203,13 @@ var khooshe = {
 		if (!color) {
 			color = khooshe._default_color
 		}
-		if(!khooshe._layerKhooshe[baseDir]){
-			khooshe._drawKhoosheLayer(0, [ 0 ], baseDir, color)
+		if(khooshe._layerKhooshe[baseDir]){
+			//Already initialized on khooshe for this baseDir
+			return;
 		}
+		
+		khooshe._drawKhoosheLayer(0, [ 0 ], baseDir, color)
+		
 		var dictOfLayer = null
 		$.ajax({
 			type : "GET",
