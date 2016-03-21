@@ -41,13 +41,13 @@
           <div class="col-md-5 bottom-buffer">
             <div class="btn-group btn-group-lg" id="navButtons" data-toggle="buttons">
               <!-- BELOW HEIRARCHY OF label MUST BE MAINTAINED -->
-              <label class="btn btn-default"> <input type="radio" name="options"
-                id="navAddIndex" autocomplete="off"> <span class="glyphicon glyphicon-cog"
+              <label class="btn btn-default" title="Add/View Index"> <input type="radio" name="options"
+                id="navAddIndex" autocomplete="off"> <span class="glyphicon icon-db"
                 aria-hidden="true"></span>
-              </label> <label class="btn btn-default active"> <input type="radio" name="options"
+              </label> <label class="btn btn-default active" title="Upload File"> <input type="radio" name="options"
                 id="navUploadFiles" autocomplete="off"> <span
                 class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
-              </label> <label class="btn btn-default"> <input type="radio" name="options"
+              </label> <label class="btn btn-default" title="Search (Coming soon..)"> <input type="radio" name="options"
                 id="navSearchIndex" autocomplete="off"> <span
                 class="glyphicon glyphicon-search" aria-hidden="true"></span>
               </label>
@@ -229,11 +229,20 @@
             </div>
             <div class="clear"></div>
             <div class="row">
+              <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10 no-left-padding  bottom-buffer">
+                  <h4>View geoparsed index</h4>
+                  <hr />
+                </div>
+                <div class="col-md-1"></div>
+              </div>
+              <div class="clear"></div>
               <div class="col-md-3">
-                <select id="savedDomain" class="dropdown-toggle-full-width">  </select>
+                <select id="savedDomain" class="dropdown-toggle-full-width font-20">  </select>
               </div>
               <div class="col-md-6">
-                <select id="savedIndexes" class="dropdown-toggle-full-width">  </select>
+                <select id="savedIndexes" class="dropdown-toggle-full-width font-20">  </select>
               </div>
               <div class="col-md-3">
                 <button id="viewIndex" type="button" class="btn btn-primary has-spinner">
