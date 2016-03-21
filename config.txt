@@ -5,4 +5,5 @@ STATIC = static
 SUBDOMAIN = 
 TIKA_SERVER = http://localhost:8001
 SOLR_URL = http://localhost:8983/solr/
+SOLR_PORT = 8983
 UPLOADED_FILES_COLLECTION_NAME = uploaded_files

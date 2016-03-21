@@ -16,7 +16,7 @@ conf_parser.read('config.txt')
 
 SOLR_URL = conf_parser.get('general', 'SOLR_URL')
 UPLOADED_FILES_COLLECTION_NAME = conf_parser.get('general', 'UPLOADED_FILES_COLLECTION_NAME')
-
+SOLR_PORT = conf_parser.get('general', 'SOLR_PORT')
 
 headers = {"content-type" : "application/json" }
 params = {"commit" : "true" }
@@ -153,7 +153,7 @@ def IndexUploadedFilesText(file_name, text):
         f.close()
     if create_core(UPLOADED_FILES_COLLECTION_NAME):
         try:
-            command = "{0}../Solr/solr-5.3.1/bin/post -c {1} {2}".format(file_dir, UPLOADED_FILES_COLLECTION_NAME, tmp_json)
+            command = "{0}../Solr/solr-5.3.1/bin/post -c {1} {2} -p {3}".format(file_dir, UPLOADED_FILES_COLLECTION_NAME, tmp_json, SOLR_PORT)
             os.system(command)
             os.remove(tmp_json)
             return (True, "Text indexed to Solr successfully.")
