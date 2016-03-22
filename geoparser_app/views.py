@@ -339,12 +339,13 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
                                     print "Error while transforming points "
                                     print e
                                     pass
-                            print "Found {0} coordinates..".format(len(points))
-                            docs[str(t['id'])] = points
+                            print "Found {0} coordinates..".format(len(points))  
                             # print docs
                         except Exception as e:
                             print traceback.format_exc()
                             pass
+                        
+                        docs[str(t['id'])] = points
                         # loop tika server ends
                     status = IndexCrawledPoints(core_name, docs)
                     print status
