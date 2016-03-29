@@ -80,7 +80,7 @@ Now start lucene-geo-gazetteer server
 ```
 lucene-geo-gazetteer -server
 ```
-4.Run tika server as mentioned in `https://wiki.apache.org/tika/GeoTopicParser` on port `8001`. Port is mentioned in `https://github.com/MBoustani/GeoParser/blob/master/geoparser_app/views.py#L117`
+4.Run tika server as mentioned in `https://wiki.apache.org/tika/GeoTopicParser` on port `8001`. Port can be configured via [config.txt](https://github.com/MBoustani/GeoParser/blob/master/config.txt)
 
 
 5.Run Django server
