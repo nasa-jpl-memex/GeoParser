@@ -106,7 +106,7 @@ $(function() {
 			return feature;
 		});
 		if (feature) {
-			//close any existing popovers
+			// close any existing popovers
 			$(element).popover('destroy');
 			
 			var popupData =  $.csv.toArray(feature.get('popup_content'))
@@ -180,10 +180,11 @@ $(function() {
 			popup.setPosition(evt.coordinate);
 		} else {
 
-			//On mouse leave close popover after 3 seconds
+			// On mouse leave close popover after 3 seconds
 			setTimeout(function() {
         if (!$(".popover:hover").length) { 
-       // This check ensure we close popover only if mouse is not hovered over .popover
+       // This check ensure we close popover only if mouse is not hovered over
+				// .popover
         	$(element).popover('destroy');
         }
 			}, 3000)
