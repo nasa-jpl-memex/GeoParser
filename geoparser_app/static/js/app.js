@@ -116,18 +116,19 @@ $(function() {
             var xmlhttp = new XMLHttpRequest();
             var url = docLink;
             var popup_content = '';
-
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    var res = JSON.parse(xmlhttp.responseText);
-
+            
+            
+            jQuery.ajax({
+                url: url,
+                data: '',
+                success:  function(res) {
+//                    console.log(JSON.stringify(res, null, 2));
                     $(element).popover({
                         trigger: 'manual',
                         'placement': 'top',
                         'html': true,
                         'content': function () {
                             if (popupData[1]) {
-                                //                                console.log(JSON.stringify(res, null, 2));
                                 popup_content = ''
                                 if (res.hasOwnProperty('response')) {
                                     if (res.response.hasOwnProperty('docs')) {
@@ -139,9 +140,7 @@ $(function() {
                                                 var value = doc[field];
                                                 popup_content += "<p>" + field + ": " + value + "</p>";
                                             }
-
                                         }
-
                                         popup_content += "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>More...</a></p>";
                                     }
                                 }
@@ -155,10 +154,28 @@ $(function() {
                     })
 
                     $(element).popover('show');
+                },
+                error: function(xhr, textStatus, errorThrown){
+                    $(element).popover({
+                        trigger: 'manual',
+                        'placement': 'top',
+                        'html': true,
+                        'content': function () {
+                            if (popupData[1]) {
+                                popup_content = "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>"+docLink+"</a></p>";
+                                return popup_content;
+                            } else {
+                                return ""
+                            }
+                        },
+                        container: $(element), // This makes popover part of element
+                        'title': eval(popupData[0])
+                    })
+                    $(element).popover('show');
                 }
-            };
-            xmlhttp.open("GET", url, true);
-            xmlhttp.send();
+                dataType: 'jsonp',
+                jsonp: 'json.wrf'
+            });
             
 			popup.setPosition(evt.coordinate);
 		} else {
@@ -596,6 +613,54 @@ $(function() {
 			})
 
 })
+
+$(function() {
+    $("#viewIndexResults").keypress(function(e) {
+        if(e.which == 13) {
+            $("#searchResults").empty();
+            var keyword = $(this).val();
+            var searchLink = "http://localhost:8984/solr/scientific_content_enrichment/select?indent=on&q="+keyword+"&wt=json";
+            
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    var res = JSON.parse(xmlhttp.responseText);
+                    var results = 0;
+                    var content = '';
+                    if (res.hasOwnProperty('response')) {
+                        if(res['response'].hasOwnProperty('numFound')){
+                            results = res['response']['numFound'];
+                        }
+                    }
+                    console.log(results);
+                    content += "<p>Found "+results+" results</p>";
+                    
+                    if (res.response.hasOwnProperty('docs')) {
+                        content += "<br><ol>";
+                        var docs = res.response.docs;
+                        for(var i=0;i<docs.length;i++){
+                            if(docs[i].hasOwnProperty('title')){
+                                var link = "http://localhost:8984/solr/scientific_content_enrichment/select?q=id:%22" + docs[i].id + "%22&wt=json&indent=true";
+                                content += "<a href='" + link + "' target = '_blank'><li>" + docs[i].title + "</li></a>";
+                            } else if(docs[i].hasOwnProperty('dc-title')){
+                                var link = "http://localhost:8984/solr/scientific_content_enrichment/select?q=id:%22" + docs[i].id + "%22&wt=json&indent=true";
+                                content += "<a href='" + link + "' target = '_blank'><li>" + docs[i]['dc-title'] + "</li></a>";
+                            }
+                        }
+                        
+                        content += "</ol>";
+                    }
+
+                    $("#searchResults").html(content);
+                }
+            };
+            xmlhttp.open("GET", searchLink, true);
+            xmlhttp.send();
+        }
+    })
+
+})
+
 /**
  * Toggle active class and set disabled = bool
  */
