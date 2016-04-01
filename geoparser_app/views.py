@@ -308,7 +308,7 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
                             try:
                                 for v in t.values():
                                     if(hasattr(v, '__iter__')):
-                                        a = u' '.join(v)
+                                        a = u' '.join(unicode(e) for e in v)
                                     elif(isinstance(v, unicode)):
                                         a = v.encode('ascii', 'ignore')
                                     else:
