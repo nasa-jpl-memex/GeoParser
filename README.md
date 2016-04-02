@@ -80,16 +80,21 @@ Now start lucene-geo-gazetteer server
 ```
 lucene-geo-gazetteer -server
 ```
-4.Run tika server as mentioned in `https://wiki.apache.org/tika/GeoTopicParser` on port `8001`. Port can be configured via [config.txt](https://github.com/MBoustani/GeoParser/blob/master/config.txt)
+4.Run tika server as mentioned in `https://wiki.apache.org/tika/GeoTopicParser` on port `8001`. Port can be configured via [config.txt](https://github.com/MBoustani/GeoParser/blob/master/config.txt)   
 
+5.MAKE SURE YOU ARE ABLE TO EXTRACT LOCATIONS FROM TIKA SERVER   
 
-5.Run Django server
+`curl -T /path/to/polar.geot -H "Content-Disposition: attachment; filename=polar.geot" http://localhost:8001/rmeta`   
+
+You can obtain [file here] (https://raw.githubusercontent.com/chrismattmann/geotopicparser-utils/master/geotopics/polar.geot)   
+
+6.Run Django server
 
 ```
 python manage.py runserver
 ```
 
-6.Open in browser [http://localhost:8000/](http://localhost:8000/)
+7.Open in browser [http://localhost:8000/](http://localhost:8000/)
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
