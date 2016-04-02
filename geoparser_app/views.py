@@ -313,7 +313,7 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
                                         a = v.encode('ascii', 'ignore')
                                     else:
                                         a = str(v)
-                                    text_content += a.encode('ascii', 'ignore')
+                                    text_content += ' ' + a.encode('ascii', 'ignore')
                             except Exception as e:
                                 print traceback.format_exc()
                                 text_content = str(t.values())
