@@ -112,8 +112,6 @@ $(function() {
 			var popupData =  $.csv.toArray(feature.get('popup_content'))
 			
 			var docLink = layerToIndexMap[feature.get('layer')] + "/select?q=id:%22"+eval(popupData[1])+"%22&wt=json&indent=true"
-			
-            var xmlhttp = new XMLHttpRequest();
             var url = docLink;
             var popup_content = '';
             
@@ -645,14 +643,17 @@ var fillDomain = function() {
 		listOfDomains = eval(d)[0];
 		if (!listOfDomains || $.isEmptyObject(listOfDomains)) {
 			$("#savedDomain").parent().parent().hide();
+            $("#savedDomainSearch").parent().parent().hide();
 		} else {
 			$("#savedDomain").parent().parent().show();
+            $("#savedDomainSearch").parent().parent().show();
 		}
 		var domainsList = $.map(listOfDomains, function(element, index) {
 			return "<option>" + index + "</option>"
 		});
 
 		$("#savedDomain").html(domainsList);
+        $("#savedDomainSearch").html(domainsList);
 
 		fillURL();
 
@@ -662,14 +663,17 @@ var fillURL = function() {
 	var selectedIndexes = listOfDomains[$("#savedDomain").val()];
 
 	$("#savedIndexes").html("");
+    $("#savedIndexesSearch").html("");
 	for ( var i in selectedIndexes) {
 		$("#savedIndexes").append("<option>" + selectedIndexes[i] + "</option>");
+        $("#savedIndexesSearch").append("<option>" + selectedIndexes[i] + "</option>");
 	}
 }
 
 $(function() {
 	fillDomain();
 	$("#savedDomain").bind("change", fillURL);
+    $("#savedDomainSearch").bind("change", fillURL);
 	var viewindexButton = $("#viewIndex")
 	viewindexButton.bind("click", function() {
 		var indexDisp = $("#savedIndexes").val();
@@ -696,4 +700,69 @@ $(function() {
 			toggleSpinner(viewindexButton, false);
 		});
 	})
+    
+	$("#searchIndex").bind("click", search)
+    $("#searchInput").keypress(function(e) {
+        // Enter was pressed
+        if(e.which == 13) {
+            search();
+        }
+    });
 })
+
+var search = function() {
+        $("#searchResults").empty();
+        var keyword = $("#searchInput").val();
+        var error = false;
+        error = markEmtyError($("#searchInput"));
+        if (error) {
+            return;
+        }
+        
+		var indexDisp = $("#savedIndexesSearch").val();
+		toggleSpinner($("#searchIndex"), true);
+        // Fetches only the first 10 pages by default. We will have too add some sort of pagination to view the full results.
+        // Will have to discuss the design with other devs
+        var searchLink = indexDisp+"/select?indent=on&q="+keyword+"&wt=json";
+        jQuery.ajax({
+                url: searchLink,
+                data: '',
+                success:  function(res) {
+                    
+                    var results = 0;
+                    var content = '';
+                    if (res.hasOwnProperty('response')) {
+                        if(res['response'].hasOwnProperty('numFound')){
+                            results = res['response']['numFound'];
+                        }
+                    }
+                    console.log(results);
+                    content += "<p>Found "+results+" results</p>";
+                    
+                    if (res.response.hasOwnProperty('docs')) {
+                        content += "<br><ol>";
+                        var docs = res.response.docs;
+                        for(var i=0;i<docs.length;i++){
+                            if(docs[i].hasOwnProperty('title')){
+                                var link = indexDisp+"/select?q=id:%22" + docs[i].id + "%22&wt=json&indent=true";
+                                content += "<a href='" + link + "' target = '_blank'><li>" + docs[i].title + "</li></a>";
+                            } else if(docs[i].hasOwnProperty('dc-title')){
+                                var link = indexDisp+"/select?q=id:%22" + docs[i].id + "%22&wt=json&indent=true";
+                                content += "<a href='" + link + "' target = '_blank'><li>" + docs[i]['dc-title'] + "</li></a>";
+                            }
+                        }
+                        
+                        content += "</ol>";
+                    }
+
+                    $("#searchResults").html(content);
+                    
+                    toggleSpinner($("#searchIndex"), false);
+                },error: function(xhr, textStatus, errorThrown){
+                     alert("Error while searching: " + textStatus + " - " + errorThrown);
+			         toggleSpinner($("#searchIndex"), false);
+                },
+                dataType: 'jsonp',
+                jsonp: 'json.wrf'
+            });
+	}
