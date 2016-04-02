@@ -108,61 +108,74 @@ $(function() {
 		if (feature) {
 			// close any existing popovers
 			$(element).popover('destroy');
+			
+			var popupData =  $.csv.toArray(feature.get('popup_content'))
+			
+			var docLink = layerToIndexMap[feature.get('layer')] + "/select?q=id:%22"+eval(popupData[1])+"%22&wt=json&indent=true"
+			
+            var xmlhttp = new XMLHttpRequest();
+            var url = docLink;
+            var popup_content = '';
+            
+            
+            jQuery.ajax({
+                url: url,
+                data: '',
+                success:  function(res) {
+//                    console.log(JSON.stringify(res, null, 2));
+                    $(element).popover({
+                        trigger: 'manual',
+                        'placement': 'top',
+                        'html': true,
+                        'content': function () {
+                            if (popupData[1]) {
+                                popup_content = ''
+                                if (res.hasOwnProperty('response')) {
+                                    if (res.response.hasOwnProperty('docs')) {
+                                        var doc = res.response.docs[0];
 
-			var popupData = $.csv.toArray(feature.get('popup_content'))
+                                        for (var i = 0; i < metadata_fields.length; i++) {
+                                            var field = metadata_fields[i];
+                                            if (doc.hasOwnProperty(field)) {
+                                                var value = doc[field];
+                                                popup_content += "<p>" + field + ": " + value + "</p>";
+                                            }
+                                        }
+                                        popup_content += "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>More...</a></p>";
+                                    }
+                                }
+                                return popup_content;
+                            } else {
+                                return ""
+                            }
+                        },
+                        container: $(element), // This makes popover part of element
+                        'title': eval(popupData[0])
+                    })
 
-			var docLink = layerToIndexMap[feature.get('layer')] + "/select?q=id:%22" + eval(popupData[1])
-					+ "%22&wt=json&indent=true"
-
-			var xmlhttp = new XMLHttpRequest();
-			var url = docLink;
-			var popup_content = '';
-
-			var res = null;
-			xmlhttp.onreadystatechange = function() {
-				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-					res = JSON.parse(xmlhttp.responseText);
-				}
-			};
-			xmlhttp.open("GET", url, true);
-			xmlhttp.send();
-
-			$(element).popover(
-					{
-						trigger : 'manual',
-						'placement' : 'top',
-						'html' : true,
-						'content' : function() {
-							if (popupData[1]) {
-								// console.log(JSON.stringify(res, null, 2));
-								popup_content = ''
-								if (res && res.hasOwnProperty('response')) {
-									if (res.response.hasOwnProperty('docs')) {
-										var doc = res.response.docs[0];
-
-										for (var i = 0; i < metadata_fields.length; i++) {
-											var field = metadata_fields[i];
-											if (doc.hasOwnProperty(field)) {
-												var value = doc[field];
-												popup_content += "<p>" + field + ": " + value + "</p>";
-											}
-										}
-									}
-								}
-								popup_content += "<p><a href='" + docLink
-										+ "' target = '_blank' style='word-wrap: break-word;'>" + docLink
-										+ "</a></p>";
-								return popup_content;
-							} else {
-								return ""
-							}
-						},
-						container : $(element), // This makes popover part of element
-						'title' : eval(popupData[0])
-					})
-
-			$(element).popover('show');
-
+                    $(element).popover('show');
+                },error: function(xhr, textStatus, errorThrown){
+                    $(element).popover({
+                        trigger: 'manual',
+                        'placement': 'top',
+                        'html': true,
+                        'content': function () {
+                            if (popupData[1]) {
+                                popup_content = "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>"+docLink+"</a></p>";
+                                return popup_content;
+                            } else {
+                                return ""
+                            }
+                        },
+                        container: $(element), // This makes popover part of element
+                        'title': eval(popupData[0])
+                    })
+                    $(element).popover('show');
+                },
+                dataType: 'jsonp',
+                jsonp: 'json.wrf'
+            });
+            
 			popup.setPosition(evt.coordinate);
 		} else {
 
@@ -600,6 +613,7 @@ $(function() {
 			})
 
 })
+
 /**
  * Toggle active class and set disabled = bool
  */
