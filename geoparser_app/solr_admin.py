@@ -20,6 +20,8 @@ ADMIN_F_IDX_LIST = "indexes"
 ADMIN_F_CORE_LIST = "core_names"
 ADMIN_F_PNT_LEN_LIST = "point_len_list"
 ADMIN_F_IDX_SIZE_LIST = "idx_size_list"
+ADMIN_F_IDX_FIELD_LIST = "idx_field_list"
+DEFAULT_IDX_FIELD = 'id,title'
 
 def _get_domain_admin(domain):
 	url = '{0}{1}/select?q=id:{2}&wt=json'.format(SOLR_URL, ADMIN_CORE, domain)	
@@ -54,7 +56,8 @@ def get_index_core(domain, index_path):
 								  ADMIN_F_IDX_LIST : {"add":"{0}".format(index_path)},
 								  ADMIN_F_CORE_LIST : {"add":core_name},
 								  ADMIN_F_PNT_LEN_LIST : {"add":0 },
-								  ADMIN_F_IDX_SIZE_LIST : {"add":0 }
+								  ADMIN_F_IDX_SIZE_LIST : {"add":0 },
+								  ADMIN_F_IDX_FIELD_LIST : {"add":DEFAULT_IDX_FIELD }
 								  }
 						   }
 				   }
@@ -127,5 +130,50 @@ def update_idx_details(domain, index_path, idx_size, pnt_size):
 			
 	return False
 	
-	
-	
+def update_idx_field_csv(domain, index_path, idx_field_csv):
+	'''
+	Updates field_csv from original index to be shown on popups
+	'''
+	if create_core(ADMIN_CORE):
+		response = _get_domain_admin(domain)['response']['docs']
+		if len(response) == 1:
+			response = response[0]
+			all_idx = response[ADMIN_F_IDX_LIST]
+			
+			if(index_path in all_idx):
+				index_arr = all_idx.index(index_path)
+				response[ADMIN_F_IDX_FIELD_LIST][index_arr] = "{0}".format(idx_field_csv)
+				
+			
+			payload = {
+						"add":{
+							   "doc":{
+									  "id" : "{0}".format(domain) ,
+									  ADMIN_F_IDX_FIELD_LIST : {"set":response[ADMIN_F_IDX_FIELD_LIST] }
+									  }
+							   }
+					   }
+			r = requests.post("{0}{1}/update".format(SOLR_URL, ADMIN_CORE), data=str(payload), params=params, headers=headers)
+			
+			print r.text
+			if(not r.ok):
+				print payload
+				raise "Can't update idx details with core name {0} - {1}".format(domain, index_path)
+			
+			return True
+			#
+	return False
+
+def get_idx_field_csv(domain, index_path):
+	'''
+	Returns field_csv from original index to be shown on popups
+	'''
+	if create_core(ADMIN_CORE):
+		response = _get_domain_admin(domain)['response']['docs'][0]
+		all_idx = response[ADMIN_F_IDX_LIST]
+		if(index_path in all_idx):
+			index_arr = all_idx.index(index_path)
+			return response[ADMIN_F_IDX_FIELD_LIST][index_arr]
+			
+	return 0, 0
+		

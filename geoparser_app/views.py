@@ -19,7 +19,7 @@ from .forms import UploadFileForm
 from .models import Document
 
 from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, GenerateKhooshe, GetIndexSize 
-from solr_admin import get_index_core, get_all_domain_details, get_idx_details, update_idx_details
+from solr_admin import get_index_core, get_all_domain_details, get_idx_details, update_idx_details,update_idx_field_csv,get_idx_field_csv
 
 from tika import parser
 from tika.tika import ServerEndpoint
@@ -209,6 +209,7 @@ def return_points_khooshe(request, indexed_path, domain_name):
     
     results["rows_processed"] = GetIndexSize(core_name)
     results["total_docs"], results["points_count"] = get_idx_details(domain_name, indexed_path)
+    results["popup_fields"] = get_idx_field_csv(domain_name, indexed_path)
     
     exclude = set(string.punctuation)
     file_name = ''.join(ch for ch in core_name if ch not in exclude)
@@ -249,6 +250,18 @@ def refresh_khooshe_tiles(request, domain_name, indexed_path):
     else:
         return HttpResponse(status=200, content="[{'msg':'Can't queue another Khooshe generation'}]")
 
+def get_idx_fields_for_popup(request, domain_name, indexed_path):
+    print "get popup fields"
+    return HttpResponse(status=200, content=get_idx_field_csv(domain_name, indexed_path))
+
+def set_idx_fields_for_popup(request, domain_name, indexed_path, index_field_csv):
+    print "setting popup fields"
+    if(update_idx_field_csv(domain_name, indexed_path, index_field_csv)):
+        return HttpResponse(status=200, content="[{'msg':'success'}]")
+    else:
+        return HttpResponse(status=200, content="[{'msg':'failed'}]")
+
+    
 def query_crawled_index(request, domain_name, indexed_path, username, passwd):
     '''
         To query crawled data that has been indexed into
