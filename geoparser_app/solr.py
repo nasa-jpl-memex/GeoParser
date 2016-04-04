@@ -296,8 +296,12 @@ def IndexCrawledPoints(core_name, docs):
 def GetIndexSize(core_name):
     
     url = '{0}{1}/select?q=*&wt=json&rows=1'.format(SOLR_URL, core_name)
-    
-    rows_processed = requests.get(url, headers=headers).json()['response']['numFound']
+    try:
+        rows_processed = requests.get(url, headers=headers).json()['response']['numFound']
+    except :
+        print "No rows found yet for core - {0}".format(core_name) 
+        rows_processed = 0
+        
     return rows_processed
     
             
@@ -319,7 +323,7 @@ def QueryPointsIndex(core_name):
                 response = yaml.safe_load(response.text)
                 
                 # loop ends when all docs are processed
-                if len(response['response']['docs']) == 0:
+                if (not 'response' in response.keys()) or len(response['response']['docs']) == 0:
                     break
                 
                 points = response['response']['docs']
