@@ -701,15 +701,21 @@ $(function() {
 		});
 	})
     
-	$("#searchIndex").bind("click", search)
+    // Resetting offset when the search button or enter is pressed
+	$("#searchIndex").bind("click", function(){
+        offset = 0;
+        search();
+    });
     $("#searchInput").keypress(function(e) {
         // Enter was pressed
         if(e.which == 13) {
+            offset = 0;
             search();
         }
     });
 })
 
+var offset = 0;
 var search = function() {
         $("#searchResults").empty();
         var keyword = $("#searchInput").val();
@@ -723,41 +729,62 @@ var search = function() {
 		toggleSpinner($("#searchIndex"), true);
         // Fetches only the first 10 pages by default. We will have too add some sort of pagination to view the full results.
         // Will have to discuss the design with other devs
-        var searchLink = indexDisp+"/select?indent=on&q="+keyword+"&wt=json";
+        var searchLink = indexDisp+"/select?indent=on&q="+keyword+"&start="+offset+"&wt=json";
+        console.log(searchLink);
         jQuery.ajax({
                 url: searchLink,
                 data: '',
                 success:  function(res) {
                     
                     var results = 0;
+                    var resultsOnPage = 0;
                     var content = '';
                     if (res.hasOwnProperty('response')) {
                         if(res['response'].hasOwnProperty('numFound')){
                             results = res['response']['numFound'];
                         }
                     }
-                    console.log(results);
                     content += "<p>Found "+results+" results</p>";
                     
                     if (res.response.hasOwnProperty('docs')) {
-                        content += "<br><ol>";
+                        content += '<br><ol start="'+(offset+1)+'">';
                         var docs = res.response.docs;
+                        resultsOnPage = docs.length;
                         for(var i=0;i<docs.length;i++){
+                            var title = "No Title";
                             if(docs[i].hasOwnProperty('title')){
-                                var link = indexDisp+"/select?q=id:%22" + docs[i].id + "%22&wt=json&indent=true";
-                                content += "<a href='" + link + "' target = '_blank'><li>" + docs[i].title + "</li></a>";
+                                title = docs[i].title;
                             } else if(docs[i].hasOwnProperty('dc-title')){
-                                var link = indexDisp+"/select?q=id:%22" + docs[i].id + "%22&wt=json&indent=true";
-                                content += "<a href='" + link + "' target = '_blank'><li>" + docs[i]['dc-title'] + "</li></a>";
+                                title = docs[i]['dc-title'];
                             }
+                            var link = indexDisp+"/select?q=id:%22" + docs[i].id + "%22&wt=json&indent=true";
+                            content += "<a href='" + link + "' target = '_blank'><li>" + title + "</li></a>";
                         }
                         
                         content += "</ol>";
                     }
-
-                    $("#searchResults").html(content);
-                    
+                    // Display pagination only if total results are greater than 10
+                    if(results > 10){
+                        // If offset is 0 or less than disable the previous button
+                        // Similarly if the total results - offset < 10 then the next button is disabled
+                        content+='<nav><ul class="pager"><li class="previous'+(offset<=0?' disabled':'')+'"><a href="#" id="previousArrow"><span aria-hidden="true">&larr;</span>Previous</a></li><li class="next'+(((results - offset) > 10)?'':' disabled')+'"><a href="#" id="nextArrow">Next <span aria-hidden="true">&rarr;</span></a></li></ul></nav>';
+                    }
+                    $("#searchResults").html(content);   
                     toggleSpinner($("#searchIndex"), false);
+                    // Setting click listeners when the next button is enabled
+                    if((results - offset) > 10) {
+                        $("#nextArrow").bind("click", function(){
+                            offset += 10;
+                            search();
+                        });   
+                    }
+                    // Setting click listeners when the previous button is enabled
+                    if(offset>0){
+                        $("#previousArrow").bind("click", function(){
+                            offset -= 10;
+                            search();
+                        });
+                    }
                 },error: function(xhr, textStatus, errorThrown){
                      alert("Error while searching: " + textStatus + " - " + errorThrown);
 			         toggleSpinner($("#searchIndex"), false);
