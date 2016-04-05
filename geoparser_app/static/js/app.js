@@ -64,7 +64,6 @@ var view = null;
  * {'static/tiles/test1/':'http://localhost:8983/solr/test'}
  */
 var layerToIndexMap = {}
-var metadata_fields = [];
 
 $(function() {
 	var layer = new ol.layer.Tile(
@@ -108,74 +107,78 @@ $(function() {
 		if (feature) {
 			// close any existing popovers
 			$(element).popover('destroy');
-			
-			var popupData =  $.csv.toArray(feature.get('popup_content'))
-			
-			var docLink = layerToIndexMap[feature.get('layer')] + "/select?q=id:%22"+eval(popupData[1])+"%22&wt=json&indent=true"
-			
-            var xmlhttp = new XMLHttpRequest();
-            var url = docLink;
-            var popup_content = '';
-            
-            
-            jQuery.ajax({
-                url: url,
-                data: '',
-                success:  function(res) {
-//                    console.log(JSON.stringify(res, null, 2));
-                    $(element).popover({
-                        trigger: 'manual',
-                        'placement': 'top',
-                        'html': true,
-                        'content': function () {
-                            if (popupData[1]) {
-                                popup_content = ''
-                                if (res.hasOwnProperty('response')) {
-                                    if (res.response.hasOwnProperty('docs')) {
-                                        var doc = res.response.docs[0];
 
-                                        for (var i = 0; i < metadata_fields.length; i++) {
-                                            var field = metadata_fields[i];
-                                            if (doc.hasOwnProperty(field)) {
-                                                var value = doc[field];
-                                                popup_content += "<p>" + field + ": " + value + "</p>";
-                                            }
-                                        }
-                                        popup_content += "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>More...</a></p>";
-                                    }
-                                }
-                                return popup_content;
-                            } else {
-                                return ""
-                            }
-                        },
-                        container: $(element), // This makes popover part of element
-                        'title': eval(popupData[0])
-                    })
+			var popupData = $.csv.toArray(feature.get('popup_content'))
+			var metadataFields = layerToIndexMap[feature.get('layer')].metadataFields
+			
+			var docLink = layerToIndexMap[feature.get('layer')].indexURL + "/select?q=id:%22" + eval(popupData[1])
+					+ "%22&wt=json&indent=true"
 
-                    $(element).popover('show');
-                },error: function(xhr, textStatus, errorThrown){
-                    $(element).popover({
-                        trigger: 'manual',
-                        'placement': 'top',
-                        'html': true,
-                        'content': function () {
-                            if (popupData[1]) {
-                                popup_content = "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>"+docLink+"</a></p>";
-                                return popup_content;
-                            } else {
-                                return ""
-                            }
-                        },
-                        container: $(element), // This makes popover part of element
-                        'title': eval(popupData[0])
-                    })
-                    $(element).popover('show');
-                },
-                dataType: 'jsonp',
-                jsonp: 'json.wrf'
-            });
-            
+			var popup_content = '';
+
+			jQuery.ajax({
+				url : docLink + "&fl="+metadataFields,
+				data : '',
+				success : function(res) {
+					$(element).popover(
+							{
+								trigger : 'manual',
+								'html' : true,
+								'content' : function() {
+									if (popupData[1]) {
+										popup_content = ''
+										if (res.hasOwnProperty('response')) {
+											if (res.response.hasOwnProperty('docs')) {
+												var doc = res.response.docs[0];
+
+												for (var i = 0; i < metadataFields.length; i++) {
+													var field = metadataFields[i];
+													if (doc.hasOwnProperty(field)) {
+														var value = doc[field];
+														if (value && value.toString() && value.toString().trim()!=""){															
+															popup_content += "<p>" + field + ": " + value.toString().slice(0,100) + "</p>";
+														}
+													}
+												}
+												popup_content += "<p><a href='" + docLink
+														+ "' target = '_blank' style='word-wrap: break-word;'>Link to indexed document</a></p>";
+											}
+										}
+										return popup_content;
+									} else {
+										return ""
+									}
+								},
+								container : $(element), // This makes popover part of element
+								'title' : eval(popupData[0])
+							})
+
+					$(element).popover('show');
+				},
+				error : function(xhr, textStatus, errorThrown) {
+					$(element).popover(
+							{
+								trigger : 'manual',
+								'placement' : 'top',
+								'html' : true,
+								'content' : function() {
+									if (popupData[1]) {
+										popup_content = "<p><a href='" + docLink
+												+ "' target = '_blank' style='word-wrap: break-word;'>Link to indexed document</a></p>";
+										return popup_content;
+									} else {
+										return ""
+									}
+								},
+								container : $(element), // This makes popover part of element
+								'title' : eval(popupData[0])
+							})
+					$(element).popover('show');
+				},
+				dataType : 'jsonp',
+				jsonp : 'json.wrf'
+			});
+
 			popup.setPosition(evt.coordinate);
 		} else {
 
@@ -365,15 +368,16 @@ var getNewColor = function() {
 	return color;
 }
 
-var paintDataFromKhooshe = function (khoosheBaseDir, docName, metadataFields) {
-
+var paintDataFromKhooshe = function (khoosheData, indexURL) {
+		var khoosheBaseDir = khoosheData.khooshe_tile
+		var metadataFields = $.csv.toArray(khoosheData.popup_fields)
+	
     if (notEndsWithSlash(khoosheBaseDir)) {
         khoosheBaseDir = khoosheBaseDir + "/"
     }
     khoosheBaseDir = SUB_DOMAIN + khoosheBaseDir
 
-    layerToIndexMap[khoosheBaseDir] = docName
-    metadata_fields = metadataFields
+    layerToIndexMap[khoosheBaseDir] = {'indexURL' : indexURL, 'metadataFields' : metadataFields}
 
     khooshe.initKhoosheLayer(khoosheBaseDir, getNewColor())
 
@@ -604,7 +608,7 @@ $(function() {
 								ele.find(".progress-bar").css('width', progress + '%').attr('aria-valuenow', progress).html(
 										d.rows_processed + ' / ' + d.total_docs);
 
-								paintDataFromKhooshe(d.khooshe_tile, index.val(), null);
+								paintDataFromKhooshe(d, index.val());
 								if (d.total_docs == d.rows_processed) {
 									clearInterval(timer);
 								}
@@ -683,9 +687,7 @@ $(function() {
 						"<li>" + d.points_count + " points found in domain-" + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
 								+ d.total_docs + "</li>");
 				
-                // The below field would basically be stored in the solr index and we will fetch it from there
-                metadata_fields = ['Content-Type', 'title', 'dc-title', 'description'];
-                paintDataFromKhooshe(d.khooshe_tile, indexDisp, metadata_fields);
+                paintDataFromKhooshe(d, indexDisp);
 			} catch (e) {
 				console.error(e.stack)
 				alert("Error while displaying co-ordinates: " + e)
