@@ -745,9 +745,9 @@ var search = function() {
                         }
                     }
                     content += "<p>Found "+results+" results</p>";
-                    
+                    content += '<div>'
                     if (res.response.hasOwnProperty('docs')) {
-                        content += '<br><ol start="'+(offset+1)+'">';
+                        content += '<ol start="'+(offset+1)+'">';
                         var docs = res.response.docs;
                         resultsOnPage = docs.length;
                         for(var i=0;i<docs.length;i++){
@@ -767,8 +767,9 @@ var search = function() {
                     if(results > 10){
                         // If offset is 0 or less than disable the previous button
                         // Similarly if the total results - offset < 10 then the next button is disabled
-                        content+='<nav><ul class="pager"><li class="previous'+(offset<=0?' disabled':'')+'"><a href="#" id="previousArrow"><span aria-hidden="true">&larr;</span>Previous</a></li><li class="next'+(((results - offset) > 10)?'':' disabled')+'"><a href="#" id="nextArrow">Next <span aria-hidden="true">&rarr;</span></a></li></ul></nav>';
+                        content+='<nav><ul class="pager"><li class="previous'+(offset<=0?' disabled':'')+'"><a href="#" id="previousArrow"><span aria-hidden="true">&laquo;</span> Previous</a></li><li>Showing results '+(offset+1)+'-'+(((offset+10)>results)?results:(offset+10))+'</li><li class="next'+(((results - offset) > 10)?'':' disabled')+'"><a href="#" id="nextArrow">Next <span aria-hidden="true">&raquo;</span></a></li></ul></nav>';
                     }
+                    content += '</div>'
                     $("#searchResults").html(content);   
                     toggleSpinner($("#searchIndex"), false);
                     // Setting click listeners when the next button is enabled
