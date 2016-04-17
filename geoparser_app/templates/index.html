@@ -25,7 +25,11 @@
 <link href="{{subdomian}}{% static 'css/style.css' %}" rel="stylesheet" />
 
 <link rel="shortcut icon" type="image/png" href="{{subdomian}}{% static 'img/favicon.ico' %}"/>
-
+<script>
+    function setUpFrame(){
+        document.getElementById('d3-iframe').contentWindow.setD3Data(d3_data);
+    }
+</script>
 </head>
 <body>
   <nav class="navbar navbar-inverse navbar-static-top">
@@ -290,7 +294,23 @@
     </div>
   </div>
   {% csrf_token %}
-
+  <!-- Modal -->
+  <div class="modal fade" id="moreModal" role="dialog" tabindex="-1" data-backdrop="true">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 id="modal-title" class="modal-title">Modal Header</h4>
+        </div>
+        <div id="modal-body" class="modal-body">
+          <iframe id="d3-iframe" src="" style="zoom:0.60" width="100%" height="500" frameborder="0"></iframe>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 </body>
 
 </html>

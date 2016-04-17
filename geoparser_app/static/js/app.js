@@ -64,7 +64,7 @@ var view = null;
  * {'static/tiles/test1/':'http://localhost:8983/solr/test'}
  */
 var layerToIndexMap = {}
-
+var d3_data;
 $(function() {
 	var layer = new ol.layer.Tile(
 			{
@@ -107,7 +107,6 @@ $(function() {
 		if (feature) {
 			// close any existing popovers
 			$(element).popover('destroy');
-
 			var popupData = $.csv.toArray(feature.get('popup_content'))
 			var metadataFields = layerToIndexMap[feature.get('layer')].metadataFields
 			
@@ -115,71 +114,104 @@ $(function() {
 					+ "%22&wt=json&indent=true"
 
 			var popup_content = '';
-
-			jQuery.ajax({
-				url : docLink + "&fl="+metadataFields,
-				data : '',
-				success : function(res) {
-					$(element).popover(
-							{
-								trigger : 'manual',
-								'html' : true,
-								'content' : function() {
-									if (popupData[1]) {
-										popup_content = ''
-										if (res.hasOwnProperty('response')) {
-											if (res.response.hasOwnProperty('docs')) {
-												var doc = res.response.docs[0];
-
-												for (var i = 0; i < metadataFields.length; i++) {
-													var field = metadataFields[i];
-													if (doc.hasOwnProperty(field)) {
-														var value = doc[field];
-														if (value && value.toString() && value.toString().trim()!=""){															
-															popup_content += "<p>" + field + ": " + value.toString().slice(0,100) + "</p>";
-														}
-													}
-												}
-												popup_content += "<p><a href='" + docLink
-														+ "' target = '_blank' style='word-wrap: break-word;'>Link to indexed document</a></p>";
-											}
-										}
-										return popup_content;
-									} else {
-										return ""
-									}
-								},
-								container : $(element), // This makes popover part of element
-								'title' : eval(popupData[0])
-							})
-
-					$(element).popover('show');
-				},
-				error : function(xhr, textStatus, errorThrown) {
-					$(element).popover(
-							{
-								trigger : 'manual',
-								'placement' : 'top',
-								'html' : true,
-								'content' : function() {
-									if (popupData[1]) {
-										popup_content = "<p><a href='" + docLink
-												+ "' target = '_blank' style='word-wrap: break-word;'>Link to indexed document</a></p>";
-										return popup_content;
-									} else {
-										return ""
-									}
-								},
-								container : $(element), // This makes popover part of element
-								'title' : eval(popupData[0])
-							})
-					$(element).popover('show');
-				},
-				dataType : 'jsonp',
-				jsonp : 'json.wrf'
-			});
-
+            d3_data = {"name": eval(popupData[0]), "children": []};
+            
+            jQuery.ajax({
+                url: docLink,
+                data: '',
+                beforeSend: function() {
+                    $(element).popover({
+                        trigger: 'manual',
+                        'placement': 'top',
+                        'html': true,
+                        'content': function () {
+                            if (popupData[1]) {
+                                popup_content = "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>"+docLink+"</a></p>";
+                                popup_content += '<div class="progress"><div class="progress-bar progress-bar-striped active"role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"><span class="sr-only">Indeterminate</span></div></div>'
+                                return popup_content;
+                            } else {
+                                return ""
+                            }
+                        },
+                        container: $(element), // This makes popover part of element
+                        'title': eval(popupData[0])
+                    });
+                    $(element).popover('show');
+                },
+                success:  function(res) {
+//                    console.log(JSON.stringify(res, null, 2));
+                        $(element).popover('destroy');
+                        $(element).popover({
+                        trigger: 'manual',
+                        'placement': 'top',
+                        'html': true,
+                        'content': function () {
+                            if (popupData[1]) {
+                                popup_content = ''
+                                if (res.hasOwnProperty('response')) {
+                                    if (res.response.hasOwnProperty('docs')) {
+                                        var doc = res.response.docs[0];
+                                        var count = 0;
+                                        for (var key in doc) {
+                                            if (doc.hasOwnProperty(key)) {
+                                                count+=1;
+                                                var value = doc[key];
+                                                // Ellipsing the string if its too long
+                                                if(value.toString().length > 145) {
+                                                    value = value.toString().substring(0,144)+"...";
+                                                }
+                                                var child = {"name": key, "children": [{"name": value,"size": 1}]};
+                                                d3_data['children'].push(child);
+                                                // Max num of default keys to be shown in the popup
+                                                if(count <= 4){
+                                                    popup_content += "<p>" + key + ": " + value + "</p>";
+                                                }
+                                            }
+                                        }
+//                                        popup_content += "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>More...</a></p>";
+                                        popup_content += "<p><a class='more' href='' data-toggle='modal' data-target='#moreModal' style='word-wrap: break-word;'>More...</a></p>";
+                                    }
+                                }
+                                return popup_content;
+                            } else {
+                                return ""
+                            }
+                        },
+                        container: $(element), // This makes popover part of element
+                        'title': eval(popupData[0])
+                    })
+                    $(element).popover('show');
+                },
+                error: function(xhr, textStatus, errorThrown){
+                    $(element).popover({
+                        trigger: 'manual',
+                        'placement': 'top',
+                        'html': true,
+                        'content': function () {
+                            if (popupData[1]) {
+                                popup_content = "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>"+docLink+"</a></p>";
+                                return popup_content;
+                            } else {
+                                return ""
+                            }
+                        },
+                        container: $(element), // This makes popover part of element
+                        'title': eval(popupData[0])
+                    })
+                    $(element).popover('show');
+                },
+                dataType: 'jsonp',
+                jsonp: 'json.wrf'
+            });
+            
 			popup.setPosition(evt.coordinate);
+            $(document).click(function (e) {
+                if ($(e.target).is('.more')) {
+                    $(element).popover('destroy');
+                    $('#modal-title').text(eval(popupData[0]));
+                    $('#d3-iframe').attr("src","static/html/collapsible_indented_tree.html");
+                }
+            });
 		} else {
 
 			// On mouse leave close popover after 3 seconds
