@@ -28,6 +28,7 @@ import traceback
 
 import thread
 import time
+import re
 
 flip = True
 
@@ -79,7 +80,7 @@ def list_of_uploaded_files(request):
             files_list.append(f)
     return HttpResponse(status=200, content="{0}".format(files_list))
 
-# TODO EDIT IT AS PER NEW SCHEMA
+
 def list_of_domains(request):
     '''
     Returns list of Solr cores except "uploaded_files"
@@ -103,6 +104,10 @@ def parse_lat_lon(locations):
 
     return points
 
+def removeNewLineAndPunctuation(text):
+    regex = re.compile('[%s]' % re.escape(string.punctuation + "\n" ))
+    return regex.sub(' ', text)
+
 
 def extract_text(request, file_name):
     '''
@@ -111,7 +116,10 @@ def extract_text(request, file_name):
     '''
     if "none" in IndexStatus("text", file_name):
         parsed = parser.from_file("{0}/{1}/{2}".format(APP_NAME, UPLOADED_FILES_PATH, file_name))
-        status = IndexUploadedFilesText(file_name, parsed["content"])
+        text =  parsed["content"] + " ".join(parsed["metadata"]) 
+        text = removeNewLineAndPunctuation(text)
+        
+        status = IndexUploadedFilesText(file_name, text)
         if status[0]:
             return HttpResponse(status=200, content="Text extracted.")
         else:
