@@ -230,33 +230,36 @@ $(function() {
 
 });
 
+var chooseBoxToBeDisplayed = function(selection){
+	$("#"+selection).parent().addClass('active').siblings().removeClass('active');
+	var boxToBeDisplayed;
+	//switch case on this.id to control corresponding div
+	switch (selection) {
+	case 'navUploadFiles':
+		boxToBeDisplayed = $('#fileUploadBox');
+		break;
+	case 'navAddIndex':
+		boxToBeDisplayed = $('#addIndexBox');
+		break;
+	case 'navSearchIndex':
+		boxToBeDisplayed = $('#searchIndexBox');
+		break;
+	default:
+		console.error("Error while navigating ");
+	}
+	boxToBeDisplayed.removeClass('hide').siblings().addClass('hide');
+
+}
 /**
  * Nav icons to control views. Views supported<br/> 1. Add Index<br/> 2.
  * Upload files<br/> 3. Search Index.
  */
 $(function() {
 	$("#navButtons :input").change(function() {
-		var boxToBeDisplayed;
 		// variable this points to the clicked input button
 		var buttonClicked = $(this);
-		buttonClicked.parent().addClass('active').siblings().removeClass('active');
 
-		// switch case on this.id to control corresponding div
-		switch (buttonClicked.attr("id")) {
-		case 'navUploadFiles':
-			boxToBeDisplayed = $('#fileUploadBox');
-			break;
-		case 'navAddIndex':
-			boxToBeDisplayed = $('#addIndexBox');
-			break;
-		case 'navSearchIndex':
-			boxToBeDisplayed = $('#searchIndexBox');
-			break;
-		default:
-			console.error("Error while navigating ");
-		}
-		boxToBeDisplayed.removeClass('hide').siblings().addClass('hide');
-
+		chooseBoxToBeDisplayed(buttonClicked.attr("id"))
 	});
 });
 
@@ -703,31 +706,68 @@ var fillURL = function() {
 	}
 }
 
+var viewindexButton ;
+
+var viewIndex = function(indexDisp, domainDisp){
+	callRESTApi(SUB_DOMAIN + "return_points_khooshe/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
+		try {
+			d = eval(d)[0];
+			$("#resultsIndex").append(
+					"<li>" + d.points_count + " points found in domain-" + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
+							+ d.total_docs + "</li>");
+			
+              paintDataFromKhooshe(d, indexDisp);
+		} catch (e) {
+			console.error(e.stack)
+			alert("Error while displaying co-ordinates: " + e)
+		}
+		toggleSpinner(viewindexButton, false);
+	}, function(d) {
+		alert("Error while retrieving co-ordinates: " + d.status + " - " + d.responseText);
+		toggleSpinner(viewindexButton, false);
+	});
+}
+
 $(function() {
 	fillDomain();
 	$("#savedDomain").bind("change", fillURL);
-	var viewindexButton = $("#viewIndex")
+	viewindexButton = $("#viewIndex")
 	viewindexButton.bind("click", function() {
 		var indexDisp = $("#savedIndexes").val();
 		var domainDisp = $("#savedDomain").val();
 		toggleSpinner(viewindexButton, true);
-
-		callRESTApi(SUB_DOMAIN + "return_points_khooshe/" + indexDisp + "/" + domainDisp, 'GET', 'true', null, function(d) {
-			try {
-				d = eval(d)[0];
-				$("#resultsIndex").append(
-						"<li>" + d.points_count + " points found in domain-" + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
-								+ d.total_docs + "</li>");
-				
-                paintDataFromKhooshe(d, indexDisp);
-			} catch (e) {
-				console.error(e.stack)
-				alert("Error while displaying co-ordinates: " + e)
-			}
-			toggleSpinner(viewindexButton, false);
-		}, function(d) {
-			alert("Error while retrieving co-ordinates: " + d.status + " - " + d.responseText);
-			toggleSpinner(viewindexButton, false);
-		});
+		viewIndex(indexDisp, domainDisp)
 	})
 })
+
+
+$(function() {
+	var queryMap = {};
+	location.search.substr(1).split("&").forEach(function(item) {
+	    var s = item.split("="),
+	        k = s[0],
+	        v = s[1] && decodeURIComponent(s[1]);
+	    queryMap[k] = v
+	})
+	
+	switch (queryMap["v"]) {
+	case 'f':
+		chooseBoxToBeDisplayed("navUploadFiles")
+		break;
+	case 'i':
+		chooseBoxToBeDisplayed("navAddIndex")
+		break;
+	case 's':
+		chooseBoxToBeDisplayed("navSearchIndex")
+		break;
+	default:
+		// Do nothing
+	}
+	
+	var domain = queryMap["domain"]
+	var indexURL = queryMap["idx"]
+	if (domain && indexURL){
+		viewIndex(indexURL, domain)
+	}		
+})
+
