@@ -56,7 +56,7 @@ var callRESTApi = function(url, type, async, data, success, errorFn) {
  * 
  */
 var colorIndex = 0
-var colorArr = [ 'red', 'yellow', 'blue', 'green', 'orange', 'white', 'grey' ];
+var colorArr = [ 'red', 'blue', 'green', 'orange', 'white', 'grey' ];
 var map = null;
 var view = null;
 /**
