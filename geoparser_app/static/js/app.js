@@ -209,7 +209,7 @@ $(function() {
                 if ($(e.target).is('.more')) {
                     $(element).popover('destroy');
                     $('#modal-title').text(eval(popupData[0]));
-                    $('#d3-iframe').attr("src","static/html/collapsible_indented_tree.html");
+                    $('#d3-iframe').attr("src", SUB_DOMAIN + "static/html/collapsible_indented_tree.html");
                 }
             });
 		} else {
