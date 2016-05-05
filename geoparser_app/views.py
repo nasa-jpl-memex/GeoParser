@@ -381,3 +381,38 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
     else:
         return HttpResponse(status=500, content= ("Only solr indexes supported for now"))
     
+
+def search_crawled_index(request, indexed_path, domain_name, username, passwd, keyword):
+    '''
+    Searches a 'keyword' in 'indexed_path', using 'username', 'passwd'
+    '''
+    print "Searching for {0} in {1}".format(keyword,indexed_path)
+            
+    url = "{0}/select?q=*{1}*&wt=json&rows=1".format(indexed_path, keyword)
+    r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
+    
+    if r.status_code != 200:
+        return HttpResponse(status=r.status_code, content=r.reason)
+    print r.text
+    response = r.json()
+    numFound = response['response']['numFound']
+    print "Total number of records found {0}".format(numFound)
+    for row in range(0, int(numFound), QUERY_RANGE):  # loop solr query
+        docs = {}
+        url = "{0}/select?q=*{1}*&start={2}&rows={3}&wt=json".format(indexed_path, keyword, row, QUERY_RANGE)
+        print "solr query - {0}".format(url)
+        r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
+        response = r.json()
+        docs = response['response']['docs']
+        
+        list_id =  [doc["id"] for doc in docs]
+        
+        print list_id 
+            
+            
+            
+    
+    # TODO Refactor "return_points_khooshe" and return similar response as in "return_points_khooshe".
+    return HttpResponse(status=200, content="[{'rows_processed': 388, 'points_count': 13, 'total_docs': 388, 'khooshe_tile': 'static/tiles/test1', 'popup_fields': 'id,content_type'}]")
+
+
