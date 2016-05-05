@@ -126,8 +126,9 @@ $(function() {
                   'html': true,
                   'content': function () {
                       if (popupData[1]) {
-                          popup_content = "<p><a href='" + docLink + "' target = '_blank' style='word-wrap: break-word;'>"+docLink+"</a></p>";
-                          popup_content += '<div class="progress"><div class="progress-bar progress-bar-striped active"role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"><span class="sr-only">Indeterminate</span></div></div>'
+                          popup_content = '<div class="progress"><div class="progress-bar progress-bar-striped active"role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"><span class="sr-only">Indeterminate</span></div></div>'
+                          popup_content += "<p><a href='" + docLink + "' target = '_blank' >Link to actual doc</a></p>";
+
                           return popup_content;
                       } else {
                           return ""
@@ -151,7 +152,9 @@ $(function() {
                               if (res.response.hasOwnProperty('docs')) {
                                   var doc = res.response.docs[0];
                                   var count = 0;
-                                  for (var key in doc) {
+                                  for (var key in metadataFields) {
+                                  		key = metadataFields[key]
+                                  		
                                       if (doc.hasOwnProperty(key)) {
                                           count+=1;
                                           var value = doc[key];
@@ -163,11 +166,12 @@ $(function() {
                                           d3_data['children'].push(child);
                                           // Max num of default keys to be shown in the popup
                                           if(count <= 4){
-                                              popup_content += "<p>" + key + ": " + value + "</p>";
+                                              popup_content += "<p><b>" + key + "</b>: " + value + "</p>";
                                           }
                                       }
                                   }
                                   popup_content += "<p><a class='more' href='' data-toggle='modal' data-target='#moreModal' style='word-wrap: break-word;'>More...</a></p>";
+                                  popup_content += "<p><a href='" + docLink + "' target = '_blank' >Link to actual doc</a></p>";
                               }
                           }
                           return popup_content;
