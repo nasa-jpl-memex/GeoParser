@@ -406,7 +406,7 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
     
     if r.status_code != 200:
         return HttpResponse(status=r.status_code, content=r.reason)
-    print r.text
+    
     response = r.json()
     numFound = response['response']['numFound']
     list_id = []
