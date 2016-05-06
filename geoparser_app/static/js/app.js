@@ -159,11 +159,8 @@ $(function() {
                               if (res.response.hasOwnProperty('docs')) {
                                   var doc = res.response.docs[0];
                                   var count = 0;
-                                  for (var key in metadataFields) {
-                                  		key = metadataFields[key]
-                                  		
+                                  for (var key in doc) {
                                       if (doc.hasOwnProperty(key)) {
-                                          count+=1;
                                           var value = doc[key];
                                           // Ellipsing the string if its too long
                                           if(value.toString().length > 145) {
@@ -171,8 +168,10 @@ $(function() {
                                           }
                                           var child = {"name": key, "children": [{"name": value,"size": 1}]};
                                           d3_data['children'].push(child);
+                                          
                                           // Max num of default keys to be shown in the popup
-                                          if(count <= 4){
+                                          if(count <= 4 && $.inArray(key, metadataFields) > -1){
+                                          		count+=1;
                                               popup_content += "<p><b>" + key + "</b>: " + value + "</p>";
                                           }
                                       }
