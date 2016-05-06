@@ -385,9 +385,6 @@ def SearchLocalSolrIndex(core_name , list_id, keyword):
     '''
     Search local Solr for given ids and core and create Khooshe tiles under serach directory.
     '''
-
-    file_name = ''.join(ch for ch in core_name if ch not in exclude)
-
     search_results = []
     all_points = []
 
@@ -417,7 +414,7 @@ def SearchLocalSolrIndex(core_name , list_id, keyword):
     file_name = ''.join(ch for ch in core_name if ch not in exclude)
 
     if len(all_points) > 0:
-        khoose_tiles_folder_name = "geoparser_app/static/search/tiles/{0}_{1}".format(file_name, keyword)
+        khoose_tiles_folder_name = "static/search/tiles/{0}_{1}".format(file_name, keyword)
         khooshe.run_khooshe(all_points, None, khoose_tiles_folder_name)
         return khoose_tiles_folder_name, len(all_points)
     else:
