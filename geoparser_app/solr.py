@@ -10,6 +10,7 @@ import traceback
 import yaml
 import time
 
+from solr_admin import get_index_core
 
 conf_parser = SafeConfigParser()
 conf_parser.read('config.txt')
@@ -20,6 +21,8 @@ SOLR_PORT = conf_parser.get('general', 'SOLR_PORT')
 
 headers = {"content-type" : "application/json" }
 params = {"commit" : "true" }
+
+exclude = set(string.punctuation)
 
 def check_solr():
     '''
@@ -249,6 +252,7 @@ def get_all_points(point):
     loc_name = re.compile("locname (\w+)").findall(point)
     return all_x, loc_name, all_y
 
+
 def QueryPoints(file_name, core_name):
     '''
     Return geopoints for given filename
@@ -293,6 +297,7 @@ def IndexCrawledPoints(core_name, docs):
         print e
         return (False, "Cannot index geopoints from crawled data to Solr.")
 
+
 def GetIndexSize(core_name):
     
     url = '{0}{1}/select?q=*&wt=json&rows=1'.format(SOLR_URL, core_name)
@@ -304,7 +309,7 @@ def GetIndexSize(core_name):
         
     return rows_processed
     
-            
+
 def QueryPointsIndex(core_name):
     '''
     Return geopoints for given index
@@ -345,7 +350,8 @@ def QueryPointsIndex(core_name):
             print traceback.format_exc()
             print e
             return listNew
-        
+
+
 def GenerateKhooshe(core_name):
     '''
     Generate Khooshe tiles for given core
@@ -361,7 +367,6 @@ def GenerateKhooshe(core_name):
             x = float(point["x"])
             y = float(point["y"])
             all_points.append([x, y, point["popup_info"]])
-        exclude = set(string.punctuation)
         file_name = ''.join(ch for ch in core_name if ch not in exclude)
 
         if len(all_points) > 0:
@@ -377,4 +382,47 @@ def GenerateKhooshe(core_name):
     return 0
 
 
+def SearchLocalSolrIndex(request, indexed_path, domain_name, list_id, keyword):
+    '''
+    Search local Solr for given ids and core and create Khooshe tiles under serach directory.
+    '''
 
+    #To get the local Solr core name from domain name and index path
+    core_name = get_index_core(domain_name, indexed_path)
+
+    file_name = ''.join(ch for ch in core_name if ch not in exclude)
+
+    search_results = []
+    all_points = []
+
+    for each_id in list_id:
+        url = '{0}{1}/select?q=*:*&fq=id:"{2}"&fl=points&wt=json&rows=1000000000'.format(SOLR_URL, core_name, each_id)
+        response = requests.get(url, headers=headers)
+
+        if ('response' in response.keys()) and len(response['response']['docs']) != 0:
+            points = response['response']['docs']
+            for point in points:
+                docId = point['id']
+                point = point['points'][0]
+                all_x, loc_name, all_y = get_all_points(point)
+                if(len(all_x) == len(all_y) == len(loc_name)):
+                    # if length of all_x,all_y,loc_name is not same our results are inconsistent
+                    for i in range(len(all_x)):
+                        search_results.append({"popup_info":"'{0}','{1}'".format(loc_name[i],docId), "x":all_x[i].encode(), "y":all_y[i].encode()})
+                else:
+                    print "length of all_x,all_y,loc_name is not same"
+                    print point
+    del points
+
+    for point in search_results:
+        x = float(point["x"])
+        y = float(point["y"])
+        all_points.append([x, y, point["popup_info"]])
+    file_name = ''.join(ch for ch in core_name if ch not in exclude)
+
+    if len(all_points) > 0:
+        khoose_tiles_folder_name = "geoparser_app/static/search/tiles/{0}_{1}".format(file_name, keyword)
+        khooshe.run_khooshe(all_points, None, khoose_tiles_folder_name)
+        return khoose_tiles_folder_name
+    else:
+        return None
