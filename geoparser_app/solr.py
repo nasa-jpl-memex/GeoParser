@@ -10,7 +10,6 @@ import traceback
 import yaml
 import time
 
-from solr_admin import get_index_core
 
 conf_parser = SafeConfigParser()
 conf_parser.read('config.txt')
@@ -382,13 +381,10 @@ def GenerateKhooshe(core_name):
     return 0
 
 
-def SearchLocalSolrIndex(request, indexed_path, domain_name, list_id, keyword):
+def SearchLocalSolrIndex(core_name , list_id, keyword):
     '''
     Search local Solr for given ids and core and create Khooshe tiles under serach directory.
     '''
-
-    #To get the local Solr core name from domain name and index path
-    core_name = get_index_core(domain_name, indexed_path)
 
     file_name = ''.join(ch for ch in core_name if ch not in exclude)
 
@@ -396,8 +392,8 @@ def SearchLocalSolrIndex(request, indexed_path, domain_name, list_id, keyword):
     all_points = []
 
     for each_id in list_id:
-        url = '{0}{1}/select?q=*:*&fq=id:"{2}"&fl=points&wt=json&rows=1000000000'.format(SOLR_URL, core_name, each_id)
-        response = requests.get(url, headers=headers)
+        url = '{0}{1}/select?q=-points%3A%22%5B%5D%22&fq=id:"{2}"&fl=id,points&wt=json'.format(SOLR_URL, core_name, each_id)
+        response = requests.get(url, headers=headers).json()
 
         if ('response' in response.keys()) and len(response['response']['docs']) != 0:
             points = response['response']['docs']

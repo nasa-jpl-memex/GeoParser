@@ -410,8 +410,11 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
         docs = response['response']['docs']
         
         list_id += [doc["id"] for doc in docs]
-
-    khooshe_tile_folder_name = SearchLocalSolrIndex(indexed_path, domain_name, list_id, keyword)
+    
+    #To get the local Solr core name from domain name and index path
+    core_name = get_index_core(domain_name, indexed_path)
+    
+    khooshe_tile_folder_name = SearchLocalSolrIndex(core_name, list_id, keyword)
     
     if khooshe_tile_folder_name:
         # TODO Refactor "return_points_khooshe" and return similar response as in "return_points_khooshe".
