@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import glob, os
 import urllib2
+import urllib
 import ast
 import requests
 from requests.auth import HTTPBasicAuth
@@ -18,7 +19,7 @@ from django.views.decorators.gzip import gzip_page
 from .forms import UploadFileForm
 from .models import Document
 
-from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, GenerateKhooshe, GetIndexSize 
+from solr import IndexUploadedFilesText, QueryText, IndexLocationName, QueryLocationName, IndexLatLon, QueryPoints, IndexFile, create_core, IndexStatus, IndexCrawledPoints, GenerateKhooshe, GetIndexSize , SearchLocalSolrIndex
 from solr_admin import get_index_core, get_all_domain_details, get_idx_details, update_idx_details,update_idx_field_csv,get_idx_field_csv
 
 from tika import parser
@@ -386,8 +387,10 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
     '''
     Searches a 'keyword' in 'indexed_path', using 'username', 'passwd'
     '''
-    print "Searching for {0} in {1}".format(keyword,indexed_path)
-            
+    print "Searching for {0} in {1}".format(keyword, indexed_path)
+
+    keyword = urllib.quote_plus(keyword)
+
     url = "{0}/select?q=*{1}*&wt=json&rows=1".format(indexed_path, keyword)
     r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
     
@@ -396,23 +399,24 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
     print r.text
     response = r.json()
     numFound = response['response']['numFound']
+    list_id = []
     print "Total number of records found {0}".format(numFound)
     for row in range(0, int(numFound), QUERY_RANGE):  # loop solr query
         docs = {}
-        url = "{0}/select?q=*{1}*&start={2}&rows={3}&wt=json".format(indexed_path, keyword, row, QUERY_RANGE)
+        url = "{0}/select?q=*{1}*&start={2}&rows={3}&wt=json&fl=id".format(indexed_path, keyword, row, QUERY_RANGE)
         print "solr query - {0}".format(url)
         r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
         response = r.json()
         docs = response['response']['docs']
         
-        list_id =  [doc["id"] for doc in docs]
-        
-        print list_id 
-            
-            
-            
+        list_id += [doc["id"] for doc in docs]
+
+    khooshe_tile_folder_name = SearchLocalSolrIndex(indexed_path, domain_name, list_id, keyword)
     
-    # TODO Refactor "return_points_khooshe" and return similar response as in "return_points_khooshe".
-    return HttpResponse(status=200, content="[{'rows_processed': 388, 'points_count': 13, 'total_docs': 388, 'khooshe_tile': 'static/tiles/test1', 'popup_fields': 'id,content_type'}]")
+    if khooshe_tile_folder_name:
+        # TODO Refactor "return_points_khooshe" and return similar response as in "return_points_khooshe".
+        return HttpResponse(status=200, content="[{{'rows_processed': 388, 'points_count': 13, 'total_docs': 388, 'khooshe_tile': '{0}', 'popup_fields': 'id, content_type'}}]".format(khooshe_tile_folder_name))
+    else:
+        return HttpResponse(status=404, content="No points found for given search")
 
 
