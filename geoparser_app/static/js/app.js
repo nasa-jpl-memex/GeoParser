@@ -709,6 +709,7 @@ var fillDomain = function() {
  * Fills indexed url as per domain selected
  */
 var fillURL = function() {
+	$(".savedDomain").val($(this).val())
 	var selectedIndexes = listOfDomains[$(".savedDomain").val()];
 
 	$(".savedIndexes").html("");
@@ -775,6 +776,10 @@ var searchIndex = function(){
 $(function() {
 	fillDomain();
 	$(".savedDomain").bind("change", fillURL);
+	$(".savedIndexes").bind("change", function(){
+		$(".savedIndexes").val($(this).val())
+	});
+	
 	viewindexButton = $("#viewIndex")
 	viewindexButton.bind("click", function() {
 		var indexDisp = $(".savedIndexes").val();
