@@ -387,7 +387,7 @@ def SearchLocalSolrIndex(core_name , list_id, keyword):
     '''
     search_results = []
     all_points = []
-
+    points = []
     for each_id in list_id:
         url = '{0}{1}/select?q=-points%3A%22%5B%5D%22&fq=id:"{2}"&fl=id,points&wt=json'.format(SOLR_URL, core_name, each_id)
         response = requests.get(url, headers=headers).json()
@@ -414,8 +414,9 @@ def SearchLocalSolrIndex(core_name , list_id, keyword):
     file_name = ''.join(ch for ch in core_name if ch not in exclude)
 
     if len(all_points) > 0:
+        
         khoose_tiles_folder_name = "static/search/tiles/{0}_{1}".format(file_name, keyword)
-        khooshe.run_khooshe(all_points, None, khoose_tiles_folder_name)
+        khooshe.run_khooshe(all_points, None, "geoparser_app/"+khoose_tiles_folder_name)
         return khoose_tiles_folder_name, len(all_points)
     else:
         return None, 0

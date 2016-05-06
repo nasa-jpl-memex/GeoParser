@@ -219,11 +219,6 @@
                 <input id="indexPasswd" type="password" class="form-control" placeholder="Passwd.." value = "pass"
                   aria-describedby="sizing-addon1">
               </div>
-              <div class="col-md-8 col-md-offset-1 form-group">
-                 <label class="control-label" for="indexPath">Solar Index Fields</label>
-                 <input id="solrFieldsPath" type="text" class="form-control" placeholder="Solar Index Fields csv file path" 
-                  aria-describedby="sizing-addon1">
-              </div>
               </div>
               <div>Show more options</div>
             </div>
@@ -256,10 +251,10 @@
               </div>
               <div class="clear"></div>
               <div class="col-md-3">
-                <select id="savedDomain" class="dropdown-toggle-full-width font-20">  </select>
+                <select class="savedDomain dropdown-toggle-full-width font-20">  </select>
               </div>
               <div class="col-md-6">
-                <select id="savedIndexes" class="dropdown-toggle-full-width font-20">  </select>
+                <select class="savedIndexes dropdown-toggle-full-width font-20">  </select>
               </div>
               <div class="col-md-3">
                 <button id="viewIndex" type="button" class="btn btn-primary has-spinner">
@@ -280,14 +275,55 @@
               <div class="col-md-10 no-left-padding ">
                 <p class="input-group">
                   <span class="input-group-addon"><span
-                    class="glyphicon glyphicon-map-marker"></span></span> <input id="viewIndexResults" type="text"
+                    class="glyphicon glyphicon-map-marker"></span></span> <input id="searchIndexBoxKeyword" type="text"
                     class="form-control search-input" placeholder="Search by keyword or location.." />
-                  <span class="input-group-addon search-icon"> <span
-                    class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                  </span>
                 </p>
               </div>
               <div class="col-md-1"></div>
+            </div>
+            
+            <br/><br/><br/>
+            <div class="clear"></div>
+            <div class="row">
+              <div class="col-md-1">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true" onclick="hideOtherChild(this)"></span>
+              </div>
+              <div style="display: none">
+              <div class="col-md-5 form-group">
+                <label class="control-label" for="indexPath">Username</label>
+                <input id="searchIndexUsername" type="text" class="form-control" placeholder="Username.." value="user"
+                  aria-describedby="sizing-addon1">
+              </div>
+              <div class="col-md-6 no-left-padding form-group">
+                <label class="control-label" for="indexPath">Password</label>
+                <input id="searchIndexPasswd" type="password" class="form-control" placeholder="Passwd.." value = "pass"
+                  aria-describedby="sizing-addon1">
+              </div>
+              </div>
+              <div>Show more options</div>
+            </div>
+            
+            <br/><br/><br/>
+            <div class="clear"></div>
+            <div class="row">
+              <div class="col-md-3">
+                <select class="savedDomain dropdown-toggle-full-width font-20">  </select>
+              </div>
+              <div class="col-md-6">
+                <select class="savedIndexes dropdown-toggle-full-width font-20">  </select>
+              </div>
+              <div class="col-md-3">
+                <button id="searchIndex" type="button" class="btn btn-primary has-spinner" onclick="searchIndex()">
+                    <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+                    Search &nbsp;
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <br/>
+            <div class="clear"></div>
+            <div class="row" >
+              <div class="col-md-12" id="searchResultsIndex"></div>
             </div>
           </div>
           <!-- Search Index Box end-->

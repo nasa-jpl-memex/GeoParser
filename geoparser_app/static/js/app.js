@@ -60,6 +60,13 @@ var colorArr = [ 'red', 'blue', 'green', 'orange', 'brown', 'grey' ];
 var map = null;
 var view = null;
 /**
+ * location icon with current color
+ */
+var getColorIconHTML = function (){
+	return "<span class='glyphicon glyphicon-map-marker' style='color: "+ colorArr[colorIndex] + ";'></span>"
+}
+
+/**
  * layerToIndexMap has key as base directory for khooshe tiles and value as actual solr index.
  * {'static/tiles/test1/':'http://localhost:8983/solr/test'}
  */
@@ -500,8 +507,7 @@ var fetchAndDrawPoints = function(res, file, displayArea) {
 
 		var fileLabels = $(file.previewElement).find('.glyphicon-minus');
 		fileLabels = fileLabels.parent();
-		fileLabels.append(Dropzone.createElement("<span class='glyphicon glyphicon-map-marker fill-bg' style='color: "
-				+ colorArr[colorIndex] + ";'>"));
+		fileLabels.append(Dropzone.createElement(getColorIconHTML()));
 
 		paintDataFromAPI(data, file.name);
 	});
@@ -677,31 +683,37 @@ var markEmtyError = function(inputEle) {
 	return false;
 }
 
+/**
+ * pre fills available domains and indexes
+ */
 var listOfDomains;
 var fillDomain = function() {
 	callRESTApi(SUB_DOMAIN + "list_of_domains/", 'GET', 'true', null, function(d) {
 		listOfDomains = eval(d)[0];
 		if (!listOfDomains || $.isEmptyObject(listOfDomains)) {
-			$("#savedDomain").parent().parent().hide();
+			$(".savedDomain").parent().parent().hide();
 		} else {
-			$("#savedDomain").parent().parent().show();
+			$(".savedDomain").parent().parent().show();
 		}
 		var domainsList = $.map(listOfDomains, function(element, index) {
 			return "<option>" + index + "</option>"
 		});
 
-		$("#savedDomain").html(domainsList);
+		$(".savedDomain").html(domainsList);
 
 		fillURL();
 
 	});
 }
+/**
+ * Fills indexed url as per domain selected
+ */
 var fillURL = function() {
-	var selectedIndexes = listOfDomains[$("#savedDomain").val()];
+	var selectedIndexes = listOfDomains[$(".savedDomain").val()];
 
-	$("#savedIndexes").html("");
+	$(".savedIndexes").html("");
 	for ( var i in selectedIndexes) {
-		$("#savedIndexes").append("<option>" + selectedIndexes[i] + "</option>");
+		$(".savedIndexes").append("<option>" + selectedIndexes[i] + "</option>");
 	}
 }
 
@@ -712,7 +724,7 @@ var viewIndex = function(indexDisp, domainDisp){
 		try {
 			d = eval(d)[0];
 			$("#resultsIndex").append(
-					"<li>" + d.points_count + " points found in domain-" + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
+					"<li> " + getColorIconHTML() + d.points_count + " points found in domain-" + domainDisp + " - " + indexDisp + " - " + d.rows_processed + ' / '
 							+ d.total_docs + "</li>");
 			
               paintDataFromKhooshe(d, indexDisp);
@@ -727,19 +739,54 @@ var viewIndex = function(indexDisp, domainDisp){
 	});
 }
 
+/**
+ * Call searchIndex API and displays khooshe on map
+ */
+var searchIndex = function(){
+	var searchIndexButton =  $("#searchIndex")
+	var indexDisp = $(".savedIndexes").val();
+	var domainDisp = $(".savedDomain").val();
+	var username = $("#searchIndexUsername").val();
+	var passwd = $("#searchIndexPasswd").val();
+	var keyword = $("#searchIndexBoxKeyword").val();
+	
+	toggleSpinner(searchIndexButton, true);
+	callRESTApi(SUB_DOMAIN + "search_crawled_index/" + indexDisp + "/" + domainDisp + "/" + username + "/" + passwd + "/" + keyword, 'GET', 'true', null, function(d) {
+		try {
+			d = eval(d)[0];
+			console.log(colorArr[colorIndex])
+			$("#searchResultsIndex").append("<li> " + getColorIconHTML() + d.points_count + " points found for search - " + keyword 
+					+ " on " + domainDisp + " - " + indexDisp + ". Total docs matched  " + d.rows_processed 
+					+ " among " + d.total_docs + "</li>");
+			paintDataFromKhooshe(d, indexDisp);
+		} catch (e) {
+			console.error(e.stack)
+			alert("Error while displaying co-ordinates: " + e)
+		}
+		toggleSpinner(searchIndexButton, false);
+	}, function(d) {
+		alert("Error while retrieving co-ordinates: " + d.status + " - " + d.responseText);
+		toggleSpinner(searchIndexButton, false);
+	});
+}
+/**
+ * Binds fillURL to savedDomain and viewIndexButton to viewIndex  
+ */
 $(function() {
 	fillDomain();
-	$("#savedDomain").bind("change", fillURL);
+	$(".savedDomain").bind("change", fillURL);
 	viewindexButton = $("#viewIndex")
 	viewindexButton.bind("click", function() {
-		var indexDisp = $("#savedIndexes").val();
-		var domainDisp = $("#savedDomain").val();
+		var indexDisp = $(".savedIndexes").val();
+		var domainDisp = $(".savedDomain").val();
 		toggleSpinner(viewindexButton, true);
 		viewIndex(indexDisp, domainDisp)
 	})
 })
 
-
+/**
+ * Parse a query string from URL and initialize display, selects domain and crawled index 
+ */
 $(function() {
 	var queryMap = {};
 	location.search.substr(1).split("&").forEach(function(item) {
