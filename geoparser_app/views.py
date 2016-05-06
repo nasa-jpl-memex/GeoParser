@@ -45,7 +45,8 @@ TIKA_SERVER = conf_parser.get('general', 'TIKA_SERVER')
 
 QUERY_RANGE = 500
 KHOOSHE_GEN_FREQ = QUERY_RANGE * 30
-            
+MAX_SEARCH_RESULT = 20000
+
 headers = {"content-type" : "application/json"}
 params = {"commit" : "true" }
 
@@ -411,6 +412,12 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
     numFound = response['response']['numFound']
     list_id = []
     print "Total number of records found {0}".format(numFound)
+    
+    # limiting search count to MAX_SEARCH_RESULT 
+    if numFound > MAX_SEARCH_RESULT:
+        numFound = MAX_SEARCH_RESULT
+        print "Processing only {0} records".format(numFound)
+        
     for row in range(0, int(numFound), QUERY_RANGE):  # loop solr query
         docs = {}
         url = "{0}/select?q=*{1}*&start={2}&rows={3}&wt=json&fl=id".format(indexed_path, keyword, row, QUERY_RANGE)
