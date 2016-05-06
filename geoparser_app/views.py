@@ -208,21 +208,31 @@ Works only for index geo tagging
 file uploads have different solr schema
 TODO - Consider having a unified approach
 '''
+
+def create_khooshe_result(rows_processed, total_docs, points_count,popup_fields, khooshe_tile):
+    results = {}
+    results["rows_processed"] = rows_processed
+    results["total_docs"] = total_docs
+    results["points_count"] = points_count 
+    results["popup_fields"] = popup_fields
+    results["khooshe_tile"] = khooshe_tile
+    
+    return results
+
 def return_points_khooshe(request, indexed_path, domain_name):
     '''
         Returns geo point for give file using khooshe
     '''
-    
     core_name = get_index_core(domain_name, indexed_path)
-    results = {}
     
-    results["rows_processed"] = GetIndexSize(core_name)
-    results["total_docs"], results["points_count"] = get_idx_details(domain_name, indexed_path)
-    results["popup_fields"] = get_idx_field_csv(domain_name, indexed_path)
+    total_docs, points_count = get_idx_details(domain_name, indexed_path)
     
     exclude = set(string.punctuation)
     file_name = ''.join(ch for ch in core_name if ch not in exclude)
-    results["khooshe_tile"] = "static/tiles/{0}".format(file_name)
+    
+    results  = create_khooshe_result(GetIndexSize(core_name), total_docs, points_count, 
+                                     get_idx_field_csv(domain_name, indexed_path),"static/tiles/{0}".format(file_name) )
+    
     if results["rows_processed"]:
         return HttpResponse(status=200, content="[{0}]".format(results))
     else:
@@ -414,11 +424,13 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
     #To get the local Solr core name from domain name and index path
     core_name = get_index_core(domain_name, indexed_path)
     
-    khooshe_tile_folder_name = SearchLocalSolrIndex(core_name, list_id, keyword)
+    khooshe_tile_folder_name,points_count = SearchLocalSolrIndex(core_name, list_id, keyword)
+    
+    result = create_khooshe_result(len(list_id), GetIndexSize(core_name), points_count,
+                                    get_idx_field_csv(domain_name, indexed_path), khooshe_tile_folder_name)
     
     if khooshe_tile_folder_name:
-        # TODO Refactor "return_points_khooshe" and return similar response as in "return_points_khooshe".
-        return HttpResponse(status=200, content="[{{'rows_processed': 388, 'points_count': 13, 'total_docs': 388, 'khooshe_tile': '{0}', 'popup_fields': 'id, content_type'}}]".format(khooshe_tile_folder_name))
+        return HttpResponse(status=200, content="[{0}]".format(str(result)))
     else:
         return HttpResponse(status=404, content="No points found for given search")
 

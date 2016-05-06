@@ -419,6 +419,6 @@ def SearchLocalSolrIndex(core_name , list_id, keyword):
     if len(all_points) > 0:
         khoose_tiles_folder_name = "geoparser_app/static/search/tiles/{0}_{1}".format(file_name, keyword)
         khooshe.run_khooshe(all_points, None, khoose_tiles_folder_name)
-        return khoose_tiles_folder_name
+        return khoose_tiles_folder_name, len(all_points)
     else:
-        return None
+        return None, 0
