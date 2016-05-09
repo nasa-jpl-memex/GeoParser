@@ -52,6 +52,9 @@ params = {"commit" : "true" }
 
 accept_new_khooshe_request = True
 
+exclude = set(string.punctuation)
+
+
 def index(request):
     file_name = ""
     if request.method == 'POST':
@@ -105,6 +108,7 @@ def parse_lat_lon(locations):
         points[locations["Optional_NAME{0}".format(x)].replace(" ", "").decode("UTF-8",'ignore')] = [locations["Optional_LATITUDE{0}".format(x)].replace(" ", ""), locations["Optional_LONGITUDE{0}".format(x)].replace(" ", "")]
 
     return points
+
 
 def removeNewLineAndPunctuation(text):
     regex = re.compile('[%s]' % re.escape(string.punctuation + "\n" ))
@@ -220,17 +224,17 @@ def create_khooshe_result(rows_processed, total_docs, points_count,popup_fields,
     
     return results
 
+
 def return_points_khooshe(request, indexed_path, domain_name):
     '''
         Returns geo point for give file using khooshe
     '''
     core_name = get_index_core(domain_name, indexed_path)
-    
+
     total_docs, points_count = get_idx_details(domain_name, indexed_path)
-    
-    exclude = set(string.punctuation)
+
     file_name = ''.join(ch for ch in core_name if ch not in exclude)
-    
+
     results  = create_khooshe_result(GetIndexSize(core_name), total_docs, points_count, 
                                      get_idx_field_csv(domain_name, indexed_path),"static/tiles/{0}".format(file_name) )
     
@@ -261,6 +265,7 @@ def gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound):
         print "Rejected Khooshe generation request.. Waiting for previous request to get completed"
         return False
 
+
 def refresh_khooshe_tiles(request, domain_name, indexed_path):
     core_name = get_index_core(domain_name, indexed_path)
     numFound = GetIndexSize(core_name)
@@ -270,9 +275,11 @@ def refresh_khooshe_tiles(request, domain_name, indexed_path):
     else:
         return HttpResponse(status=200, content="[{'msg':'Can't queue another Khooshe generation'}]")
 
+
 def get_idx_fields_for_popup(request, domain_name, indexed_path):
     print "get popup fields"
     return HttpResponse(status=200, content=get_idx_field_csv(domain_name, indexed_path))
+
 
 def set_idx_fields_for_popup(request, domain_name, indexed_path, index_field_csv):
     print "setting popup fields"
@@ -442,3 +449,13 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
         return HttpResponse(status=404, content="No points found for given search")
 
 
+def list_of_searched_tiles(request):
+    '''
+    Returns list of Khooshe tiles generated from previous search keywords"
+    '''
+    main_dir = os.path.realpath("manage.py").split("manage.py")[0]
+    search_tiles_dir = "{0}geoparser_app/static/search/tiles/".format(main_dir)
+    try:
+        return HttpResponse(status=200, content="{0}".format([name for name in os.listdir(search_tiles_dir) if os.path.isdir("{0}/{1}".format(search_tiles_dir,name))]))
+    except:
+        return HttpResponse(status=200, content="No search folder found.")
