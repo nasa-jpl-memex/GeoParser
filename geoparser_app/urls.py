@@ -18,4 +18,5 @@ urlpatterns = patterns('geoparser_app.views',
     url(r'query_crawled_index/(?P<indexed_path>\S+)/(?P<domain_name>\S+)/(?P<username>\S+)/(?P<passwd>\S+)$', views.query_crawled_index, name='query_crawled_index'),
     url(r'list_of_domains/$', views.list_of_domains, name='list_of_domains'),
     url(r'search_crawled_index/(?P<indexed_path>\S+)/(?P<domain_name>\S+)/(?P<username>\S+)/(?P<passwd>\S+)/(?P<keyword>\S+)$', views.search_crawled_index, name='search_crawled_index'),
+    url(r'list_of_searched_tiles/$', views.list_of_searched_tiles, name='list_of_searched_tiles'),
 )
