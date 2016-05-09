@@ -9,6 +9,7 @@ from ConfigParser import SafeConfigParser
 from compiler.ast import flatten
 from os.path import isfile
 import string
+import shutil
 
 from django.shortcuts import render, render_to_response
 from django.template import RequestContext
@@ -459,3 +460,20 @@ def list_of_searched_tiles(request):
         return HttpResponse(status=200, content="{0}".format([name for name in os.listdir(search_tiles_dir) if os.path.isdir("{0}/{1}".format(search_tiles_dir,name))]))
     except:
         return HttpResponse(status=200, content="No search folder found.")
+
+
+def remove_khooshe_tile(request, tiles_path, khooshe_folder):
+    '''
+    Remove the Khooshe tile folder.
+    '''
+    main_dir = os.path.realpath("manage.py").split("manage.py")[0]
+    search_tiles_dir = "{0}{1}".format(main_dir, tiles_path)
+    existing_folders = [name for name in os.listdir(search_tiles_dir) if os.path.isdir("{0}/{1}".format(search_tiles_dir,name))]
+    try:
+        if khooshe_folder in existing_folders:
+            shutil.rmtree('{0}/{1}'.format(search_tiles_dir, khooshe_folder))
+            return HttpResponse(status=200, content="Folder {0} successfully removed.".format(khooshe_folder))
+        else:
+            return HttpResponse(status=200, content="Folder does not exists.")
+    except:
+        return HttpResponse(status=404, content="Something went wrong. (maybe tiles folder does not exists.")
