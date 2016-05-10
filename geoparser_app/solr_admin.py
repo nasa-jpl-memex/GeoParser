@@ -21,6 +21,7 @@ ADMIN_F_CORE_LIST = "core_names"
 ADMIN_F_PNT_LEN_LIST = "point_len_list"
 ADMIN_F_IDX_SIZE_LIST = "idx_size_list"
 ADMIN_F_IDX_FIELD_LIST = "idx_field_list"
+ADMIN_F_COUNT = "count"
 DEFAULT_IDX_FIELD = 'id,title'
 
 def _get_domain_admin(domain):
@@ -40,12 +41,13 @@ def get_index_core(domain, index_path):
 		else:
 			# Check if this index exist for this domain
 			all_idx = response['response']['docs'][0][ADMIN_F_IDX_LIST]
+			count = response['response']['docs'][0][ADMIN_F_COUNT][0]
 			if(index_path in all_idx):
 				index_arr = all_idx.index(index_path)
 				core_name = response['response']['docs'][0][ADMIN_F_CORE_LIST][index_arr]
 				return core_name
 			# if not create a new count for this index
-			count = len(all_idx) + 1
+			count = count + 1
 		
 		# get unique core name
 		core_name = "{0}_{1}".format(domain, count)
@@ -57,7 +59,8 @@ def get_index_core(domain, index_path):
 								  ADMIN_F_CORE_LIST : {"add":core_name},
 								  ADMIN_F_PNT_LEN_LIST : {"add":0 },
 								  ADMIN_F_IDX_SIZE_LIST : {"add":0 },
-								  ADMIN_F_IDX_FIELD_LIST : {"add":DEFAULT_IDX_FIELD }
+								  ADMIN_F_IDX_FIELD_LIST : {"add":DEFAULT_IDX_FIELD },
+								  ADMIN_F_COUNT : {"set":count }
 								  }
 						   }
 				   }
@@ -177,3 +180,46 @@ def get_idx_field_csv(domain, index_path):
 			
 	return 0, 0
 		
+def delete_index_core(domain, index_path):
+	# TODO strip trailing /
+	
+	if create_core(ADMIN_CORE):		
+		response = _get_domain_admin(domain)
+		
+		num_found = response['response']['numFound']
+		if(num_found == 0):  # # No record found for this domain.  
+			return "No domain added with name - "  + domain
+		else:
+			# Check if this index exist for this domain
+			all_idx = response['response']['docs'][0][ADMIN_F_IDX_LIST]
+			if(index_path not in all_idx):
+				return "No index added with name {0} for domain {1} ".format(index_path,domain)
+
+		index_in_arr = all_idx.index(index_path)
+		
+		new_doc = response['response']['docs'][0]
+		print "Data now -", new_doc
+		del(new_doc[ADMIN_F_IDX_LIST][index_in_arr])
+		del(new_doc[ADMIN_F_CORE_LIST][index_in_arr])
+		del(new_doc[ADMIN_F_PNT_LEN_LIST][index_in_arr])
+		del(new_doc[ADMIN_F_IDX_SIZE_LIST][index_in_arr])
+		del(new_doc[ADMIN_F_IDX_FIELD_LIST][index_in_arr])
+		
+		print "Updated data - ", new_doc
+			
+		payload = {
+					"add":{
+						   "doc":new_doc
+						   }
+				   }
+ 		
+		r = requests.post("{0}{1}/update".format(SOLR_URL, ADMIN_CORE), data=str(payload), params=params, headers=headers)
+ 		
+		print r.text
+		if(not r.ok):
+			print "Can't delete index with name {0} for domain {1} ".format(index_path,domain)
+		else:
+			print "Deleted index with name {0} for domain {1} ".format(index_path,domain)
+ 		
+		
+
