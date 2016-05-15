@@ -29,7 +29,7 @@ def _get_domain_admin(domain):
 	response = requests.get(url, headers=headers)
 	return yaml.safe_load(response.text)
 
-def get_index_core(domain, index_path):
+def get_index_core(domain, index_path, user="user",passwd="pass"):
 	# TODO strip trailing /
 	
 	if create_core(ADMIN_CORE):		

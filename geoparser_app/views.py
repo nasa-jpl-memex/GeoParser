@@ -289,6 +289,13 @@ def set_idx_fields_for_popup(request, domain_name, indexed_path, index_field_csv
     else:
         return HttpResponse(status=200, content="[{'msg':'failed'}]")
 
+
+def add_crawled_index(request, domain_name, indexed_path, username, passwd):
+    '''
+        Adds a new index in admin core. Storing username and password for future use
+    '''
+    core_name = get_index_core(domain_name, indexed_path)
+    print core_name
     
 def query_crawled_index(request, domain_name, indexed_path, username, passwd):
     '''

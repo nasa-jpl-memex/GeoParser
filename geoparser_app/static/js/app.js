@@ -246,14 +246,17 @@ var chooseBoxToBeDisplayed = function(selection){
 	case 'navUploadFiles':
 		boxToBeDisplayed = $('#fileUploadBox');
 		break;
-	case 'navAddIndex':
-		boxToBeDisplayed = $('#addIndexBox');
+	case 'navGeoIndex':
+		boxToBeDisplayed = $('#geoIndexBox');
 		break;
 	case 'navSearchIndex':
 		boxToBeDisplayed = $('#searchIndexBox');
 		break;
+	case 'navConfIndex':
+		boxToBeDisplayed = $('#confIndexBox');
+		break;
 	default:
-		console.error("Error while navigating ");
+		console.error("Error while navigating can't find: " + selection);
 	}
 	boxToBeDisplayed.removeClass('hide').siblings().addClass('hide');
 
@@ -277,7 +280,7 @@ var notEndsWithSlash = function(string) {
 }
 
 /**
- * Dropdown text change bindings. Dropdown is used in #addIndexBox
+ * Dropdown text change bindings. Dropdown is used in #geoIndexBox
  */
 $(function() {
 	$(".dropdown-menu li a").click(function() {
@@ -805,7 +808,7 @@ $(function() {
 		chooseBoxToBeDisplayed("navUploadFiles")
 		break;
 	case 'i':
-		chooseBoxToBeDisplayed("navAddIndex")
+		chooseBoxToBeDisplayed("navGeoIndex")
 		break;
 	case 's':
 		chooseBoxToBeDisplayed("navSearchIndex")
