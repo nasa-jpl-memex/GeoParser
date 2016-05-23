@@ -3,6 +3,7 @@
 var SUB_DOMAIN = "/"
 var csrfMiddlewareToken;
 var CSRF_MIDDLEWARE_TOKEN_PARAM = "csrfmiddlewaretoken";
+var FACETVIEW_URL = "http://imagecat.dyndns.org/weapons/facetview/ads/index.html";
 
 var getCsrfMiddlewareToken = function() {
 	if (!csrfMiddlewareToken) {
@@ -118,7 +119,10 @@ $(function() {
 			var metadataFields = layerToIndexMap[feature.get('layer')].metadataFields
 			
 			var docLink = layerToIndexMap[feature.get('layer')].indexURL + "/select?q=id:%22" + eval(popupData[1])
-					+ "%22&wt=json&indent=true"
+					+ "%22&wt=json&indent=true";
+
+			var facetViewLink = FACETVIEW_URL + "?query=id:%22" + eval(popupData[1])
+			+ "%22&wt=json&indent=true";
 
 			var popup_content = '';
       d3_data = {"name": eval(popupData[0]), "children": []};
@@ -134,7 +138,8 @@ $(function() {
                   'content': function () {
                       if (popupData[1]) {
                           popup_content = '<div class="progress"><div class="progress-bar progress-bar-striped active"role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"><span class="sr-only">Indeterminate</span></div></div>'
-                          popup_content += "<p><a href='" + docLink + "' target = '_blank' >Link to actual doc</a></p>";
+                          //popup_content += "<p><a href='" + docLink + "' target = '_blank' >Link to actual doc</a></p>";
+						  popup_content += "<p><a href='" + facetViewLink + "' target = '_blank' >Link FacetView doc</a></p>";
 
                           return popup_content;
                       } else {
@@ -177,7 +182,8 @@ $(function() {
                                       }
                                   }
                                   popup_content += "<p><a class='more' href='' data-toggle='modal' data-target='#moreModal' style='word-wrap: break-word;'>More...</a></p>";
-                                  popup_content += "<p><a href='" + docLink + "' target = '_blank' >Link to actual doc</a></p>";
+                                  //popup_content += "<p><a href='" + docLink + "' target = '_blank' >Link to actual doc</a></p>";
+								  popup_content += "<p><a href='" + facetViewLink + "' target = '_blank' >Link FacetView doc</a></p>";
                               }
                           }
                           return popup_content;
