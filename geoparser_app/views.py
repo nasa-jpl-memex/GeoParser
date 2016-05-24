@@ -230,7 +230,7 @@ def return_points_khooshe(request, indexed_path, domain_name):
     '''
         Returns geo point for give file using khooshe
     '''
-    core_name = get_index_core(domain_name, indexed_path)
+    core_name,_,_ = get_index_core(domain_name, indexed_path)
 
     total_docs, points_count = get_idx_details(domain_name, indexed_path)
 
@@ -268,7 +268,7 @@ def gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound):
 
 
 def refresh_khooshe_tiles(request, domain_name, indexed_path):
-    core_name = get_index_core(domain_name, indexed_path)
+    core_name,_,_ = get_index_core(domain_name, indexed_path)
     numFound = GetIndexSize(core_name)
     is_in_queue = gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound)
     if(is_in_queue):
@@ -294,10 +294,15 @@ def add_crawled_index(request, domain_name, indexed_path, username, passwd):
     '''
         Adds a new index in admin core. Storing username and password for future use
     '''
-    core_name = get_index_core(domain_name, indexed_path)
-    print core_name
+    core_name,_,_ = get_index_core(domain_name, indexed_path, username, passwd)
+    print "Created core ", core_name
     
-def query_crawled_index(request, domain_name, indexed_path, username, passwd):
+    if(core_name):
+        return HttpResponse(status=200, content="[{'msg':'success'}]")
+    else:
+        return HttpResponse(status=200, content="[{'msg':'failed'}]")
+    
+def query_crawled_index(request, domain_name, indexed_path):
     '''
         To query crawled data that has been indexed into
         Solr or Elastichsearch and return location names
@@ -306,7 +311,7 @@ def query_crawled_index(request, domain_name, indexed_path, username, passwd):
         '''
         Query admin core to get core information for domain_name, indexed_path combination
         '''
-        core_name = get_index_core(domain_name, indexed_path)
+        core_name, username, passwd = get_index_core(domain_name, indexed_path)
         print core_name
         if create_core(core_name):
             # 1 query solr QUERY_RANGE records at a time
@@ -444,7 +449,7 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
         list_id += [doc["id"] for doc in docs]
     
     #To get the local Solr core name from domain name and index path
-    core_name = get_index_core(domain_name, indexed_path)
+    core_name,_,_ = get_index_core(domain_name, indexed_path)
     
     khooshe_tile_folder_name,points_count = SearchLocalSolrIndex(core_name, list_id, keyword)
     
