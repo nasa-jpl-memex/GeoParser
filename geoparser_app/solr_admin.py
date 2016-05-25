@@ -1,11 +1,15 @@
 '''
 GeoParser admin core Utility
 - Store information about index configuration
-	- id - domain-name
+	- 	id - domain-name
 	- 	indexes -  list of indexes for this domain.
 	-	core_names - list of cores for those indexes.
 	-	point_list - list of num of points points found 
 	-	idx_size_list - list of size of target index
+	-	idx_field_list - csv list of fields for each document
+	-	count - Current count of total cores created for this domain 
+	-	username - list of username for target indexes
+	-	password - list of passwords for target indexes
 
 '''
 
@@ -13,23 +17,37 @@ import yaml
 import requests
 
 from solr import create_core, headers, SOLR_URL, params
-
+from keyczar_util import Crypter
 
 ADMIN_CORE = 'admin'
+'''
+LIST OF FIELD START
+Add all new fields in delete_index_core() which needs to be updated
+'''
 ADMIN_F_IDX_LIST = "indexes"
 ADMIN_F_CORE_LIST = "core_names"
 ADMIN_F_PNT_LEN_LIST = "point_len_list"
 ADMIN_F_IDX_SIZE_LIST = "idx_size_list"
 ADMIN_F_IDX_FIELD_LIST = "idx_field_list"
 ADMIN_F_COUNT = "count"
+ADMIN_F_USER_LIST = "username"
+ADMIN_F_PASSWD_LIST = "password"
+'''
+LIST OF FIELD ENDS
+'''
 DEFAULT_IDX_FIELD = 'id,title'
+
+'''
+keyczar.Crypter object
+'''
+crypter = Crypter()
 
 def _get_domain_admin(domain):
 	url = '{0}{1}/select?q=id:{2}&wt=json'.format(SOLR_URL, ADMIN_CORE, domain)	
 	response = requests.get(url, headers=headers)
 	return yaml.safe_load(response.text)
 
-def get_index_core(domain, index_path):
+def get_index_core(domain, index_path, user="user",passwd="pass"):
 	# TODO strip trailing /
 	
 	if create_core(ADMIN_CORE):		
@@ -45,8 +63,13 @@ def get_index_core(domain, index_path):
 			if(index_path in all_idx):
 				index_arr = all_idx.index(index_path)
 				core_name = response['response']['docs'][0][ADMIN_F_CORE_LIST][index_arr]
-				return core_name
+				# todo encrypt it
+				stored_user = response['response']['docs'][0][ADMIN_F_USER_LIST][index_arr]
+				stored_passwd = response['response']['docs'][0][ADMIN_F_PASSWD_LIST][index_arr]
+				# return existing core name with user name and passwprd  
+				return core_name,stored_user,crypter.decrypt(stored_passwd)
 			# if not create a new count for this index
+			print "No existing core found for ", domain, index_path
 			count = count + 1
 		
 		# get unique core name
@@ -60,6 +83,8 @@ def get_index_core(domain, index_path):
 								  ADMIN_F_PNT_LEN_LIST : {"add":0 },
 								  ADMIN_F_IDX_SIZE_LIST : {"add":0 },
 								  ADMIN_F_IDX_FIELD_LIST : {"add":DEFAULT_IDX_FIELD },
+								  ADMIN_F_USER_LIST: {"add":"{0}".format(user) },
+								  ADMIN_F_PASSWD_LIST: {"add":"{0}".format(crypter.encrypt(passwd) ) },
 								  ADMIN_F_COUNT : {"set":count }
 								  }
 						   }
@@ -70,8 +95,10 @@ def get_index_core(domain, index_path):
 		print r.text
 		if(not r.ok):
 			raise "Can't create core with core name {0}".format(core_name)
+			return
 		
-		return core_name
+		# return newly created core
+		return core_name,user,passwd
 
 def get_all_domain_details():
 	resp = {}
@@ -204,6 +231,8 @@ def delete_index_core(domain, index_path):
 		del(new_doc[ADMIN_F_PNT_LEN_LIST][index_in_arr])
 		del(new_doc[ADMIN_F_IDX_SIZE_LIST][index_in_arr])
 		del(new_doc[ADMIN_F_IDX_FIELD_LIST][index_in_arr])
+		del(new_doc[ADMIN_F_USER_LIST][index_in_arr])
+		del(new_doc[ADMIN_F_PASSWD_LIST][index_in_arr])
 		
 		print "Updated data - ", new_doc
 			

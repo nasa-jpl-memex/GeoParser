@@ -252,14 +252,17 @@ var chooseBoxToBeDisplayed = function(selection){
 	case 'navUploadFiles':
 		boxToBeDisplayed = $('#fileUploadBox');
 		break;
-	case 'navAddIndex':
-		boxToBeDisplayed = $('#addIndexBox');
+	case 'navGeoIndex':
+		boxToBeDisplayed = $('#geoIndexBox');
 		break;
 	case 'navSearchIndex':
 		boxToBeDisplayed = $('#searchIndexBox');
 		break;
+	case 'navConfIndex':
+		boxToBeDisplayed = $('#confIndexBox');
+		break;
 	default:
-		console.error("Error while navigating ");
+		console.error("Error while navigating can't find: " + selection);
 	}
 	boxToBeDisplayed.removeClass('hide').siblings().addClass('hide');
 
@@ -283,7 +286,7 @@ var notEndsWithSlash = function(string) {
 }
 
 /**
- * Dropdown text change bindings. Dropdown is used in #addIndexBox
+ * Dropdown text change bindings. Dropdown is used in #geoIndexBox
  */
 $(function() {
 	$(".dropdown-menu li a").click(function() {
@@ -602,66 +605,84 @@ var collapseFile = function(ele) {
 	$(ele).toggleClass("glyphicon-minus").toggleClass("glyphicon-plus");
 }
 
-// Save Index functions below
-var timer;
-$(function() {
-	$("#saveIndex").bind(
-			"click",
-			function() {
-				var domain = $("#indexDomain");
-				var index = $("#indexPath");
-				var username = $("#indexUsername");
-				var passwd = $("#indexPasswd");
-				var button = $("#saveIndex");
-				var error = false;
-				domain.parent().removeClass("has-error");
-				index.parent().removeClass("has-error");
+// Add Index functions below
+var addIndex = function() {
+	var domain = $("#indexDomain");
+	var index = $("#indexPath");
+	var username = $("#indexUsername");
+	var passwd = $("#indexPasswd");
+	var button = $("#saveIndex");
+	var error = false;
+	domain.parent().removeClass("has-error");
+	index.parent().removeClass("has-error");
 
-				error = markEmtyError(domain);
-				error = markEmtyError(index) || error;
+	error = markEmtyError(domain);
+	error = markEmtyError(index) || error;
 
-				if (error) {
-					return;
-				}
+	if (error) {
+		return;
+	}
 
-				// add "/" in index if not present already
-				if (notEndsWithSlash(index.val())) {
-					index.val(index.val() + "/");
-				}
+	// add "/" in index if not present already
+	if (notEndsWithSlash(index.val())) {
+		index.val(index.val() + "/");
+	}
 
-				toggleSpinner(button, true);
-				callRESTApi(SUB_DOMAIN + "query_crawled_index/" + index.val() + domain.val() + "/" + username.val() + "/"
-						+ passwd.val(), 'GET', 'true', null, function(d) {
-					toggleSpinner(button, false);
-					fillDomain();
-					alert("Successfully Geotagged Index");
-				}, function(d) {
-					alert("Error while GeoTagging Index: " + d.status + " - " + d.responseText);
-					toggleSpinner(button, false);
+	toggleSpinner(button, true);
+	callRESTApi(SUB_DOMAIN + "add_crawled_index/" + index.val() + domain.val() + "/" + username.val() + "/"
+			+ passwd.val(), 'GET', 'true', null, function(d) {
+		toggleSpinner(button, false);
+		fillDomain();
+		alert("Successfully Added Index");
+	}, function(d) {
+		alert("Error while Added Index: " + d.status + " - " + d.responseText);
+		toggleSpinner(button, false);
+	});
+}
+
+//GeoParse Index functions below
+var timer = null;
+var geoparse = function() {
+	var indexDisp = $(".savedIndexes").val();
+	var domainDisp = $(".savedDomain").val();
+	
+	var button = $("#geoparseIndex");
+	
+	toggleSpinner(button, true);
+	callRESTApi(SUB_DOMAIN + "query_crawled_index/" + indexDisp + "/" + domainDisp , 'GET', 'true', null, function(d) {
+		toggleSpinner(button, false);
+		alert("Successfully geoparsed Index");
+		//stopping periodic call to return_points_khooshe once index is geoparsed 
+		setTimeout(function() {
+			clearInterval(timer);
+		}, 11000);
+		
+	}, function(d) {
+		alert("Error while geoparsing Index: " + d.status + " - " + d.responseText);
+		toggleSpinner(button, false);
+		clearInterval(timer);
+	});
+	
+	timer = setInterval(function() {
+		callRESTApi(SUB_DOMAIN + "return_points_khooshe/" + indexDisp + "/" + domainDisp , 'GET', 'true', null,
+				function(d) {
+					d = eval(d)[0];
+					var progress = 0
+					if (d.total_docs && d.rows_processed) {
+						progress = (d.rows_processed / d.total_docs) * 100
+					}
+					var ele = $("#indexProgress")
+					ele.show();
+					ele.find(".progress-bar").css('width', progress + '%').attr('aria-valuenow', progress).html(
+							d.rows_processed + ' / ' + d.total_docs);
+
+					paintDataFromKhooshe(d, indexDisp);
+					if (d.total_docs == d.rows_processed) {
+						clearInterval(window.timer);
+					}
 				});
-
-				timer = setInterval(function() {
-					callRESTApi(SUB_DOMAIN + "return_points_khooshe/" + index.val() + domain.val(), 'GET', 'true', null,
-							function(d) {
-								d = eval(d)[0];
-								var progress = 0
-								if (d.total_docs && d.rows_processed) {
-									progress = (d.rows_processed / d.total_docs) * 100
-								}
-								var ele = $("#indexProgress")
-								ele.show();
-								ele.find(".progress-bar").css('width', progress + '%').attr('aria-valuenow', progress).html(
-										d.rows_processed + ' / ' + d.total_docs);
-
-								paintDataFromKhooshe(d, index.val());
-								if (d.total_docs == d.rows_processed) {
-									clearInterval(timer);
-								}
-							});
-				}, 10000)
-			})
-
-})
+	}, 10000)
+}
 
 /**
  * Toggle active class and set disabled = bool
@@ -752,12 +773,10 @@ var searchIndex = function(){
 	var searchIndexButton =  $("#searchIndex")
 	var indexDisp = $(".savedIndexes").val();
 	var domainDisp = $(".savedDomain").val();
-	var username = $("#searchIndexUsername").val();
-	var passwd = $("#searchIndexPasswd").val();
 	var keyword = $("#searchIndexBoxKeyword").val();
 	
 	toggleSpinner(searchIndexButton, true);
-	callRESTApi(SUB_DOMAIN + "search_crawled_index/" + indexDisp + "/" + domainDisp + "/" + username + "/" + passwd + "/" + keyword, 'GET', 'true', null, function(d) {
+	callRESTApi(SUB_DOMAIN + "search_crawled_index/" + indexDisp + "/" + domainDisp + "/" + keyword, 'GET', 'true', null, function(d) {
 		try {
 			d = eval(d)[0];
 			console.log(colorArr[colorIndex])
@@ -811,7 +830,7 @@ $(function() {
 		chooseBoxToBeDisplayed("navUploadFiles")
 		break;
 	case 'i':
-		chooseBoxToBeDisplayed("navAddIndex")
+		chooseBoxToBeDisplayed("navGeoIndex")
 		break;
 	case 's':
 		chooseBoxToBeDisplayed("navSearchIndex")

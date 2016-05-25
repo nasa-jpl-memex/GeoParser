@@ -53,13 +53,16 @@
           <div class="col-md-10 bottom-buffer">
             <div class="btn-group btn-group-lg pull-right" id="navButtons" data-toggle="buttons">
               <!-- BELOW HEIRARCHY OF label MUST BE MAINTAINED -->
-              <label class="btn btn-default" title="Add/View Index"> <input type="radio" name="options"
-                id="navAddIndex" autocomplete="off"> <span class="glyphicon icon-db"
+               <label class="btn btn-default" title="Configure Index"> <input type="radio" name="options"
+                id="navConfIndex" autocomplete="off"> <span
+                class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </label> <label class="btn btn-default" title="Add/View Index"> <input type="radio" name="options"
+                id="navGeoIndex" autocomplete="off"> <span class="glyphicon icon-db"
                 aria-hidden="true"></span>
               </label> <label class="btn btn-default active" title="Upload File"> <input type="radio" name="options"
                 id="navUploadFiles" autocomplete="off"> <span
                 class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
-              </label> <label class="btn btn-default" title="Search (Coming soon..)"> <input type="radio" name="options"
+              </label> <label class="btn btn-default" title="Search"> <input type="radio" name="options"
                 id="navSearchIndex" autocomplete="off"> <span
                 class="glyphicon glyphicon-search" aria-hidden="true"></span>
               </label>
@@ -70,7 +73,7 @@
         <div class="clear"></div>
         <!-- User Input Box Start-->
         <div id="useInputDiv">
-          <!-- BELOW HEIRARCHY OF div{fileUploadBox,addIndexBox,searchIndexBox} MUST BE MAINTAINED else toggle switch will fail-->
+          <!-- BELOW HEIRARCHY OF div{fileUploadBox,geoIndexBox,searchIndexBox} MUST BE MAINTAINED else toggle switch will fail-->
           <!-- File Upload box Start-->
           <div id="fileUploadBox">
             <div class="row">
@@ -167,8 +170,96 @@
 
           </div>
           <!-- File Upload box End-->
-          <!-- Add Index Box start-->
-          <div id="addIndexBox" class="hide">
+          <!-- GeoParse Index Box start-->
+          <div id="geoIndexBox" class="hide">
+            
+            <div class="clear"></div>
+            <div class="row">
+              <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10 no-left-padding  bottom-buffer">
+                  <h4>GeoParse/View crawled data index</h4>
+                  <hr />
+                </div>
+                <div class="col-md-1"></div>
+              </div>
+              <div class="clear"></div>
+              <div class="col-md-3">
+                <select class="savedDomain dropdown-toggle-full-width font-20">  </select>
+              </div>
+              <div class="col-md-6">
+                <select class="savedIndexes dropdown-toggle-full-width font-20">  </select>
+              </div>
+              <div class="col-md-3 bottom-buffer">
+                <button id="viewIndex" type="button" class="btn btn-primary has-spinner">
+                    <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+                    View
+                </button>
+              </div>
+            </div>
+            
+            <div class="clear"></div>
+            <div class="row">
+              <div class="col-md-9">
+                <div class="progress" style="display: none;"  id="indexProgress">
+                  <div class="progress-bar progress-bar-striped active" role="progressbar"
+                    aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 bottom-buffer">
+                <button id="geoparseIndex" type="button" class="btn btn-primary has-spinner" onclick="geoparse()">
+                    <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+                    Geoparse
+                </button>
+              </div>
+            </div>
+            <div class="row" >
+              <div class="col-md-12" id="resultsIndex"></div>
+            </div>
+          </div>
+          <!-- GeoParse Index Box end-->
+          <!-- Search Index Box start-->
+          <div id="searchIndexBox" class="hide">
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10 no-left-padding ">
+                <p class="input-group">
+                  <span class="input-group-addon"><span
+                    class="glyphicon glyphicon-map-marker"></span></span> <input id="searchIndexBoxKeyword" type="text"
+                    class="form-control search-input" placeholder="Search by keyword or location.." />
+                </p>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            
+            <br/><br/><br/>
+            
+            <div class="clear"></div>
+            <div class="row">
+              <div class="col-md-3">
+                <select class="savedDomain dropdown-toggle-full-width font-20">  </select>
+              </div>
+              <div class="col-md-6">
+                <select class="savedIndexes dropdown-toggle-full-width font-20">  </select>
+              </div>
+              <div class="col-md-3">
+                <button id="searchIndex" type="button" class="btn btn-primary has-spinner" onclick="searchIndex()">
+                    <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
+                    Search &nbsp;
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <br/>
+            <div class="clear"></div>
+            <div class="row" >
+              <div class="col-md-12" id="searchResultsIndex"></div>
+            </div>
+          </div>
+          <!-- Search Index Box end-->
+          <!-- Configure Index Box start-->
+          <div id="confIndexBox" class="hide">
             <div class="row">
               <div class="col-md-1"></div>
               <div class="col-md-10 no-left-padding  bottom-buffer">
@@ -225,108 +316,18 @@
 
             <div class="clear"></div>
             <div class="row">
-              <div class="col-md-9">
-                <div class="progress" style="display: none;"  id="indexProgress">
-                  <div class="progress-bar progress-bar-striped active" role="progressbar"
-                    aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-3 bottom-buffer">
-                <button id="saveIndex" type="button" class="btn btn-primary has-spinner">
+              <div class="col-md-4 bottom-buffer"></div>
+              <div class="col-md-4 bottom-buffer">
+                <button id="addIndex" type="button" class="btn btn-primary has-spinner" onclick="addIndex()">
                     <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
-                    Geoparse
+                    Add Index
                 </button>
               </div>
+              <div class="col-md-4 bottom-buffer"></div>
             </div>
             <div class="clear"></div>
-            <div class="row">
-              <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-10 no-left-padding  bottom-buffer">
-                  <h4>View geoparsed index</h4>
-                  <hr />
-                </div>
-                <div class="col-md-1"></div>
-              </div>
-              <div class="clear"></div>
-              <div class="col-md-3">
-                <select class="savedDomain dropdown-toggle-full-width font-20">  </select>
-              </div>
-              <div class="col-md-6">
-                <select class="savedIndexes dropdown-toggle-full-width font-20">  </select>
-              </div>
-              <div class="col-md-3">
-                <button id="viewIndex" type="button" class="btn btn-primary has-spinner">
-                    <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
-                    View
-                </button>
-              </div>
-            </div>
-            <div class="row" >
-              <div class="col-md-12" id="resultsIndex"></div>
-            </div>
           </div>
-          <!-- Add Index Box end-->
-          <!-- Search Index Box start-->
-          <div id="searchIndexBox" class="hide">
-            <div class="row">
-              <div class="col-md-1"></div>
-              <div class="col-md-10 no-left-padding ">
-                <p class="input-group">
-                  <span class="input-group-addon"><span
-                    class="glyphicon glyphicon-map-marker"></span></span> <input id="searchIndexBoxKeyword" type="text"
-                    class="form-control search-input" placeholder="Search by keyword or location.." />
-                </p>
-              </div>
-              <div class="col-md-1"></div>
-            </div>
-            
-            <br/><br/><br/>
-            <div class="clear"></div>
-            <div class="row">
-              <div class="col-md-1">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true" onclick="hideOtherChild(this)"></span>
-              </div>
-              <div style="display: none">
-              <div class="col-md-5 form-group">
-                <label class="control-label" for="indexPath">Username</label>
-                <input id="searchIndexUsername" type="text" class="form-control" placeholder="Username.." value="user"
-                  aria-describedby="sizing-addon1">
-              </div>
-              <div class="col-md-6 no-left-padding form-group">
-                <label class="control-label" for="indexPath">Password</label>
-                <input id="searchIndexPasswd" type="password" class="form-control" placeholder="Passwd.." value = "pass"
-                  aria-describedby="sizing-addon1">
-              </div>
-              </div>
-              <div>Show more options</div>
-            </div>
-            
-            <br/><br/><br/>
-            <div class="clear"></div>
-            <div class="row">
-              <div class="col-md-3">
-                <select class="savedDomain dropdown-toggle-full-width font-20">  </select>
-              </div>
-              <div class="col-md-6">
-                <select class="savedIndexes dropdown-toggle-full-width font-20">  </select>
-              </div>
-              <div class="col-md-3">
-                <button id="searchIndex" type="button" class="btn btn-primary has-spinner" onclick="searchIndex()">
-                    <span class="spinner"><i class="glyphicon glyphicon-refresh spinning"></i></span>
-                    Search &nbsp;
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                </button>
-              </div>
-            </div>
-            <br/>
-            <div class="clear"></div>
-            <div class="row" >
-              <div class="col-md-12" id="searchResultsIndex"></div>
-            </div>
-          </div>
-          <!-- Search Index Box end-->
+          <!-- Configure Index Box end-->
         </div>
         <!-- User Input Box End-->
         <div class="clear"></div>
