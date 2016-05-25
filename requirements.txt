@@ -4,3 +4,4 @@ tika==1.10
 Django==1.8.5
 scipy==0.16.1
 pyyaml
+python-keyczar==0.716
