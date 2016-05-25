@@ -646,7 +646,11 @@ var geoparse = function() {
 	callRESTApi(SUB_DOMAIN + "query_crawled_index/" + indexDisp + "/" + domainDisp , 'GET', 'true', null, function(d) {
 		toggleSpinner(button, false);
 		alert("Successfully geoparsed Index");
-		//clearInterval(timer);
+		//stopping periodic call to return_points_khooshe once index is geoparsed 
+		setTimeout(function() {
+			clearInterval(timer);
+		}, 11000);
+		
 	}, function(d) {
 		alert("Error while geoparsing Index: " + d.status + " - " + d.responseText);
 		toggleSpinner(button, false);
@@ -763,12 +767,10 @@ var searchIndex = function(){
 	var searchIndexButton =  $("#searchIndex")
 	var indexDisp = $(".savedIndexes").val();
 	var domainDisp = $(".savedDomain").val();
-	var username = $("#searchIndexUsername").val();
-	var passwd = $("#searchIndexPasswd").val();
 	var keyword = $("#searchIndexBoxKeyword").val();
 	
 	toggleSpinner(searchIndexButton, true);
-	callRESTApi(SUB_DOMAIN + "search_crawled_index/" + indexDisp + "/" + domainDisp + "/" + username + "/" + passwd + "/" + keyword, 'GET', 'true', null, function(d) {
+	callRESTApi(SUB_DOMAIN + "search_crawled_index/" + indexDisp + "/" + domainDisp + "/" + keyword, 'GET', 'true', null, function(d) {
 		try {
 			d = eval(d)[0];
 			console.log(colorArr[colorIndex])

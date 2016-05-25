@@ -414,12 +414,15 @@ def query_crawled_index(request, domain_name, indexed_path):
         return HttpResponse(status=500, content= ("Only solr indexes supported for now"))
     
 
-def search_crawled_index(request, indexed_path, domain_name, username, passwd, keyword):
+def search_crawled_index(request, indexed_path, domain_name, keyword):
     '''
     Searches a 'keyword' in 'indexed_path', using 'username', 'passwd'
     '''
     print "Searching for {0} in {1}".format(keyword, indexed_path)
-
+    
+    #Fetching stored data for domain name and index path from admin
+    core_name, username, passwd = get_index_core(domain_name, indexed_path)
+    
     keyword = urllib.quote_plus(keyword)
 
     url = "{0}/select?q=*{1}*&wt=json&rows=1".format(indexed_path, keyword)
@@ -447,9 +450,6 @@ def search_crawled_index(request, indexed_path, domain_name, username, passwd, k
         docs = response['response']['docs']
         
         list_id += [doc["id"] for doc in docs]
-    
-    #To get the local Solr core name from domain name and index path
-    core_name,_,_ = get_index_core(domain_name, indexed_path)
     
     khooshe_tile_folder_name,points_count = SearchLocalSolrIndex(core_name, list_id, keyword)
     

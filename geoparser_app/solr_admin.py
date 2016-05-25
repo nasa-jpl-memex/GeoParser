@@ -17,6 +17,7 @@ import yaml
 import requests
 
 from solr import create_core, headers, SOLR_URL, params
+from keyczar_util import Crypter
 
 ADMIN_CORE = 'admin'
 '''
@@ -35,6 +36,11 @@ ADMIN_F_PASSWD_LIST = "password"
 LIST OF FIELD ENDS
 '''
 DEFAULT_IDX_FIELD = 'id,title'
+
+'''
+keyczar.Crypter object
+'''
+crypter = Crypter()
 
 def _get_domain_admin(domain):
 	url = '{0}{1}/select?q=id:{2}&wt=json'.format(SOLR_URL, ADMIN_CORE, domain)	
@@ -61,7 +67,7 @@ def get_index_core(domain, index_path, user="user",passwd="pass"):
 				stored_user = response['response']['docs'][0][ADMIN_F_USER_LIST][index_arr]
 				stored_passwd = response['response']['docs'][0][ADMIN_F_PASSWD_LIST][index_arr]
 				# return existing core name with user name and passwprd  
-				return core_name,stored_user,stored_passwd
+				return core_name,stored_user,crypter.decrypt(stored_passwd)
 			# if not create a new count for this index
 			print "No existing core found for ", domain, index_path
 			count = count + 1
@@ -78,7 +84,7 @@ def get_index_core(domain, index_path, user="user",passwd="pass"):
 								  ADMIN_F_IDX_SIZE_LIST : {"add":0 },
 								  ADMIN_F_IDX_FIELD_LIST : {"add":DEFAULT_IDX_FIELD },
 								  ADMIN_F_USER_LIST: {"add":"{0}".format(user) },
-								  ADMIN_F_PASSWD_LIST: {"add":"{0}".format(passwd) },
+								  ADMIN_F_PASSWD_LIST: {"add":"{0}".format(crypter.encrypt(passwd) ) },
 								  ADMIN_F_COUNT : {"set":count }
 								  }
 						   }
