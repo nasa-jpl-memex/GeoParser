@@ -13,7 +13,7 @@ The Geoparser is a software tool that can process information from any type of f
 
 3.Run "Docker Quickstart Terminal" on your machine
 
-4.Run ` docker-compose build` command in "docker" folder from step 2
+4.Run ` docker-compose build` command inside "docker" folder from step 2
 
 5.After build finished, run ` docker-compose up` command
 
