@@ -19,7 +19,6 @@ ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64/jre/
 ENV PATH $JAVA_HOME:$PATH
 
 RUN git clone https://github.com/memex-explorer/GeoParser.git /home/
-RUN ls /home
 RUN pip install django==1.8.5
 RUN pip install pyyaml
 RUN pip install requests
@@ -56,5 +55,4 @@ ENV PATH $LGG:$PATH
 RUN curl -O http://download.geonames.org/export/dump/allCountries.zip
 RUN unzip allCountries.zip
 RUN lucene-geo-gazetteer -i geo -b allCountries.txt
-RUN ls /home
 WORKDIR /home
