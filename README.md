@@ -8,10 +8,15 @@ The Geoparser is a software tool that can process information from any type of f
 ##Installation (Docker)
 
 1.Install Docker [Docker.com](https://www.docker.com/)
+
 2.Download "docker" folder
+
 3.Run "Docker Quickstart Terminal" on your machine
+
 4.Run ` docker-compose build` command in "docker" folder from step 2
+
 5.After build finished, run ` docker-compose up` command
+
 6.Open http://<docker host ip>:8000 on your browser
 
 
