@@ -17,7 +17,7 @@ The Geoparser is a software tool that can process information from any type of f
 
 5.After build finished, run ` docker-compose up` command
 
-6.Open http://<docker host ip>:8000 on your browser
+6.Run `docker-machine ip` to get your docker ip address and open http:// <docker host ip> :8000 on your browser
 
 
 ##Installation (manually)
