@@ -9,7 +9,7 @@ The Geoparser is a software tool that can process information from any type of f
 
 1.Install Docker [Docker.com](https://www.docker.com/)
 
-2.Download "docker" folder
+2.Get code from repo
 
 3.Run "Docker Quickstart Terminal" on your machine
 
