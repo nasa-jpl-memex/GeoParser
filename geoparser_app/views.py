@@ -254,7 +254,7 @@ def _gen_khooshe_update_admin_thread(core_name, domain_name, indexed_path, numFo
         print traceback.format_exc()
         print e
     accept_new_khooshe_request = True
-    
+
 
 def gen_khooshe_update_admin(core_name, domain_name, indexed_path, numFound):
     global accept_new_khooshe_request
@@ -301,7 +301,8 @@ def add_crawled_index(request, domain_name, indexed_path, username, passwd):
         return HttpResponse(status=200, content="[{'msg':'success'}]")
     else:
         return HttpResponse(status=200, content="[{'msg':'failed'}]")
-    
+
+
 def query_crawled_index(request, domain_name, indexed_path):
     '''
         To query crawled data that has been indexed into
@@ -329,7 +330,7 @@ def query_crawled_index(request, domain_name, indexed_path):
                 
                 if r.status_code != 200:
                     return HttpResponse(status=r.status_code, content=r.reason)
-                
+
                 response = r.json()
                 numFound = response['response']['numFound']
                 print "Total number of records to be geotagged {0}".format(numFound)
@@ -370,13 +371,12 @@ def query_crawled_index(request, domain_name, indexed_path):
                             except Exception as e:
                                 print traceback.format_exc()
                                 text_content = str(t.values())
-                            
+
                             # simplify text
                             text_content = ' '.join(text_content.split())
-                            
                             parsed = callServer('put', TIKA_SERVER, '/rmeta', text_content, {'Accept': 'application/json', 'Content-Type' : 'application/geotopic'}, False)
                             location_names = parse_lat_lon(eval(parsed[1])[0])
-        
+
                             for key, values in location_names.iteritems():
                                 try:
                                     # # TODO - ADD META DATA
@@ -397,7 +397,7 @@ def query_crawled_index(request, domain_name, indexed_path):
                         except Exception as e:
                             print traceback.format_exc()
                             pass
-                        
+
                         docs[str(t['id'])] = points
                         # loop tika server ends
                     status = IndexCrawledPoints(core_name, docs)
@@ -412,14 +412,14 @@ def query_crawled_index(request, domain_name, indexed_path):
 
     else:
         return HttpResponse(status=500, content= ("Only solr indexes supported for now"))
-    
+
 
 def search_crawled_index(request, indexed_path, domain_name, keyword):
     '''
     Searches a 'keyword' in 'indexed_path', using 'username', 'passwd'
     '''
     print "Searching for {0} in {1}".format(keyword, indexed_path)
-    
+
     #Fetching stored data for domain name and index path from admin
     core_name, username, passwd = get_index_core(domain_name, indexed_path)
     
@@ -427,20 +427,20 @@ def search_crawled_index(request, indexed_path, domain_name, keyword):
 
     url = "{0}/select?q=*{1}*&wt=json&rows=1".format(indexed_path, keyword)
     r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
-    
+
     if r.status_code != 200:
         return HttpResponse(status=r.status_code, content=r.reason)
-    
+
     response = r.json()
     numFound = response['response']['numFound']
     list_id = []
     print "Total number of records found {0}".format(numFound)
-    
+
     # limiting search count to MAX_SEARCH_RESULT 
     if numFound > MAX_SEARCH_RESULT:
         numFound = MAX_SEARCH_RESULT
         print "Processing only {0} records".format(numFound)
-        
+
     for row in range(0, int(numFound), QUERY_RANGE):  # loop solr query
         docs = {}
         url = "{0}/select?q=*{1}*&start={2}&rows={3}&wt=json&fl=id".format(indexed_path, keyword, row, QUERY_RANGE)
@@ -448,14 +448,13 @@ def search_crawled_index(request, indexed_path, domain_name, keyword):
         r = requests.get(url, headers=headers, auth=HTTPBasicAuth(username, passwd))
         response = r.json()
         docs = response['response']['docs']
-        
         list_id += [doc["id"] for doc in docs]
     
     khooshe_tile_folder_name,points_count = SearchLocalSolrIndex(core_name, list_id, keyword)
     
     result = create_khooshe_result(len(list_id), GetIndexSize(core_name), points_count,
                                     get_idx_field_csv(domain_name, indexed_path), khooshe_tile_folder_name)
-    
+
     if khooshe_tile_folder_name:
         return HttpResponse(status=200, content="[{0}]".format(str(result)))
     else:
@@ -464,7 +463,7 @@ def search_crawled_index(request, indexed_path, domain_name, keyword):
 
 def list_of_searched_tiles(request):
     '''
-    Returns list of Khooshe tiles generated from previous search keywords"
+    Returns list of Khooshe tiles generated from previous search keywords
     '''
     main_dir = os.path.realpath("manage.py").split("manage.py")[0]
     search_tiles_dir = "{0}geoparser_app/static/search/tiles/".format(main_dir)
@@ -489,3 +488,16 @@ def remove_khooshe_tile(request, tiles_path, khooshe_folder):
             return HttpResponse(status=200, content="Folder does not exists.")
     except:
         return HttpResponse(status=404, content="Something went wrong. (maybe tiles folder does not exists.")
+
+
+def remove_uploaded_file(request, file_name):
+    '''
+    Remove uploaded file.
+    '''
+    print file_name
+    file_dir = os.path.realpath(__file__).split("views.py")[0]
+    if os.path.isfile("{0}{1}/{2}".format(file_dir, UPLOADED_FILES_PATH, file_name)):
+        os.remove("{0}{1}/{2}".format(file_dir, UPLOADED_FILES_PATH, file_name))
+        return HttpResponse(status=200, content="File {0} removed successfully".format(file_name))
+    else:
+        return HttpResponse(status=404, content="File {0} is not exists.".format(file_name))

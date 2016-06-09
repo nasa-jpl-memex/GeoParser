@@ -569,6 +569,7 @@ $(function() {
 	});
 
 	myDropzone.on("removedfile", function(file) {
+		callRESTApi(SUB_DOMAIN + "remove_uploaded_file/" + file.name , 'GET', 'true', null);
 		deletePoints(dataPointsAll[file.name]);
 	});
 	// Dropzone end
