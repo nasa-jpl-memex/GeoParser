@@ -53,7 +53,7 @@ cd Solr/solr-5.3.1/
 git clone https://github.com/chrismattmann/lucene-geo-gazetteer.git
 cd lucene-geo-gazetteer
 mvn install assembly:assembly
-add lucene-geo-gazetteer/src/lucene-geo-gazetteer/src/main/bin to your PATH environment variable
+add lucene-geo-gazetteer/src/main/bin to your PATH environment variable
 ```
 make sure it is working
 ```
@@ -70,7 +70,7 @@ usage: lucene-geo-gazetteer
 
 3.You will now need to build a Gazetteer using the Geonames.org dataset. (1.2 GB)
 ```
-cd lucene-geo-gazetteer/src/lucene-geo-gazetteer
+cd lucene-geo-gazetteer
 curl -O http://download.geonames.org/export/dump/allCountries.zip
 unzip allCountries.zip
 lucene-geo-gazetteer -i geoIndex -b allCountries.txt
