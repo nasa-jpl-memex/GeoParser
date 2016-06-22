@@ -132,6 +132,8 @@ python manage.py runserver
 
 7.Open in browser [http://localhost:8000/](http://localhost:8000/)
 
+*Note : Please refer to the wiki page on this github repository which can act as a guide for you on how to use GeoParser.
+
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
 - [Lucene Geo Gazetteer] (https://github.com/chrismattmann/lucene-geo-gazetteer)
