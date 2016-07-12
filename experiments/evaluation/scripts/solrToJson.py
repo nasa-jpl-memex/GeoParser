@@ -8,8 +8,8 @@ filename = sys.argv[1]
 
 #Sample url fetching all documents containing text/html content types.
 url = 'http://imagecat.dyndns.org/solr/cronIngest/select?q=contentType+%3A+text%2Fhtml&rows=10000&wt=json&indent=true'
-username = 'darpamemex'
-password = 'darpamemex'
+username = 'username'
+password = 'pass'
 p = urllib2.HTTPPasswordMgrWithDefaultRealm()
 
 p.add_password(None, url, username, password)
