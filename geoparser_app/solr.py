@@ -59,7 +59,7 @@ def create_core(core_name):
     elif check_solr():
         try:
             file_dir = os.path.realpath(__file__).split("solr.py")[0]
-            command = "{0}/../Solr/solr-5.3.1/bin/solr create_core -c {1}".format(file_dir, core_name)
+            command = "{0}/../Solr/solr-5.3.1/bin/solr create_core -c {1} -p {2}".format(file_dir, core_name, SOLR_PORT)
             os.system(command)
             return True
         except:
