@@ -32,7 +32,7 @@ The Geoparser is a software tool that can process information from any type of f
 
 -Apache Tika
 
-###Instructions
+### Instructions
 
 Install python requirements
 ```
@@ -136,7 +136,7 @@ python manage.py runserver
 
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
-- [Lucene Geo Gazetteer] (https://github.com/chrismattmann/lucene-geo-gazetteer)
+- [Lucene Geo Gazetteer](https://github.com/chrismattmann/lucene-geo-gazetteer)
 - [Apache Solr](http://lucene.apache.org/solr/)
 
 
