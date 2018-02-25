@@ -5,7 +5,7 @@
 # GeoParser
 The Geoparser is a software tool that can process information from any type of file, extract geographic coordinates, and visualize locations on a map. Users who are interested in seeing a geographical representation of information or data can choose to search for locations using the Geoparser, through a search index or by uploading files from their computer. The Geoparser will parse the files and visualizes cities or latitude-longitude points on the map. After the information is parsed and points are plotted on the map, users are able to filter their results by density, or by searching a key word and applying a "facet" to the parsed information. On the map, users can click on location points to reveal more information about the location and how it is related to their search.
 
-##Installation (Docker)
+## Installation (Docker)
 *NO NEED TO CLONE THE REPO*
 
 1.Install Docker [Docker.com](https://www.docker.com/)
@@ -21,9 +21,9 @@ The Geoparser is a software tool that can process information from any type of f
 6.Run `docker-machine ip` to get your docker ip address and open `http://<docker host ip>:8000` on your browser
 
 
-##Installation (manually)
+## Installation (manually)
 
-###Requirements
+### Requirements
 -Python 2.7
 
 -pip 
@@ -39,7 +39,7 @@ Install python requirements
 pip install -r requirements.txt
 ```
 
-###How to Run the Application
+### How to Run the Application
 
 1.Run Solr
 
@@ -137,6 +137,6 @@ python manage.py runserver
 ## Technologies we Use
 - [Apache Tika](https://github.com/chrismattmann/tika-python)
 - [Lucene Geo Gazetteer] (https://github.com/chrismattmann/lucene-geo-gazetteer)
-- Apache Solr
+- [Apache Solr](http://lucene.apache.org/solr/)
 
 
