@@ -20,7 +20,7 @@ services:
     networks:
       - memex-network
     entrypoint:
-      - /home/entrypoint-geoparser.sh
+      - /home/Docker/entrypoint-geoparser.sh
     ports:
       - "8983:8983"
       - "8000:8000"
