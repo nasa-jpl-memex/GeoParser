@@ -6,3 +6,4 @@
 *.pid
 
 *.csv
+solrToJson.py
