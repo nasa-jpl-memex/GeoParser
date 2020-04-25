@@ -7,19 +7,9 @@
 The Geoparser is a software tool that can process information from any type of file, extract geographic coordinates, and visualize locations on a map. Users who are interested in seeing a geographical representation of information or data can choose to search for locations using the Geoparser, through a search index or by uploading files from their computer. The Geoparser will parse the files and visualizes cities or latitude-longitude points on the map. After the information is parsed and points are plotted on the map, users are able to filter their results by density, or by searching a key word and applying a "facet" to the parsed information. On the map, users can click on location points to reveal more information about the location and how it is related to their search.
 
 ## Installation (Docker)
-*NO NEED TO CLONE THE REPO*
-
-1.Install Docker [Docker.com](https://www.docker.com/)
-
-2.Download [docker.zip](https://github.com/memex-explorer/GeoParser/raw/master/docker.zip), unzip and cd to docker folder
-
-3.Run "Docker Quickstart Terminal" on your machine
-
-4.Run ` docker-compose build` command inside "docker" folder from step 2
-
-5.After build finished, run ` docker-compose up` command
-
-6.Run `docker-machine ip` to get your docker ip address and open `http://<docker host ip>:8000` on your browser
+  1. `docker build -t nasajplmemex/geo-parser --no-cache -f Dockerfile . `
+  2. `docker-compose up -d`
+  3. Run `docker-machine ip` to get your docker ip address and open `http://<docker host ip>:8000` on your browser
 
 
 ## Installation (manually)
