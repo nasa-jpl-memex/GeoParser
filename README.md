@@ -92,30 +92,27 @@ lucene-geo-gazetteer -server
   You can obtain [file here] (https://raw.githubusercontent.com/chrismattmann/geotopicparser-utils/master/geotopics/polar.geot)   
 
   Output should be this
-    ```
-    [
-       {
-          "Content-Type":"application/geotopic",
-          "Geographic_LATITUDE":"39.76",
-          "Geographic_LONGITUDE":"-98.5",
-          "Geographic_NAME":"United States",
-          "Optional_LATITUDE1":"27.33931",
-          "Optional_LONGITUDE1":"-108.60288",
-          "Optional_NAME1":"China",
-          "X-Parsed-By":[
-             "org.apache.tika.parser.DefaultParser",
-             "org.apache.tika.parser.geo.topic.GeoParser"
-          ],
-          "X-TIKA:parse_time_millis":"1634",
-          "resourceName":"polar.geot"
-       }
-    ]
-    ```
-    6. Run Django server
-
 ```
-python manage.py runserver
+[
+   {
+      "Content-Type":"application/geotopic",
+      "Geographic_LATITUDE":"39.76",
+      "Geographic_LONGITUDE":"-98.5",
+      "Geographic_NAME":"United States",
+      "Optional_LATITUDE1":"27.33931",
+      "Optional_LONGITUDE1":"-108.60288",
+      "Optional_NAME1":"China",
+      "X-Parsed-By":[
+         "org.apache.tika.parser.DefaultParser",
+         "org.apache.tika.parser.geo.topic.GeoParser"
+      ],
+      "X-TIKA:parse_time_millis":"1634",
+      "resourceName":"polar.geot"
+   }
+]
 ```
+   6. Run Django server
+    ```python manage.py runserver```
 
    7. Open in browser [http://localhost:8000/](http://localhost:8000/)
        *Note : Please refer to the wiki page on this github repository which can act as a guide for you on how to use GeoParser.*
