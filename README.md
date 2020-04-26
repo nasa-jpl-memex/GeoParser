@@ -23,19 +23,19 @@ The Geoparser is a software tool that can process information from any type of f
 ### Install Requirements
 
  1. Install python requirements
-    ```
-    pip install -r requirements.txt
-    ```
+```
+pip install -r requirements.txt
+```
 
 ### How to Run the Application
 
-  1.Run Solr
+  1. Run Solr
     Change directory to where you cloned the project
     ```
     cd Solr/solr-5.3.1/
     ./bin/solr start
     ```
-  2.Clone lucene-geo-gazetteer repo
+  2. Clone lucene-geo-gazetteer repo
       ```
       git clone https://github.com/chrismattmann/lucene-geo-gazetteer.git
       cd lucene-geo-gazetteer
@@ -55,7 +55,7 @@ The Geoparser is a software tool that can process information from any type of f
                                              Gazetteer for
       ```
 
-  3.You will now need to build a Gazetteer using the Geonames.org dataset. (1.2 GB)
+  3. You will now need to build a Gazetteer using the Geonames.org dataset. (1.2 GB)
       ```
       cd lucene-geo-gazetteer
       curl -O http://download.geonames.org/export/dump/allCountries.zip
@@ -82,15 +82,15 @@ The Geoparser is a software tool that can process information from any type of f
       ```
       lucene-geo-gazetteer -server
       ```
-  4.Run tika server as mentioned in `https://cwiki.apache.org/confluence/display/TIKA/GeoTopicParser` on port `8001`. Port can be configured via [config.txt](https://github.com/MBoustani/GeoParser/blob/master/config.txt)   
+  4. Run tika server as mentioned in `https://cwiki.apache.org/confluence/display/TIKA/GeoTopicParser` on port `8001`. Port can be configured via [config.txt](https://github.com/MBoustani/GeoParser/blob/master/config.txt)   
 
-5.MAKE SURE YOU ARE ABLE TO EXTRACT LOCATIONS FROM TIKA SERVER   
+  5. Make sure you can extract locations from Tika Server
 
   `curl -T /path/to/polar.geot -H "Content-Disposition: attachment; filename=polar.geot" http://localhost:8001/rmeta`   
 
     You can obtain [file here] (https://raw.githubusercontent.com/chrismattmann/geotopicparser-utils/master/geotopics/polar.geot)   
 
-    Output should be this
+  Output should be this
     ```
     [
        {
@@ -110,13 +110,13 @@ The Geoparser is a software tool that can process information from any type of f
        }
     ]
     ```
-    6.Run Django server
+    6. Run Django server
 
-    ```
-    python manage.py runserver
-    ```
+```
+python manage.py runserver
+```
 
-    7.Open in browser [http://localhost:8000/](http://localhost:8000/)
+   7. Open in browser [http://localhost:8000/](http://localhost:8000/)
 
     *Note : Please refer to the wiki page on this github repository which can act as a guide for you on how to use GeoParser.*
 
