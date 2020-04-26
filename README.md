@@ -79,16 +79,17 @@ pip install -r requirements.txt
       ]
       ```
   Now start lucene-geo-gazetteer server
-      ```
-      lucene-geo-gazetteer -server
-      ```
-  4. Run tika server as mentioned in `https://cwiki.apache.org/confluence/display/TIKA/GeoTopicParser` on port `8001`. Port can be configured via [config.txt](https://github.com/MBoustani/GeoParser/blob/master/config.txt)   
+```
+lucene-geo-gazetteer -server
+```
+  4. Run tika server as mentioned in `https://cwiki.apache.org/confluence/display/TIKA/GeoTopicParser` on port `8001`. 
+     Port can be configured via [config.txt](https://github.com/MBoustani/GeoParser/blob/master/config.txt)   
 
   5. Make sure you can extract locations from Tika Server
 
   `curl -T /path/to/polar.geot -H "Content-Disposition: attachment; filename=polar.geot" http://localhost:8001/rmeta`   
-
-    You can obtain [file here] (https://raw.githubusercontent.com/chrismattmann/geotopicparser-utils/master/geotopics/polar.geot)   
+  
+  You can obtain [file here] (https://raw.githubusercontent.com/chrismattmann/geotopicparser-utils/master/geotopics/polar.geot)   
 
   Output should be this
     ```
@@ -117,12 +118,11 @@ python manage.py runserver
 ```
 
    7. Open in browser [http://localhost:8000/](http://localhost:8000/)
+       *Note : Please refer to the wiki page on this github repository which can act as a guide for you on how to use GeoParser.*
 
-    *Note : Please refer to the wiki page on this github repository which can act as a guide for you on how to use GeoParser.*
-
-    ## Technologies we Use
-    - [Apache Tika](https://github.com/chrismattmann/tika-python)
-    - [Lucene Geo Gazetteer](https://github.com/chrismattmann/lucene-geo-gazetteer)
-    - [Apache Solr](http://lucene.apache.org/solr/)
+## Technologies we Use
+  - [Apache Tika](https://github.com/chrismattmann/tika-python)
+  - [Lucene Geo Gazetteer](https://github.com/chrismattmann/lucene-geo-gazetteer)
+  - [Apache Solr](http://lucene.apache.org/solr/)
 
 
