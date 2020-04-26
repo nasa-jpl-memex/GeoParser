@@ -11,6 +11,8 @@ The Geoparser is a software tool that can process information from any type of f
   2. `docker-compose up -d`
   3. Visit `http://localhost:8000` on your browser
 
+## Try it out to help fight COVID!
+GeoParser has been updated with a new easy to use Docker install, and also [an example to download and run the COVID-19 literature data and view the locations](https://github.com/nasa-jpl-memex/GeoParser/wiki/Sample:-COVID19-publication-data-parsing). Use that example to explore and test out GeoParser on a real example and view locations from that dataset.
 
 ## Installation (manually)
 
