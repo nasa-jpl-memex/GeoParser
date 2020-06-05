@@ -1,7 +1,7 @@
 numpy==1.10.1
 requests==2.3.0
 tika==1.10
-Django==1.11.28
+Django==1.11.29
 scipy==0.16.1
 pyyaml
 python-keyczar==0.716
